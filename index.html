@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    html{
+        height: 100%;
+    }
+    body{
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: "Arial", sans-serif;
+    }
+    section{
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        align-content: center;
+        flex-direction: column;
+    }
+    a{
+        background: #fff;
+        border-radius: 30px;
+        box-shadow: 0 0 10px rgb(205 205 205 / 96%);
+        display: block;
+        padding: 12px 16px;
+        color: #333;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color .3s;
+        margin: 15px;
+        min-width: 200px;
+        text-align: center;
+    }
+    a:hover{
+        color: #0cb0ff;
+    }
+    .grid{margin: auto;
+        max-width: 960px;
+        display: grid;
+        width: 100%;
+        grid-template-columns: repeat(10, 1fr);
+        grid-template-rows: repeat(10,1fr);
+        grid-gap: 10px;
+        height: 100%;
+    }
+    .grid > div:nth-child(odd){
+        background: #999;
+    }
+    .grid > div:nth-child(even){
+        background: #505050;
+    }
+</style>
+<body>
+<section>
+    <a href="iphone_pl_1.html">iPhone 13 Contest</a>
+    <a href="https://adavice.com">Adavice</a>
+
+</section>
+</body>
+</html>
