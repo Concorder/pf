@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body {
+        background: #f5f5f7;
+    }
+
+    h3 {
+        font-size: 48px
+    }
+
+    #c {
+
+        z-index: -999;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    header {
+
+    }
+
+    section.hero {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header__logo {
+
+    }
+
+    #loading_animation {
+        display: none;
+    }
+
+    #loading_animation.visible {
+        display: block;
+        position: absolute;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+        mix-blend-mode: multiply;
+    }
+
+    svg#Layer_1 {
+        width: 100%;
+        height: 100%;
+        opacity: 0.2;
+        fill: #3b5064;
+        transition: 0.5s;
+        position: absolute;
+        z-index: -1;
+    }
+
+    #phone {
+        min-width: 380px;
+        max-width: 500px;
+        height: inherit;
+        top: 0;
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+    #phone.visible {
+        opacity: 1;
+    }
+
+
+    .container, #container {
+        width: 90%;
+        max-width: 1440px;
+        margin: auto;
+        position: relative;
+    }
+
+    #container {
+        max-width: 960px;
+    }
+
+    section:not(:nth-child(2)) {
+        position: relative;
+    }
+
+    section {
+        padding: 110px 20px 60px;
+        height: calc(var(--vh, 1vh) * 100);
+    }
+
+    section.hero {
+        position: relative;
+    }
+
+    canvas {
+        width: 100%;
+    }
+
+    .grid__gradientText {
+        background-image: linear-gradient(90deg, #adfbd6 0%, #a3f5d9 40%, #92cdf5 55%, #97cff2 70%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+
+    }
+
+    .colors-container {
+        position: absolute;
+        filter: brightness(1.5);
+        padding: 12px 14px;
+        border-radius: 8px;
+        left: 50%;
+        bottom: 1.5%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .color-item {
+        opacity: 1;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        /* transform: skew(20deg, 0deg); */
+        border-radius: 5px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-auto-rows: 550px;
+        grid-gap: 20px;
+    }
+
+    .grid > div > h3 {
+        font-size: 48px;
+    }
+
+    .grid > div {
+        background: #666;
+        border-radius: 25px;
+        position: relative;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid img {
+        width: 100%;
+    }
+
+    .grid > div:nth-child(1) {
+        grid-column-start: 1;
+        grid-column-end: 5;
+        height: 550px;
+        transition: 2s;
+        background: rgba(255, 255, 255, 0.80);
+    }
+
+    .form {
+        max-width: 320px;
+    }
+
+    .grid > div:nth-child(2) {
+        grid-column-start: 5;
+        grid-column-end: 13;
+        background: url("http://img.mobilenobo.net/wLEEKLmScwcLZfq.jpg") no-repeat;
+        background-size: cover;
+        justify-content: flex-end;
+        align-items: flex-start;
+        color: #fff;
+    }
+
+    .grid > div:nth-child(3) {
+        grid-column-start: 1;
+        grid-column-end: 9;
+        align-items: center;
+        justify-content: space-evenly;
+        color: #fff;
+        background: #2e2e39;
+    }
+
+    .grid > div:nth-child(3) img {
+        width: 80%;
+    }
+
+    .grid > div:nth-child(4) {
+        grid-column-start: 9;
+        grid-column-end: 13;
+        flex-direction: column;
+        background: #fff url("http://img.mobilenobo.net/a1bfOPZC_CWnltV.jpg") no-repeat center;
+
+
+    }
+
+    .grid > div:nth-child(5) {
+        grid-column-start: 1;
+        grid-column-end: 13;
+        background: url("http://img.mobilenobo.net/spXh4rsj_dOLWJ9.jpg");
+
+    }
+
+    .grid > div:nth-child(6) {
+        grid-column-start: 1;
+        grid-column-end: 5;
+
+        color: #fff;
+        background: url("http://img.mobilenobo.net/w4U1WjzbzRQKbUQ.jpg") no-repeat;
+        background-size: cover;
+
+    }
+
+    .grid > div:nth-child(7) {
+        grid-column-start: 5;
+        grid-column-end: 13;
+        text-align: center;
+        align-items: center;
+        color: #0d1a30;
+        background: #fff url("http://img.mobilenobo.net/pT85QSweFNWqL_G.jpg") no-repeat bottom;
+    }
+
+    .grid > div:nth-child(8) {
+        grid-column-start: 1;
+        grid-column-end: 13;
+        background: transparent;
+        align-items: center;
+        padding-top: 60px;
+    }
+
+    .benefits {
+        text-align: center;
+    }
+
+    .hero__phoneContainer {
+        display: flex;
+        flex-direction: row;
+    }
+
+    /*form*/
+    .form-fs-group {
+        display: block;
+        position: relative;
+    }
+
+    .form-fs-group label {
+        white-space: normal;
+    }
+
+    input[type="text"], input[type="email"] {
+        width: 100%;
+        padding: 4px 12px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        border: 1px solid #d2d2d7;
+        margin: 20px 0 5px;
+    }
+
+    input:focus {
+        outline: none;
+    }
+
+    .checkbox label {
+        margin-top: 10px;
+    }
+
+    input:placeholder-shown + label.fst-only {
+        position: absolute;
+        top: 25px;
+        left: 9px;
+        transition: 0.5s;
+    }
+
+    input:focus + label.fst-only,
+    input:not(:placeholder-shown) + label.fst-only {
+        top: 5px;
+        left: 3px;
+        font-size: 12px;
+        color: #55a0e5;
+        position: absolute;
+    }
+
+    #email_error {
+        color: red;
+        display: none;
+        margin-bottom: 15px;
+    }
+
+    .flexbow {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .form-selector-swatch .form-selector-label {
+        min-height: 6.05882rem;
+    }
+
+    .form-selector .form-selector-label {
+        color: #1d1d1f;
+        border-color: #d2d2d7;
+        background-color: hsla(0, 0%, 100%, .8);
+    }
+
+    .form-selector-label {
+        font-size: 17px;
+        line-height: 1.23536;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border-width: 1px;
+        border-style: solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        min-height: 4.88235rem;
+    }
+
+    .rc-dimension .form-selector-swatch img {
+        width: 32px;
+        height: 32px;
+        mix-blend-mode: multiply;
+    }
+
+    fieldset {
+        opacity: 0;
+        border: 1px solid #3f3f3f;
+        box-sizing: border-box;
+        max-width: 370px;
+        margin-bottom: 20px;
+    }
+
+    .form-selector-label {
+        font-size: 17px;
+        line-height: 1.23536;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border-width: 1px;
+        border-style: solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        min-height: 4.88235rem;
+    }
+
+    .large-6 {
+        flex-basis: 46%;
+        margin: 2%;
+        max-width: 50%;
+    }
+
+    .colorSelector {
+        max-width: 320px;
+        margin-right: 20px;
+    }
+
+    .fieldcontainer {
+        display: flex;
+    }
+
+    .button {
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 17px;
+        line-height: 1.17648;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, AOS Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        min-width: 28px;
+        padding: 8px 16px;
+        border-radius: 980px;
+        background: #0071e3;
+        color: #fff;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        border-radius: 8px;
+        border: 0;
+        margin-top: 20px;
+        text-decoration: none;
+        transition: .3s;
+    }
+
+    .button:hover {
+        background: #007eff;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .checkbox span {
+        margin-left: 30px;
+        display: inline-block;
+        font-size: 12px;
+    }
+
+    #terms {
+        position: absolute;
+    }
+
+    .cta_two {
+        position: absolute;
+        margin-top: 200px;
+    }
+
+    @media screen and (max-width: 460px) {
+        #container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        section.hero {
+            height: 70%;
+        }
+
+        .hero .container {
+            height: 100%;
+        }
+
+        .hero #container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+    }
+
+</style>
+<body>
+<header>
+    <div class="container"><span class="header__logo">iPhone 14 Max</span>
+        <ul>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+        <a href="#">Get</a>
+    </div>
+</header>
+<div class="container">
+    <section class="hero">
+        <h1>iPhone 14</h1>
+            <img class="visible" id="loading_animation" src="http://img.mobilenobo.net/SzH5lBQU5H7fEcb.gif"
+                 alt="loading_animation">
+
+            <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                 viewBox="0 0 487.33 417.51" style="enable-background:new 0 0 487.33 417.51;" xml:space="preserve">
+<g>
+	<polygon points="0,27.87 0,111.49 50.86,92.24 50.86,417.51 129.59,417.51 129.59,-0.29 62.35,-0.29 	"/>
+    <polygon points="487.33,277.57 454.58,277.57 454.58,171.83 375.85,171.83 375.85,277.57 299.7,277.57 424.98,0 335.9,0
+		207.17,281.02 207.17,353.43 375.85,353.43 375.85,417.8 454.58,417.8 454.58,353.43 487.33,353.43 	"/>
+</g>
+</svg>
+            <div class="hero__phoneContainer">
+                <div id="phone"></div>
+                <div class="floated">
+
+                    <h4>Fill the form and claim the new iPhone 13 Pro!</h4>
+                    <div class="form" id="form">
+                        <div method="post" name="customer">
+                            <div class="form-fs-group has-feedback">
+                                <input autocorrect="off" class="form-fst-control required input name" id="name"
+                                       name="name" pattern=".{2,}" placeholder=" " required="required" type="text">
+                                <label class="fst-only" data-tr="name" for="name">Name</label></div>
+                            <div class="form-fs-group has-feedback">
+                                <input autocorrect="off" class="form-fst-control required input lname" id="lname"
+                                       name="lname" pattern=".{2,}" placeholder=" " required="required" type="text">
+                                <label class="fst-only" data-tr="last_name" for="lname">Last Name</label></div>
+                            <div class="form-fs-group has-feedback">
+                                <input autocorrect="off" class="form-fst-control required input" id="address"
+                                       maxlength="255" name="address" placeholder=" " required="required" type="text">
+                                <label class="fst-only" data-tr="address" for="address">Address</label></div>
+                            <div class="fieldcontainer">
+                                <div class="form-fs-group has-feedback left" style="margin-right: 10px">
+                                    <input autocorrect="off" class="form-fst-control" id="code" maxlength="255"
+                                           name="postal_code" placeholder=" " required="" type="text"> <label
+                                        class="fst-only" data-tr="code_postal" for="code">Code postal</label></div>
+                                <div class="form-fs-group has-feedback right">
+                                    <input autocorrect="off" class="form-fst-control required input" id="city"
+                                           maxlength="255" name="city" placeholder=" " required="required" type="text"
+                                           value=""> <label class="fst-only" data-tr="city" for="city">City</label>
+                                </div>
+                            </div>
+                            <div class="form-fs-group has-feedback">
+                                <input autocorrect="off" class="form-fst-control required input email p-email__input"
+                                       id="email" maxlength="255" name="email" placeholder=" " required="required"
+                                       type="email"> <label class="fst-only" data-tr="email" for="email">E-mail</label>
+                                <div data-tr="please_enter_a_valid_email" id="email_error">Please enter a valid email
+                                    address
+                                </div>
+                            </div>
+                            <div class="form-fs-group">
+                                <div class="checkbox form-checkbox">
+                                    <label class="maxwidth"><input checked="checked" class="big-checkbox" id="terms"
+                                                                   required="required" type="checkbox" value="false">
+                                        <span data-tr="checkbox_policy"> I certify that I am at least 18 years of age, and accept the terms and privacy policy.</span>
+                                    </label></div>
+                            </div>
+                            <button class="button button-gradient" data-tr="continue" id="customer_submit_btn"
+                                    name="submit" type="submit">Continue
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="colors-container">
+            </div>
+
+    </section>
+    <section>
+        <div class="grid">
+            <div></div>
+            <div><h3 class="bottom">
+                Cinematic mode.<br>
+                The new star of your videos.
+            </h3></div>
+            <div>
+                <h3>Beauty is <span class="grid__gradientText">screen deep.</span></h3>
+                <img src="http://img.mobilenobo.net/IyMahqrk6aMRzo4.jpg" alt="">
+            </div>
+            <div></div>
+            <div>
+                <h3 style="max-width: 650px" class="bottom">
+                    iOS 16. New ways<br>
+                    to stay in the moment.
+
+                </h3>
+            </div>
+            <div><h3 style="max-width: 650px" class="bottom">
+                Shoot<br>
+                macro.
+            </h3></div>
+            <div><h3 style="max-width: 650px" class="bottom">
+                A dramatically more powerful<br>
+                Pro camera system.
+            </h3></div>
+        </div>
+        <section class="benefits">
+            <h3>There’s no phone like iPhone. <br><a href="#form"> Claim yours</a></h3>
+            <div class="grid">
+
+            </div>
+        </section>
+    </section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script type="module">
+    let vh = window.innerHeight*0.01;
+    const heroSection = document.querySelector('.hero')
+    window.addEventListener('resize', () => {
+        // We execute the same script as before
+        vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+    import * as THREE from 'https://cdn.skypack.dev/three@0.136';
+    import {OrbitControls} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
+    import {RGBELoader} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/RGBELoader.js';
+    import {GLTFLoader} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/GLTFLoader.js';
+
+    let container;
+    let loadingAnim;
+    let camera;
+    let renderer;
+    let scene;
+    let phone;
+
+    const colorapi = [
+        {color: '#180303', name: 'Alpine Green'},
+        {color: '#919191', name: 'Silver'},
+        {color: '#83755b', name: 'Gold'},
+        {color: '#030303', name: 'Graphite'},
+        {color: '#3b5064', name: 'Sierra Blue'},
+    ]
+
+    function createcolors(array, appendto) {
+        array.forEach(function (el, i) {
+            const coloritem = document.createElement('div');
+            coloritem.classList.add('color-item');
+            coloritem.style.background = el.color;
+            coloritem.title = el.name;
+            appendto.appendChild(coloritem)
+        })
+    }
+
+    const iphonematerials = [];
+    createcolors(colorapi, document.querySelector('.colors-container'));
+    const forteen = document.getElementById("Layer_1")
+
+    function init() {
+        container = document.getElementById("phone");
+        loadingAnim = document.getElementById("loading_animation");
+
+
+        //Create scene
+        scene = new THREE.Scene();
+
+        const fov = 35;
+        const aspect = container.offsetWidth / container.offsetHeight;
+        const near = 0.7;
+        const far = 100;
+
+        //Camera setup
+        camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.set(0.5, -0.5, 2);
+
+        const ambient = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambient);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(50, 0, 0);
+        scene.add(light);
+        //Renderer
+        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.toneMappingExposure = 0.7;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        container.appendChild(renderer.domElement);
+
+        //Load Model
+
+        const material = new THREE.MeshBasicMaterial({color: 'white', side: THREE.DoubleSide, wireframe: false});
+
+        let loader = new GLTFLoader();
+        loader.load("https://raw.githubusercontent.com/Concorder/TemplatorScript/main/3d/iphone13/scene.gltf", function (gltf) {
+
+            phone = gltf.scene;
+            scene.add(phone);
+
+            phone.traverse((child) => {
+
+                if (child.isMesh && child.material.name == 'Body') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Frame') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Logo') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Antenna') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Frame2') {
+                    iphonematerials.push(child.material)
+                }
+                if (child.isMesh && child.material.name == 'Glass') {
+                    iphonematerials.push(child.material)
+                }
+                if (child.isMesh && child.material.name == 'Camera_Frame.001') {
+                    iphonematerials.push(child.material)
+                }
+                if (child.isMesh && child.material.name == 'Camera_Frame') {
+                    iphonematerials.push(child.material)
+                }
+            })
+            animate();
+
+        });
+
+        new RGBELoader().load('https://assets.codepen.io/7014830/studio.hdr', function (texture) {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.environment = texture;
+            container.classList.add("visible");
+            loadingAnim.classList.remove('visible');
+        })
+        document.querySelectorAll('.color-item').forEach(function (el, i) {
+            document.querySelectorAll('.color-item')[i].addEventListener('click', (e) => {
+                iphonematerials.forEach(function (material, i) {
+                    material.color.set(new THREE.Color(e.target.style.background))
+                    forteen.style.fill = e.target.style.background
+                })
+
+            })
+        })
+
+        window.addEventListener('dblclick', () => {
+            console.log(camera.position)
+        })
+
+        function animate() {
+            requestAnimationFrame(animate);
+            phone.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+    }
+
+    init();
+
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+    window.addEventListener("resize", onWindowResize);
+    //control
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
+    controls.maxDistance = 2.2;
+    controls.minDistance = 1.8;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.035
+    controls.maxPolarAngle = Math.PI / 1.7
+
+
+</script>
+</body>
+</html>

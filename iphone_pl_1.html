@@ -1,0 +1,1919 @@
+<meta content="width=device-width, initial-scale=1" name="viewport" />
+<meta charset="UTF-8" />
+<title></title>
+<style type="text/css">
+    :root {
+        --direction: ltr;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body.ar h1,
+    body.ar h2,
+    body.ar h3,
+    body.ar span,
+    body.ar a {
+        direction: rtl;
+    }
+
+    body.ar .cta {
+        max-width: 660px;
+    }
+
+
+    body {
+        overflow-x: hidden;
+        margin: 0;
+        font-family: 'Arial', Sans-Serif;
+        color: #404040;
+
+    }
+
+    h1, h2, h3, span, a {
+        direction: var(--direction);
+    }
+
+    .wrap {
+        max-width: 700px;
+        margin: 15px auto;
+        text-align: center;
+    }
+
+    .wrapper {
+        max-width: 700px;
+        margin: 30px auto;
+    }
+
+    h1 {
+        font-size: 2em;
+        text-align: center;
+    }
+
+    h2 {
+        color: #404040
+    }
+
+    .cta {
+        z-index: 20;
+        font-weight: 700;
+        max-width: 700px;
+        margin: 0 auto;
+        display: block;
+        color: transparent;
+    }
+
+    .wrapper {
+        display: flex;
+        margin: auto;
+        max-width: 750px;
+        justify-content: space-evenly;
+        flex-direction: row;
+        position: relative;
+    }
+
+    .mob-phonebox svg {
+        width: 100px;
+        height: 100px;
+        top: 0;
+        right: 0;
+        backdrop-filter: blur(8px);
+        border-radius: 100%;
+    }
+
+    .mob-phonebox span.payment_pa {
+        font-weight: 600;
+        position: absolute;
+        display: flex;
+        top: 20px;
+        border: 3px solid #ffffff;
+        color: #ffffff;
+        box-shadow: 0 0 10px #939393;
+        font-size: 42px;
+        right: 20px;
+        width: 80px;
+        height: 80px;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(6px);
+        border-radius: 100%;
+        background: url(https://grainy-gradients.vercel.app/noise.svg), #1759bb69;
+    }
+
+    .fieldcontainer {
+        display: flex;
+    }
+
+    section {
+        padding: 3em;
+        position: relative;
+        box-sizing: border-box;
+        min-height: 100vh;
+        overflow: hidden;
+    }
+
+    section.first {
+        overflow-x: hidden;
+        min-height: 100vh;
+    }
+
+    section.sticky {
+        background: #000;
+        color: #fff;
+        padding-top: 100px;
+        padding-bottom: 350px;
+
+    }
+
+    section.sticky .wrapper {
+        flex-direction: column;
+    }
+
+    label {
+
+        display: block;
+        font-size: 14px;
+    }
+
+    hr {
+        margin: 30px 0;
+    }
+
+    .phoneImage {
+        position: absolute;
+        bottom: 100px;
+        left: 34%;
+        width: 90%;
+        max-width: 1270px;
+        animation: standUp 4s ease-in-out;
+        animation-fill-mode: forwards;
+        animation-delay: 2s;
+        transform-origin: 40% 20%;
+        transform: scale(1.3);
+
+        transition: filter 1s;
+    }
+
+    @keyframes standUp {
+
+        50% {
+            transform: translate(0px, 200px) rotate(60deg)
+        }
+        100% {
+            width: 90%;
+            transform: translate(-500px, -20px) scale(0.7) rotate(60deg);
+        }
+    }
+
+    [class^='color_'] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        opacity: 0;
+        transition: opacity 1s;
+    }
+
+
+    [class^='color_']:first-child {
+        position: relative;
+        opacity: 0;
+        transition: opacity 0.5s;
+    }
+
+    [class^='color_'].visible {
+        opacity: 1;
+    }
+
+    .visible {
+        opacity: 1 !important;
+    }
+
+    .mob-phonebox {
+        display: none;
+
+    }
+
+    .line {
+        width: 100%;
+        background: red;
+        display: block;
+        height: 5px;
+    }
+
+    section:nth-child(odd) {
+        background: #fbfbfd;
+    }
+
+    .cta i {
+        animation: lightsup 3s;
+        animation-fill-mode: both;
+        animation-delay: 2s;
+        transition: 1s;
+        display: inline-block;
+        white-space: pre-wrap;
+        font-style: normal;
+
+    }
+
+    .cta span {
+        color: #3f3f3f;
+    }
+
+    @keyframes lightsup {
+        0% {
+            color: transparent
+        }
+        50% {
+            color: #c6dbee
+        }
+        100% {
+            transform: translate(0, 0)
+        }
+    }
+
+    .rf-flagship-productselection-section {
+        max-width: 380px;
+    }
+
+    .form-fs-group {
+        display: block;
+        position: relative;
+    }
+
+    .form-fs-group label {
+        white-space: normal;
+    }
+
+    input[type="text"], input[type="email"] {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        border: 1px solid #d2d2d7;
+        margin: 20px 0 5px;
+    }
+
+    input:focus {
+        outline: none;
+    }
+
+    input:placeholder-shown + label.fst-only {
+        position: absolute;
+        top: 28px;
+        left: 9px;
+        transition: 0.5s;
+    }
+
+    input:focus + label.fst-only,
+    input:not(:placeholder-shown) + label.fst-only {
+        top: 5px;
+        left: 3px;
+        font-size: 12px;
+        color: #55a0e5;
+        position: absolute;
+    }
+
+    #email_error {
+        color: red;
+        display: none;
+        margin-bottom: 15px;
+    }
+
+    .flexbow {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .form-selector-swatch .form-selector-label {
+        min-height: 6.05882rem;
+    }
+
+    .form-selector .form-selector-label {
+        color: #1d1d1f;
+        border-color: #d2d2d7;
+        background-color: hsla(0, 0%, 100%, .8);
+    }
+
+    .form-selector-label {
+        font-size: 17px;
+        line-height: 1.23536;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border-width: 1px;
+        border-style: solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        min-height: 4.88235rem;
+    }
+
+    .rc-dimension .form-selector-swatch img {
+        width: 32px;
+        height: 32px;
+        mix-blend-mode: multiply;
+    }
+
+    fieldset {
+        opacity: 0;
+        border: 1px solid #3f3f3f;
+        box-sizing: border-box;
+        max-width: 370px;
+        margin-bottom: 20px;
+    }
+
+    .large-6 {
+        flex-basis: 46%;
+        margin: 2%;
+        max-width: 50%;
+    }
+
+    .colorSelector {
+        max-width: 320px;
+        margin-right: 20px;
+    }
+
+    .button {
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 17px;
+        line-height: 1.17648;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, AOS Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        min-width: 28px;
+        padding: 8px 16px;
+        border-radius: 980px;
+        background: #0071e3;
+        color: #fff;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        border-radius: 8px;
+        border: 0;
+        margin-top: 20px;
+        text-decoration: none;
+        transition: .3s;
+    }
+
+    .button:hover {
+        background: #007eff;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .checkbox span {
+        margin-left: 30px;
+        display: inline-block;
+        font-size: 12px;
+    }
+
+    #terms {
+        position: absolute;
+    }
+
+    .cta_two {
+        position: absolute;
+        margin-top: 200px;
+    }
+
+    #phoneImage2 {
+        width: 80%;
+        position: absolute;
+        bottom: 100px;
+        right: -48px;
+        filter: saturate(0);
+    }
+
+    .sticky .wrapper h3:nth-child(2) {
+        margin-top: 0
+    }
+
+    .sticky .wrapper h3 span {
+        opacity: 0.25;
+        transition: 0.3s;
+        line-height: 1.3;
+    }
+
+    .sticky .wrapper h3 span.highlight {
+        opacity: 1;
+        color: #ffc800;
+    }
+
+    .sticky .wrapper h3:nth-child(2) {
+        margin-top: 0;
+        color: #ffc800;
+    }
+
+    #phoneImage3 {
+        position: absolute;
+        right: -470px;
+        bottom: -40%;
+        pointer-events: none;
+    }
+
+    section#sect3 {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        flex-direction: column;
+        align-content: center;
+        justify-content: flex-start;
+    }
+
+    h3, h3 span, h3[data-tr] {
+        font-size: 72px;
+        font-weight: 600;
+    }
+
+    #sect3 .wrapper {
+        height: inherit;
+        display: flex;
+        min-height: inherit;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    body.ar #sect3 .wrapper h3 {
+        max-width: 46%;
+    }
+
+    #sect3 .wrapper h3 {
+        max-width: 53%;
+        font-size: 64px;
+        font-weight: 600;
+        margin-bottom: 50px;
+    }
+
+    #sect3 .button {
+        margin-bottom: 35%;
+        max-width: 380px;
+    }
+
+    .cta .hlighted {
+        color: #55a0e5;
+        direction: ltr !important;
+    }
+
+    .cta span {
+        display: inline-block;
+    }
+
+    .timerbox {
+        font-size: 21px;
+    }
+
+    #timer {
+        font-size: 21px;
+        font-weight: 600;
+        color: #55a0e5;
+        animation: tikTok 1s infinite;
+    }
+
+    @keyframes tikTok {
+        90% {
+            color: #55a0e5
+        }
+        100% {
+            color: red
+        }
+    }
+
+    @media screen and (max-width: 450px) {
+        body {
+            max-width: 450px;
+        }
+        #sect3 .wrapper {
+            height: inherit;
+            display: flex;
+            min-height: inherit;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        section.sticky {
+
+            padding-top: 100px;
+            padding-bottom: 100px;
+        }
+
+        .cta {
+            text-align: center;
+        }
+
+        body.ar .cta span {
+            font-size: 38px !important;
+        }
+
+        #s3content {
+            min-width: 100%;
+        }
+
+        #phoneImage2 {
+            bottom: 60px;
+            height: 69px;
+        }
+
+        #phoneImage3 {
+            right: -162%;
+            bottom: -30%;
+        }
+
+        #sect3 .wrapper h3 {
+            font-size: 36px;
+            max-width: 63%;
+
+        }
+
+        section {
+            padding: 1em;
+        }
+
+        .cta {
+            margin-bottom: 0;
+        }
+
+        h3, h3 span, h3[data-tr] {
+            font-size: 36px
+        }
+
+        .first .wrapper {
+            flex-direction: column;
+        }
+
+        fieldset {
+            border: none;
+            padding: 0;
+        }
+
+        .colorSelector {
+            width: 100%;
+        }
+
+        .colorSelector.form {
+            margin-top: 10px;
+        }
+
+        .form-selector-swatch .form-selector-label {
+            min-height: unset;
+        }
+
+        .form-label-small {
+            font-size: 12px;
+            margin-top: 3px;
+        }
+
+        .large-6 {
+            flex-basis: 46%;
+            margin: 1%;
+            max-width: 23%;
+        }
+
+        .colorSelector {
+            margin-right: 0;
+            max-width: unset;
+        }
+
+        .phoneImage {
+            position: relative;
+        }
+
+        .phoneImage {
+            display: none;
+        }
+
+        .mob-phonebox {
+            display: block;
+            opacity: 0;
+            transition: opacity 5s;
+        }
+    }</style>
+<section class="first" id="form">
+    <h3 class="cta" data-tr="cta">
+        Fill the form and claim the new iPhone 13 Pro!</h3>
+    <div class="wrap">
+        <span class="timerBox" data-tr="limited_offer">Limited offer:</span> <span id="timer">04:00</span></div>
+    <img alt="" class="phoneImage" src="http://img.mobilenobo.net/7yHgk8lf4klqCF5.png" />
+    <div class="wrapper">
+        <div class="mob-phonebox">
+            <img alt="" class="color_blue visible" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-max-blue-select?wid=470&amp;hei=556&amp;fmt=png-alpha&amp;.v=1631652955000" /> <img alt="" class="color_silver" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-max-silver-select?wid=470&amp;hei=556&amp;fmt=png-alpha&amp;.v=1631652956000" /> <img alt="" class="color_gold" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-max-gold-select?wid=470&amp;hei=556&amp;fmt=png-alpha&amp;.v=1631652956000" /> <img alt="" class="color_graphite" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-13-pro-max-graphite-select?wid=470&amp;hei=556&amp;fmt=png-alpha&amp;.v=1631652956000" /> <span class="payment_pa">$1</span></div>
+        <div class="colorSelector">
+            <fieldset class="rc-dimension ">
+                <legend><span data-tr="choose_your_finish">Choose your finish.</span></legend>
+                <div class="rc-dimension-selector-group flexbow form-selector-group-withgutters">
+                    <div class="rc-dimension-multiple form-selector-swatch column large-6 small-6 form-selector">
+                        <label class="form-selector-label" id="d0acf771-31b9-11ec-b316-4f16d579c70a_label"><img alt="" class="form-selector-swatch" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-finish-blue-2021?wid=204&amp;hei=204&amp;fmt=jpeg&amp;qlt=80&amp;.v=1629940690000" /> <span class="form-label-small"></span> <span class="form-label-small" data-tr="sierra_blue">Sierra Blue</span> </label></div>
+                    <div class="rc-dimension-multiple form-selector-swatch column large-6 small-6 form-selector">
+                        <label class="form-selector-label"><img alt="" class="form-selector-swatch" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-finish-silver-2021?wid=204&amp;hei=204&amp;fmt=jpeg&amp;qlt=80&amp;.v=1629940690000" /> <span class="form-label-small"></span> <span class="form-label-small" data-tr="silver">Silver</span> </label></div>
+                    <div class="rc-dimension-multiple form-selector-swatch column large-6 small-6 form-selector">
+                        <label class="form-selector-label" id="d0ad1e81-31b9-11ec-b316-4f16d579c70a_label"><img alt="" class="form-selector-swatch" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-finish-gold-2021?wid=204&amp;hei=204&amp;fmt=jpeg&amp;qlt=80&amp;.v=1629940690000" /> <span class="form-label-small"></span> <span class="form-label-small" data-tr="gold">Gold</span> </label></div>
+                    <div class="rc-dimension-multiple form-selector-swatch column large-6 small-6 form-selector">
+                        <label class="form-selector-label" id="d0ad1e82-31b9-11ec-b316-4f16d579c70a_label"><img alt="" class="form-selector-swatch" src="https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/iphone-finish-graphite-2021?wid=204&amp;hei=204&amp;fmt=jpeg&amp;qlt=80&amp;.v=1629940690000" /> <span class="form-label-small"></span> <span class="form-label-small" data-tr="graphite">Graphite</span> </label></div>
+                </div>
+            </fieldset>
+        </div>
+        <fieldset class="colorSelector form">
+            <legend><span data-tr="how_can_we_contact_you?">How can we contact you?</span></legend>
+            <div class="form">
+                <div method="post" name="customer">
+                    <div class="form-fs-group has-feedback">
+                        <input autocorrect="off" class="form-fst-control required input name" id="name" name="name" pattern=".{2,}" placeholder=" " required="required" type="text" /> <label class="fst-only" data-tr="name" for="name">Pr&eacute;nom</label></div>
+                    <div class="form-fs-group has-feedback">
+                        <input autocorrect="off" class="form-fst-control required input lname" id="lname" name="lname" pattern=".{2,}" placeholder=" " required="required" type="text" /> <label class="fst-only" data-tr="last_name" for="lname">Nom</label></div>
+                    <div class="form-fs-group has-feedback">
+                        <input autocorrect="off" class="form-fst-control required input" id="address" maxlength="255" name="address" placeholder=" " required="required" type="text" /> <label class="fst-only" data-tr="address" for="address">address</label></div>
+                    <div class="fieldcontainer">
+                        <div class="form-fs-group has-feedback left" style="margin-right: 10px">
+                            <input autocorrect="off" class="form-fst-control" id="code" maxlength="255" name="postal_code" placeholder=" " required="" type="text" /> <label class="fst-only" data-tr="code_postal" for="code">Code postal</label></div>
+                        <div class="form-fs-group has-feedback right">
+                            <input autocorrect="off" class="form-fst-control required input" id="city" maxlength="255" name="city" placeholder=" " required="required" type="text" value="" /> <label class="fst-only" data-tr="city" for="city">Ville</label></div>
+                    </div>
+                    <div class="form-fs-group has-feedback">
+                        <input autocorrect="off" class="form-fst-control required input email p-email__input" id="email" maxlength="255" name="email" placeholder=" " required="required" type="email" /> <label class="fst-only" data-tr="email" for="email">E-mail</label>
+                        <div data-tr="please_enter_a_valid_email" id="email_error">
+                            Please enter a valid email address</div>
+                    </div>
+                    <div class="form-fs-group">
+                        <div class="checkbox form-checkbox">
+                            <label class="maxwidth"><input checked="checked" class="big-checkbox" id="terms" required="required" type="checkbox" value="false" /> <span data-tr="checkbox_policy"> I certify that I am at least 18 years of age, and accept the terms and privacy policy. </span> </label></div>
+                    </div>
+                    <button class="button button-gradient" data-tr="continue" id="customer_submit_btn" name="submit" type="submit">Continue</button></div>
+            </div>
+        </fieldset>
+    </div>
+</section>
+<section class="sticky" id="sect2">
+    <div class="wrapper">
+        <h3 data-tr="text_2">
+            A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world&rsquo;s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.</h3>
+        <h3 data-tr="text_2_pro">
+            Let&rsquo;s Pro.</h3>
+    </div>
+    <img alt="" id="phoneImage2" src="http://img.mobilenobo.net/7yHgk8lf4klqCF5.png" /></section>
+<section id="sect3">
+    <div class="wrapper">
+        <div id="s3content">
+            <h3 data-tr="text_3">
+                No wonder your photos look so good.</h3>
+            <a class="button button-gradient" data-tr="claim_yours" href="#form" id="submit_btn">Claim yours</a></div>
+        <img alt="" id="phoneImage3" src="http://img.mobilenobo.net/yUuex_UaljLDiSu.png" /></div>
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/ScrollTrigger.min.js"></script><script>
+    const lp_translation = {
+        "AU": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let's Pro",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "IE": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let's Pro",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "US": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let's Pro",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": ""
+        },
+        "UK": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let's Pro",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "CA": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let's Pro",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "AT": {
+            "cta": "Füllen Sie das Formular aus und fordern Sie das neue iPhone 13 Pro an!",
+            "choose_your_finish": "Wähle deine Farbe.",
+            "sierra_blue": "Sierrablau",
+            "silver": "Silber",
+            "gold": "Gold",
+            "graphite": "Graphit",
+            "how_can_we_contact_you?": "Wie können wir sie kontaktieren?",
+            "name": "Name",
+            "last_name": "Nachname",
+            "address": "Die Anschrift",
+            "code_postal": "Postleitzahl",
+            "city": "Stadt",
+            "email": "Email",
+            "please_enter_a_valid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+            "checkbox_policy": "Ich bestätige, dass ich mindestens 18 Jahre alt bin und akzeptiere die Bedingungen und Datenschutzbestimmungen.",
+            "continue": "Fortsetzen",
+            "text_2": "Ein deutlich leistungs­stärkeres Kamera-System. Ein Display, das so reaktions­schnell ist, dass sich alles ganz neu anfühlt. Der schnellste Smartphone Chip der Welt. Außer­gewöhnlich robust. Und ein riesiger Sprung bei der Batterielaufzeit.",
+            "text_2_pro": "Das ist Pro.",
+            "text_3": "Kein Wunder, dass deine Fotos so gut aussehen.",
+            "claim_yours": "Nimm deines",
+            "limited_offer": "Begrenztes Angebot:"
+        },
+        "DE": {
+            "cta": "Füllen Sie das Formular aus und fordern Sie das neue iPhone 13 Pro an!",
+            "choose_your_finish": "Wähle deine Farbe.",
+            "sierra_blue": "Sierrablau",
+            "silver": "Silber",
+            "gold": "Gold",
+            "graphite": "Graphit",
+            "how_can_we_contact_you?": "Wie können wir sie kontaktieren?",
+            "name": "Name",
+            "last_name": "Nachname",
+            "address": "Die Anschrift",
+            "code_postal": "Postleitzahl",
+            "city": "Stadt",
+            "email": "Email",
+            "please_enter_a_valid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+            "checkbox_policy": "Ich bestätige, dass ich mindestens 18 Jahre alt bin und akzeptiere die Bedingungen und Datenschutzbestimmungen.",
+            "continue": "Fortsetzen",
+            "text_2": "Ein deutlich leistungs­stärkeres Kamera-System. Ein Display, das so reaktions­schnell ist, dass sich alles ganz neu anfühlt. Der schnellste Smartphone Chip der Welt. Außer­gewöhnlich robust. Und ein riesiger Sprung bei der Batterielaufzeit.",
+            "text_2_pro": "Das ist Pro.",
+            "text_3": "Kein Wunder, dass deine Fotos so gut aussehen.",
+            "claim_yours": "Nimm deines",
+            "limited_offer": "Begrenztes Angebot:"
+        },
+        "CH": {
+            "cta": "Füllen Sie das Formular aus und fordern Sie das neue iPhone 13 Pro an!",
+            "choose_your_finish": "Wähle deine Farbe.",
+            "sierra_blue": "Sierrablau",
+            "silver": "Silber",
+            "gold": "Gold",
+            "graphite": "Graphit",
+            "how_can_we_contact_you?": "Wie können wir sie kontaktieren?",
+            "name": "Name",
+            "last_name": "Nachname",
+            "address": "Die Anschrift",
+            "code_postal": "Postleitzahl",
+            "city": "Stadt",
+            "email": "Email",
+            "please_enter_a_valid_email": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+            "checkbox_policy": "Ich bestätige, dass ich mindestens 18 Jahre alt bin und akzeptiere die Bedingungen und Datenschutzbestimmungen.",
+            "continue": "Fortsetzen",
+            "text_2": "Ein deutlich leistungs­stärkeres Kamera-System. Ein Display, das so reaktions­schnell ist, dass sich alles ganz neu anfühlt. Der schnellste Smartphone Chip der Welt. Außer­gewöhnlich robust. Und ein riesiger Sprung bei der Batterielaufzeit.",
+            "text_2_pro": "Das ist Pro.",
+            "text_3": "Kein Wunder, dass deine Fotos so gut aussehen.",
+            "claim_yours": "Nimm deines",
+            "limited_offer": "Begrenztes Angebot:"
+        },
+        "FR": {
+            "cta": "Remplissez le formulaire et réclamez le nouvel iPhone 13 Pro!",
+            "choose_your_finish": "Choisissez votre finition.",
+            "sierra_blue": "Bleu alpin",
+            "silver": "Argent",
+            "gold": "Or",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "Comment pouvons-nous vous contacter?",
+            "name": "Nom",
+            "last_name": "Nom de famille",
+            "address": "Adresse",
+            "code_postal": "Code postal",
+            "city": "Ville",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Veuillez entrer une adresse email valide",
+            "checkbox_policy": "Je certifie que j'ai au moins 18 ans et j'accepte les conditions et la politique de confidentialité.",
+            "continue": "Continuer",
+            "text_2": "Un système photo nettement plus puissant. Un écran si réactif qu’il renouvelle vos sensations à chaque interaction. La puce de smartphone la plus rapide au monde. Une résistance exceptionnelle. Et un gain d’autonomie spectaculaire.",
+            "text_2_pro": "À vos marques. Pro. Partez.",
+            "text_3": "Voilà pourquoi le selfie vous va si bien.",
+            "claim_yours": "Réclamez le vôtre",
+            "limited_offer": "Оffre limitée:"
+        },
+        "BE": {
+            "cta": "Remplissez le formulaire et réclamez le nouvel iPhone 13 Pro!",
+            "choose_your_finish": "Choisissez votre finition.",
+            "sierra_blue": "Argent",
+            "silver": "Silver",
+            "gold": "Or",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "Comment pouvons-nous vous contacter?",
+            "name": "Nom",
+            "last_name": "Nom de famille",
+            "address": "Adresse",
+            "code_postal": "Code postal",
+            "city": "Ville",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Veuillez entrer une adresse email valide",
+            "checkbox_policy": "Je certifie que j'ai au moins 18 ans et j'accepte les conditions et la politique de confidentialité.",
+            "continue": "Continuer",
+            "text_2": "Un système photo nettement plus puissant. Un écran si réactif qu’il renouvelle vos sensations à chaque interaction. La puce de smartphone la plus rapide au monde. Une résistance exceptionnelle. Et un gain d’autonomie spectaculaire.",
+            "text_2_pro": "À vos marques. Pro. Partez.",
+            "text_3": "Voilà pourquoi le selfie vous va si bien.",
+            "claim_yours": "Réclamez le vôtre",
+            "limited_offer": "Оffre limitée:"
+        },
+        "BG": {
+            "cta": "Попълнете формуляра и вземете новия iPhone 13 Pro!",
+            "choose_your_finish": "Изберете вашия цвят",
+            "sierra_blue": "Сиера синьо",
+            "silver": "сребърно",
+            "gold": "златно",
+            "графит": "Графит",
+            "how_can_we_contact_you?": "Как можем да се свържем с вас?",
+            "name": "Име",
+            "last_name": "Фамилно име",
+            "адрес": "Адрес",
+            "code_postal": "Пощенски код",
+            "град": "Град",
+            "имейл": "Имейл",
+            "please_enter_a_valid_email": "Моля, въведете валиден имейл адрес",
+            "checkbox_policy": " Удостоверявам, че съм на поне 18 години и приемам условията и политиката за поверителност.",
+            "continue": "Продължи",
+            "text_2": "Значително по-мощна система камери. Толкова отзивчив дисплей, че всяка интеракция създава съвсем ново усещане. Най-бързият чип в смартфон досега. Изключителна издръжливост. И огромен скок в живота на батерията.",
+            "text_2_pro": "Ето това е Про.",
+            "text_3": "Не случайно снимките изглеждат толкова добре.",
+            "claim_yours": "Вземете своето",
+            "limited_offer": "Ограничена оферта:"
+        },
+        "BR": {
+            "cta": "Preencha o formulário e solicite o novo iPhone 13 Pro!",
+            "choose_your_finish": "Escolha a cor.",
+            "sierra_blue": "Azul-Sierra",
+            "silver": "Prateado",
+            "gold": "Dourado",
+            "graphite": "Grafite",
+            "how_can_we_contact_you?": "Como podemos entrar em contato com você?",
+            "name": "Nome",
+            "last_name": "Sobrenome",
+            "address": "Endereço",
+            "code_postal": "Código postal",
+            "city": "Cidade",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Por favor, digite um endereço de e-mail válido",
+            "checkbox_policy": "Certifico que tenho pelo menos 18 anos de idade e aceito os termos e a política de privacidade.",
+            "continue": "Continuar",
+            "text_2": "Novo sistema de câmera dramaticamente mais poderoso. Tela responsiva que surpreende a cada toque. O chip de smartphone mais rápido do mundo. Design com resistência fora de série. E um salto imenso na duração da bateria.",
+            "text_2_pro": "É Pro e pronto.",
+            "text_3": "Não é à toa que suas selfies ficam lindas.",
+            "claim_yours": "Obtenha o seu",
+            "limited_offer": "Оferta limitada:"
+        },
+        "CY": {
+            "cta": "Συμπληρώστε τη φόρμα και διεκδικήστε το νέο iPhone 13 Pro!",
+            "choose_your_finish": "Επιλέξτε το χρώμα σας.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Ασημί",
+            "gold": "Χρυσαφί",
+            "graphite": "Γραφίτης",
+            "how_can_we_contact_you?": "Πώς μπορούμε να επικοινωνήσουμε μαζί σας?",
+            "name": "Όνομα",
+            "last_name": "Επώνυμο",
+            "address": "Διεύθυνση",
+            "code_postal": "Ταχυδρομικός κώδικας",
+            "city": "Πόλη",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Παρακαλώ εισάγετε μια έγκυρη διεύθυνση email",
+            "checkbox_policy": "Βεβαιώνω ότι είμαι τουλάχιστον 18 ετών και αποδέχομαι τους όρους και την πολιτική απορρήτου.",
+            "continue": "Προχωρώ",
+            "text_2": "Ριζικά πιο ισχυρό σύστημα κάμερας. Απόκριση οθόνης που κάνει κάθε αλληλεπίδρασή σου πρωτοφανή. Το ταχύτερο chip του κόσμου σε smartphone. Εξαιρετική ανθεκτικότητα. Και ένα τεράστιο άλμα στη διάρκεια λειτουργίας της μπαταρίας.",
+            "text_2_pro": "Μπες στον κόσμο του Pro.",
+            "text_3": "Δεν είναι τυχαίο που οι φωτογραφίες σου είναι εκπληκτικές.",
+            "claim_yours": "Πάρε το δικό σου",
+            "limited_offer": "Περιορισμένη προσφορά:"
+        },
+        "GR": {
+            "cta": "Συμπληρώστε τη φόρμα και διεκδικήστε το νέο iPhone 13 Pro!",
+            "choose_your_finish": "Επιλέξτε το χρώμα σας.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Ασημί",
+            "gold": "Χρυσαφί",
+            "graphite": "Γραφίτης",
+            "how_can_we_contact_you?": "Πώς μπορούμε να επικοινωνήσουμε μαζί σας?",
+            "name": "Όνομα",
+            "last_name": "Επώνυμο",
+            "address": "Διεύθυνση",
+            "code_postal": "Ταχυδρομικός κώδικας",
+            "city": "Πόλη",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Παρακαλώ εισάγετε μια έγκυρη διεύθυνση email",
+            "checkbox_policy": "Βεβαιώνω ότι είμαι τουλάχιστον 18 ετών και αποδέχομαι τους όρους και την πολιτική απορρήτου.",
+            "continue": "Προχωρώ",
+            "text_2": "Ριζικά πιο ισχυρό σύστημα κάμερας. Απόκριση οθόνης που κάνει κάθε αλληλεπίδρασή σου πρωτοφανή. Το ταχύτερο chip του κόσμου σε smartphone. Εξαιρετική ανθεκτικότητα. Και ένα τεράστιο άλμα στη διάρκεια λειτουργίας της μπαταρίας.",
+            "text_2_pro": "Μπες στον κόσμο του Pro.",
+            "text_3": "Δεν είναι τυχαίο που οι φωτογραφίες σου είναι εκπληκτικές.",
+            "claim_yours": "Πάρε το δικό σου",
+            "limited_offer": "Περιορισμένη προσφορά:"
+        },
+        "CZ": {
+            "cta": "Vyplňte formulář a vyzvedněte si nový iPhone 13 Pro!",
+            "choose_your_finish": "Zvol barvu.",
+            "sierra_blue": "horsky modrá",
+            "silver": "stříbrná",
+            "gold": "zlatá",
+            "graphite": "grafitově šedá",
+            "how_can_we_contact_you?": "Jak vás můžeme kontaktovat?",
+            "name": "název",
+            "last_name": "Příjmení",
+            "address": "Adresa",
+            "code_postal": "Poštovní směrovací číslo",
+            "city": "Město",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Prosím zadejte platnou emailovou adresu",
+            "checkbox_policy": " Potvrzuji, že je mi alespoň 18 let a souhlasím s podmínkami a zásadami ochrany osobních údajů.",
+            "continue": "Pokračovat",
+            "text_2": "Dramaticky zdokonalená soustava fotoaparátů. Displej, který reaguje tak bezprostředně, že tě pokaždé překvapí. Nejrychlejší smartphonový čip na světě. Výjimečná odolnost. A obrovský skok ve výdrži baterie.",
+            "text_2_pro": "Jsi Pro?",
+            "text_3": "není divu, že ti to na fotkách tak sluší.",
+            "claim_yours": "Získejte své",
+            "limited_offer": "Omezená nabídka:"
+        },
+        "DK": {
+            "cta": "Udfyld formularen og få den nye iPhone 13 Pro!",
+            "choose_your_finish": "Vælg en finish.",
+            "sierra_blue": "skyfri blå",
+            "silver": "sølv",
+            "gold": "guld",
+            "graphite": "grafitgrå",
+            "how_can_we_contact_you?": "Hvordan kan vi kontakte dig?",
+            "name": "Navn",
+            "last_name": "Efternavn",
+            "address": "Adresse",
+            "code_postal": "postnummer",
+            "city": "By",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Indtast venligst en gyldig e-mailadresse",
+            "checkbox_policy": " Jeg bekræfter, at jeg er mindst 18 år gammel, og accepterer vilkårene og privatlivspolitikken.",
+            "continue": "Blive ved",
+            "text_2": "Et markant stærkere kamerasystem. En skærm, der reagerer så hurtigt, at alt føles nyt igen. Verdens hurtigste chip i en smartphone. Exceptionel holdbarhed. Og et kæmpe spring i batteritid.",
+            "text_2_pro": "Klar til Pro?",
+            "text_3": "Ikke så underligt, at dine billeder er så gode.",
+            "claim_yours": "Få din",
+            "limited_offer": "Begrænset tilbud:"
+        },
+        "ES": {
+            "cta": "¡Rellena el formulario y reclama el nuevo iPhone 13 Pro!",
+            "choose_your_finish": "Elige un acabado.",
+            "sierra_blue": "Azul alpino",
+            "silver": "Plata",
+            "gold": "Oro",
+            "graphite": "Grafito",
+            "how_can_we_contact_you?": "¿Como podemos contactarlo?",
+            "name": "Nombre",
+            "last_name": "Apellido",
+            "address": "Dirección",
+            "code_postal": "Código postal",
+            "city": "Ciudad",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Por favor, introduce una dirección de correo electrónico válida",
+            "checkbox_policy": " Certifico que tengo al menos 18 años de edad y acepto los términos y la política de privacidad.",
+            "continue": "Continuar",
+            "text_2": "Un sistema de cámaras revolucionario. Una pantalla con una respuesta tan fluida que cada toque parece magia. El chip más rápido que jamás ha tenido un móvil. Una resistencia extraordinaria. Y la mayor autonomía en un iPhone.",
+            "text_2_pro": "Es todo un Pro.",
+            "text_3": "Normal que tus fotos se salgan de lo normal.",
+            "claim_yours": "Consigue el tuyo",
+            "limited_offer": "Oferta limitada:"
+        },
+        "FI": {
+            "cta": "Täytä lomake ja hanki uusi iPhone 13 Pro!",
+            "choose_your_finish": "Valitse väri.",
+            "sierra_blue": "Poutapäivän­sininen",
+            "silver": "Hopea",
+            "gold": "Kulta",
+            "graphite": "Grafiitti",
+            "how_can_we_contact_you?": "Kuinka voimme ottaa sinuun yhteyttä?",
+            "name": "Nimi",
+            "last_name": "Sukunimi",
+            "address": "Osoite",
+            "code_postal": "Postinumero",
+            "city": "Kaupunki",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Ole hyvä ja syötä toimiva sähköpostiosoite",
+            "checkbox_policy": " Vakuutan, että olen vähintään 18-vuotias, ja hyväksyn ehdot ja tietosuojakäytännön.",
+            "continue": "Jatkaa",
+            "text_2": "Tuntuvasti tehokkaampi kamerajärjestelmä. Niin herkkä näyttö, että kaikki tuntuu täysin uudelta. Maailman nopein äly­puhelimen siru. Poikkeuksellisen kestävä rakenne. Ja huima parannus akunkestossa.",
+            "text_2_pro": "Pro mikä pro.",
+            "text_3": "Ei ihme että näytät niin hyvältä kuvissasi.",
+            "claim_yours": "Hanki omasi",
+            "limited_offer": "Rajoitettu tarjous:"
+        },
+        "HU": {
+            "cta": "Töltse ki az űrlapot, és szerezze be az új iPhone 13 Pro!",
+            "choose_your_finish": "Válassz bevonatszínt.",
+            "sierra_blue": "sierrakék",
+            "silver": "ezüst",
+            "gold": "arany",
+            "graphite": "grafit",
+            "how_can_we_contact_you?": "Hogyan léphetünk kapcsolatba Önnel?",
+            "name": "Név",
+            "last_name": "Vezetéknév",
+            "address": "Cím",
+            "code_postal": "Irányítószám",
+            "city": "Város",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Kérjük valós e-mail címet adjon meg",
+            "checkbox_policy": " Kijelentem, hogy legalább 18 éves vagyok, és elfogadom a feltételeket és az adatvédelmi szabályzatot.",
+            "continue": "Folytatni",
+            "text_2": "Frenetikus, mennyivel többre képes a kamera­rendszer. Szupergyorsan reagáló, teljesen új kezelői élményt adó kijelző. A világ leggyorsabb okos­telefonchipje. Döbbenetesen strapabíró kialakítás. És sokkal hosszabb aksiidő.",
+            "text_2_pro": "Minden Pro lesz.",
+            "text_3": "Nem csoda, hogy ilyen csodásak a fotóid.",
+            "claim_yours": "Igényelje a magáét",
+            "limited_offer": "Korlátozott ajánlat:"
+        },
+        "ID": {
+            "cta": "Isi formulir dan klaim iPhone 13 Pro baru!",
+            "choose_your_finish": "Pilih warna Anda.",
+            "sierra_blue": "Biru Sierra",
+            "silver": "Perak",
+            "gold": "Emas",
+            "graphite": "Abu-abu Grafit",
+            "how_can_we_contact_you?": "Bagaimana kami bisa menghubungi Anda?",
+            "name": "Nama",
+            "last_name": "Nama keluarga",
+            "address": "Alamat",
+            "code_postal": "Kode Pos",
+            "city": "Kota",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "silakan isi alamat email",
+            "checkbox_policy": " Saya menyatakan bahwa saya berusia minimal 18 tahun, dan menerima persyaratan dan kebijakan privasi.",
+            "continue": "Melanjutkan",
+            "text_2": "Sistem kamera yang jauh lebih andal. Layar yang begitu responsif, setiap interaksi terasa baru lagi. Chip ponsel pintar paling cepat di dunia. Istimewa kokohnya. Dan lompatan besar dalam kekuatan baterai.",
+            "text_2_pro": "Ayo jadi Pro.",
+            "text_3": "Tak heran foto Anda begitu menawan.",
+            "claim_yours": "Dapatkan milikmu",
+            "limited_offer": "Penawaran terbatas:"
+        },
+        "IT": {
+            "cta": "Compila il modulo e richiedi il nuovo iPhone 13 Pro!",
+            "choose_your_finish": "Scegli il colore.",
+            "sierra_blue": "Azzurro Sierra",
+            "silver": "Argento",
+            "gold": "Oro",
+            "graphite": "Grafite",
+            "how_can_we_contact_you?": "Come possiamo contattarti?",
+            "name": "Nome",
+            "last_name": "Cognome",
+            "address": "Indirizzo",
+            "code_postal": "Cap",
+            "city": "Città",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Si prega di inserire un indirizzo email valido",
+            "checkbox_policy": " Dichiaro di avere almeno 18 anni e di accettare i termini e l'informativa sulla privacy.",
+            "continue": "Continua",
+            "text_2": "Un nuovo, sorprendente salto di qualità per le fotocamere. Un display così reattivo che anche i gesti di sempre ti stupiranno. Il chip per smartphone più veloce al mondo. Robustezza eccezionale. E autonomia senza precedenti.",
+            "text_2_pro": "Entra nel mondo Pro.",
+            "text_3": "Non è un caso che le tue foto siano così belle.",
+            "claim_yours": "Prendi il tuo",
+            "limited_offer": "Offerta limitata:"
+        },
+        "LT": {
+            "cta": "Užpildykite formą ir gaukite naują iPhone 13 Pro!",
+            "choose_your_finish": "Pasirinkite savo spalvą.",
+            "sierra_blue": "melsvos",
+            "silver": "sidabro",
+            "gold": "auksso",
+            "graphite": "grafito spalvos",
+            "how_can_we_contact_you?": "Kaip galime su jumis susisiekti?",
+            "name": "Vardas",
+            "last_name": "Pavardė",
+            "address": "Adresas",
+            "code_postal": "Pašto kodas",
+            "city": "Miestas",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Prašome įvesti galiojantį elektroninio pašto adresą",
+            "checkbox_policy": " Patvirtinu, kad esu ne jaunesnis kaip 18 metų ir sutinku su sąlygomis bei privatumo politika.",
+            "continue": "Tęsti",
+            "text_2": "Dramatiškai galingesnė kameros sistema. Ekranas reaguoja taip greitai, kad kiekvienas prisilietimas stebina. Sparčiausias pasaulyje išmaniojo lustas. Išskirtinis patvarumas. Daug ilgesnis baterijos veikimo laikas.",
+            "text_2_pro": "Tai protingasis „Pro“.",
+            "text_3": "Nenuostabu, kad jūsų nuotraukos atrodo taip nuostabiai.",
+            "claim_yours": "Gaukite savo",
+            "limited_offer": "Ribotas pasiūlymas:"
+        },
+        "LU": {
+            "cta": "Remplissez le formulaire et réclamez le nouvel iPhone 13 Pro!",
+            "choose_your_finish": "Choisissez votre finition.",
+            "sierra_blue": "Bleu alpin",
+            "silver": "Argent",
+            "gold": "Or",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "Comment pouvons-nous vous contacter?",
+            "name": "Nom",
+            "last_name": "Nom de famille",
+            "address": "Adresse",
+            "code_postal": "Code postal",
+            "city": "Ville",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Veuillez entrer une adresse email valide",
+            "checkbox_policy": "Je certifie que j'ai au moins 18 ans et j'accepte les conditions et la politique de confidentialité.",
+            "continue": "Continue",
+            "text_2": "Un système photo nettement plus puissant. Un écran si réactif qu’il renouvelle vos sensations à chaque interaction. La puce de smartphone la plus rapide au monde. Une résistance exceptionnelle. Et un gain d’autonomie spectaculaire.",
+            "text_2_pro": "À vos marques. Pro. Partez.",
+            "text_3": "Voilà pourquoi le selfie vous va si bien.",
+            "claim_yours": "Réclamez le vôtre",
+            "limited_offer": "Limitéiert Offer:"
+        },
+        "LV": {
+            "cta": "Aizpildiet veidlapu un pieprasiet jauno iPhone 13 Pro!",
+            "choose_your_finish": "Izvēlieties savu apdari.",
+            "sierra_blue": "zilgs",
+            "silver": "sudraba",
+            "gold": "zelta",
+            "graphite": "grafīta",
+            "how_can_we_contact_you?": "Kā mēs varam ar jums sazināties?",
+            "name": "Vārds",
+            "last_name": "Uzvārds",
+            "address": "Adrese",
+            "code_postal": "Pasta indekss",
+            "city": "Pilsēta",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Lūdzu ievadiet derīgu e-pasta adresi",
+            "checkbox_policy": " Es apliecinu, ka esmu vismaz 18 gadus vecs, un piekrītu noteikumiem un privātuma politikai.",
+            "continue": "Continue",
+            "text_2": "Dramatiski jaudīgāka kameru sistēma. Tik jutīgs displejs, ka katrs pieskāriens sagādās prieku. Pasaulē ātrākais viedtālruņu procesors. Vienkārši izcila izturība. Un daudz ilgāks akumulatora darbības laiks.",
+            "text_2_pro": "Tas. Ir. Pro.",
+            "text_3": "Nav brīnums, ka jūsu fotoattēli izskatās tik labi.",
+            "claim_yours": "Iegūstiet savu",
+            "limited_offer": "Ierobežots piedāvājums:"
+        },
+        "ME": {
+            "cta": "Попуните формулар и затражите нови iPhone 13 Pro!",
+            "choose_your_finish": "Изаберите свој завршетак.",
+            "sierra_blue": "Сиерра Блуе",
+            "silver": "Сребро",
+            "gold": "Злато",
+            "graphite": "Грапхите",
+            "how_can_we_contact_you?": "Како можемо да вас контактирамо?",
+            "name": "Име",
+            "last_name": "Презиме",
+            "address": "Адреса",
+            "code_postal": "поштански број",
+            "city": "Цити",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Унесите исправну е-маил адресу",
+            "checkbox_policy": " Потврђујем да имам најмање 18 година и прихватам услове и политику приватности.",
+            "continue": "Настави",
+            "text_2": "Драматично моћнији систем камера. Екран тако реагује да свака интеракција поново изгледа као нова. Најбржи чип за паметни телефон на свету. Изузетна издржљивост. И огроман скок у трајању батерије.",
+            "text_2_pro": "Лет’с Про.",
+            "text_3": "Није ни чудо да ваше фотографије изгледају тако добро.",
+            "claim_yours": "Узми своје",
+            "limited_offer": "Ограничена понуда:"
+        },
+        "MT": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let’s Pro.",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "MY": {
+            "cta": "Isi borang dan tuntut iPhone 13 Pro baharu!",
+            "choose_your_finish": "Pilih warna anda.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Perak",
+            "gold": "Emas",
+            "graphite": "Grafit",
+            "how_can_we_contact_you?": "Bagaimanakah kami boleh menghubungi anda?",
+            "name": "Nama",
+            "last_name": "Nama terakhir",
+            "address": "Alamat",
+            "code_postal": "Kod pos",
+            "city": "Bandar",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Sila masukkan alamat emel yang sah",
+            "checkbox_policy": " Saya memperakui bahawa saya berumur sekurang-kurangnya 18 tahun, dan menerima terma dan dasar privasi.",
+            "continue": "Teruskan",
+            "text_2": "Sistem kamera yang lebih berkuasa secara dramatik. Paparan yang sangat responsif, setiap interaksi terasa baharu semula. Cip telefon pintar terpantas di dunia. Ketahanan yang luar biasa. Dan satu lonjakan besar dalam hayat bateri.",
+            "text_2_pro": "Jom Pro.",
+            "text_3": "Tidak hairanlah gambar anda kelihatan sangat bagus.",
+            "claim_yours": "Tuntut milik anda",
+            "limited_offer": "Tawaran terhad:"
+        },
+        "NL": {
+            "cta": "Vul het formulier in en claim de nieuwe iPhone 13 Pro!",
+            "choose_your_finish": "Kies de uitvoering.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Zilver",
+            "gold": "Goud",
+            "graphite": "Grafiet",
+            "how_can_we_contact_you?": "Hoe kunnen we u bereiken?",
+            "name": "Naam",
+            "last_name": "Achternaam",
+            "address": "Adres",
+            "code_postal": "Postcode",
+            "city": "Stad",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Vul een geldig e-mailadres in",
+            "checkbox_policy": " Ik verklaar dat ik ten minste 18 jaar oud ben en de voorwaarden en het privacybeleid accepteer.",
+            "continue": "Doorgaan met",
+            "text_2": "Een camera­systeem met drastisch meer power. Een display dat zo snel reageert dat alles weer nieuw voelt. De snelste smartphone-chip ter wereld. Uitzonderlijk robuust. En een grote sprong vooruit in batterijduur.",
+            "text_2_pro": "Pro, en go.",
+            "text_3": "Niet zo gek dat je foto's er zo goed uitzien.",
+            "claim_yours": "Pak je eigen",
+            "limited_offer": "Beperkt aanbod:"
+        },
+        "NO": {
+            "cta": "Fyll ut skjemaet og gjør krav på den nye iPhone 13 Pro!",
+            "choose_your_finish": "Velg finish.",
+            "sierra_blue": "sierrablå",
+            "silver": "sølv",
+            "gold": "gull",
+            "graphite": "grafitt",
+            "how_can_we_contact_you?": "Hvordan kan vi kontakte deg?",
+            "name": "Navn",
+            "last_name": "Etternavn",
+            "address": "Adresse",
+            "code_postal": "Postnummer",
+            "city": "By",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Vennligst skriv inn en gyldig e-post adresse",
+            "checkbox_policy": " Jeg bekrefter at jeg er minst 18 år gammel, og godtar vilkårene og personvernreglene.",
+            "continue": "Fortsette",
+            "text_2": "Et enormt mye kraftigere kamerasystem. En skjerm som er så responsiv at alt du gjør med den føles nytt. Verdens raskeste chip i en smarttelefon. Usedvanlig solid. Og et stort byks i batteritid.",
+            "text_2_pro": "Gå for Pro.",
+            "text_3": "Ikke rart bildene dine ser så bra ut.",
+            "claim_yours": "Få din",
+            "limited_offer": "Begrenset tilbud:"
+        },
+        "NZ": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let’s Pro.",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "PH": {
+            "cta": "Punan ang form at kunin ang bagong iPhone 13 Pro!",
+            "choose_your_finish": "Piliin ang iyong tapusin.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Pilak",
+            "gold": "Ginto",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "Paano ka namin makokontak?",
+            "name": "Pangalan",
+            "last_name": "Huling pangalan",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "Lungsod",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Mangyaring magpasok ng wastong email address",
+            "checkbox_policy": " Pinapatunayan ko na ako ay hindi bababa sa 18 taong gulang, at tinatanggap ang mga tuntunin at patakaran sa privacy.",
+            "continue": "Magpatuloy",
+            "text_2": "Isang mas malakas na sistema ng camera. Isang display na napakaresponsable, ang bawat pakikipag-ugnayan ay parang bago muli. Pinakamabilis na smartphone chip sa mundo. Pambihirang tibay. At isang malaking hakbang sa buhay ng baterya.",
+            "text_2_pro": "Pro tayo.",
+            "text_3": "Hindi nakakagulat na napakaganda ng iyong mga larawan.",
+            "claim_yours": "Kunin ang sa iyo",
+            "limited_offer": "Limitadong alok:"
+        },
+        "PT": {
+            "cta": "Preencha o formulário e solicite o novo iPhone 13 Pro!",
+            "choose_your_finish": "Escolha a cor.",
+            "sierra_blue": "Azul Sierra",
+            "silver": "Prateado",
+            "gold": "Dourado",
+            "graphite": "Grafite",
+            "how_can_we_contact_you?": "Como podemos entrar em contato com você?",
+            "name": "Nome",
+            "last_name": "Último nome",
+            "address": "Endereço",
+            "code_postal": "Código postal",
+            "city": "Cidade",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Por favor insira um endereço de e-mail válido",
+            "checkbox_policy": " Certifico que tenho pelo menos 18 anos de idade e aceito os termos e a política de privacidade.",
+            "continue": "Prosseguir",
+            "text_2": "Um sistema de câmaras revolucionário. Um ecrã tão reativo que surpreende a cada toque. O processador mais rápido num smartphone. Resistência excecional. A maior autonomia de sempre do iPhone.",
+            "text_2_pro": "É mesmo Pro.",
+            "text_3": "Não admira que suas fotos sejam tão boas.",
+            "claim_yours": "Pegue o seu",
+            "limited_offer": "Oferta limitada:"
+        },
+        "RO": {
+            "cta": "Completați formularul și revendicați noul iPhone 13 Pro!",
+            "choose_your_finish": "Alege-ți finisajul.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Argint",
+            "gold": "Aur",
+            "graphite": "Grafit",
+            "how_can_we_contact_you?": "Cum te putem contacta?",
+            "name": "Nume",
+            "last_name": "Numele de familie",
+            "address": "Abordare",
+            "code_postal": "Cod Postal",
+            "city": "Oraș",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Vă rugăm să introduceți o adresă de email validă",
+            "checkbox_policy": " Certific că am cel puțin 18 ani și accept termenii și politica de confidențialitate.",
+            "continue": "Continua",
+            "text_2": "Un sistem de camere cu mult mai puternic. Un afișaj atât de receptiv, fiecare interacțiune pare din nou nouă. Cel mai rapid cip pentru smartphone-uri din lume. Durabilitate exceptionala. Și un salt uriaș în viața bateriei.",
+            "text_2_pro": "Să fim pro",
+            "text_3": "Nu e de mirare că fotografiile tale arată atât de bine.",
+            "claim_yours": "Revendica-l pe al tau",
+            "limited_offer": "Oferta limitata:"
+        },
+        "RS": {
+            "cta": "Попуните формулар и затражите нови iPhone 13 Pro!",
+            "choose_your_finish": "Изаберите свој завршетак.",
+            "sierra_blue": "Плави",
+            "silver": "Сребро",
+            "gold": "Злато",
+            "graphite": "Грапхите",
+            "how_can_we_contact_you?": "Како можемо да вас контактирамо?",
+            "name": "Име",
+            "last_name": "Презиме",
+            "address": "Адреса",
+            "code_postal": "поштански број",
+            "city": "Цити",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Унесите исправну е-маил адресу",
+            "checkbox_policy": " Потврђујем да имам најмање 18 година и прихватам услове и политику приватности.",
+            "continue": "Настави",
+            "text_2": "Драматично моћнији систем камера. Екран тако реагује да свака интеракција поново изгледа као нова. Најбржи чип за паметни телефон на свету. Изузетна издржљивост. И огроман скок у трајању батерије.",
+            "text_2_pro": "Хајдемо Про.",
+            "text_3": "Није ни чудо да ваше фотографије изгледају тако добро.",
+            "claim_yours": "Узми своје",
+            "limited_offer": "Ограничена понуда:"
+        },
+        "SA": {
+            "cta": "املأ النموذج واطلب Pro 13 iPhone الجديد!",
+            "choose_your_finish": "اختر النهاية الخاصة بك.",
+            "sierra_blue": "سييرا بلو",
+            "silver": "فضة",
+            "gold": "ذهب",
+            "graphite": "الجرافيت",
+            "how_can_we_contact_you?": "كيف يمكننا الاتصال بك؟",
+            "name": "اسم",
+            "last_name": "الكنية",
+            "address": "عنوان",
+            "code_postal": "الرمز البريدي",
+            "city": "مدينة",
+            "email": "بريد الالكتروني",
+            "please_enter_a_valid_email": "يرجى إدخال عنوان بريد إلكتروني صالح",
+            "checkbox_policy": " أقر بأن عمري لا يقل عن 18 عامًا ، وأوافق على الشروط وسياسة الخصوصية.",
+            "continue": "يكمل",
+            "text_2": "نظام كاميرا أكثر قوة بشكل كبير. شاشة سريعة الاستجابة ، كل تفاعل يبدو جديدًا مرة أخرى. أسرع شريحة هاتف ذكي في العالم. متانة استثنائية. وقفزة هائلة في عمر البطارية.  هيا بنا للمحترفين.",
+            "text_2_pro": "هيا بنا للمحترفين.",
+            "text_3": "لا عجب أن صورك تبدو جيدة جدا.",
+            "claim_yours": "احصل على لك",
+            "limited_offer": "عرض محدود:"
+        },
+        "SE": {
+            "cta": "Fyll i formuläret och hämta den nya iPhone 13 Pro!",
+            "choose_your_finish": "Välj finish.",
+            "sierra_blue": "sierrablå",
+            "silver": "silver",
+            "gold": "guld",
+            "graphite": "grafit",
+            "how_can_we_contact_you?": "Hur kan vi kontakta dig?",
+            "name": "Namn",
+            "last_name": "Efternamn",
+            "address": "Adress",
+            "code_postal": "Postkod",
+            "city": "Stad",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Ange en giltig e-postadress",
+            "checkbox_policy": " Jag intygar att jag är minst 18 år gammal och accepterar villkoren och integritetspolicyn.",
+            "continue": "Fortsätta",
+            "text_2": "Ett kamerasystem med mycket mer kraft. En skärm så följsam att varje tryck och svep känns som en ny upplevelse. Världens snabbaste chip i en smartphone. Extremt tålig. Och ett stort språng för batteritiden.",
+            "text_2_pro": "Det är Pro. Nu kör vi.",
+            "text_3": "Inte konstigt att dina bilder är så bra.",
+            "claim_yours": "Ta din",
+            "limited_offer": "Begränsat erbjudande:"
+        },
+        "SG": {
+            "cta": "填写表格并领取新的 iPhone 13 Pro！",
+            "choose_your_finish": "选择外观",
+            "sierra_blue": "远峰蓝色",
+            "silver": "银色",
+            "gold": "金色",
+            "graphite": "石墨色",
+            "how_can_we_contact_you?": "我们如何与您联系？",
+            "name": "姓名",
+            "last_name": "姓",
+            "address": "地址",
+            "code_postal": "邮编号",
+            "city": "城市",
+            "email": "电子邮件",
+            "please_enter_a_valid_email": "请输入有效的电子邮件地址",
+            "checkbox_policy": " 我证明我已年满 18 岁，并接受条款和隐私政策。",
+            "continue": "继续",
+            "text_2": "Pro 级摄像头系统，能力强悍提升； 显示屏响应之快，让体验全面刷新； 芯片速度再创 iPhone 巅峰； 坚固耐用的设计，出类拔萃； 电池续航更是大步飞跃。",
+            "text_2_pro": "来吧，Pro 起来。",
+            "text_3": "难怪你在照片上看起来很好。",
+            "claim_yours": "得到你的",
+            "limited_offer": "限量优惠"
+        },
+        "SI": {
+            "cta": "Izpolnite obrazec in zahtevajte novi iPhone 13 Pro!",
+            "choose_your_finish": "Izberite svoj zaključek.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Srebrna",
+            "gold": "Zlato",
+            "graphite": "Grafit",
+            "how_can_we_contact_you?": "Kako vas lahko kontaktiramo?",
+            "name": "ime",
+            "last_name": "Priimek",
+            "address": "Address",
+            "code_postal": "Poštna številka",
+            "city": "Mesto",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Vnesite veljaven elektronski naslov",
+            "checkbox_policy": " Potrjujem, da sem star najmanj 18 let in sprejemam pogoje in politiko zasebnosti.",
+            "continue": "Nadaljuj",
+            "text_2": "Dramatično močnejši sistem kamer. Zaslon tako odziven, da je vsaka interakcija spet nova. Najhitrejši čip za pametni telefon na svetu. Izjemna vzdržljivost. In velik preskok v življenjskem obdobju baterije.",
+            "text_2_pro": "Poďme Pro.",
+            "text_3": "Ni čudno, da so vaše fotografije videti tako dobre.",
+            "claim_yours": "Zahtevajte svoje",
+            "limited_offer": "Omejena ponudba:"
+        },
+        "SK": {
+            "cta": "Vyplňte formulár a požiadajte o nový iPhone 13 Pro!",
+            "choose_your_finish": "Vyberte si farbu.",
+            "sierra_blue": "Horská modrá",
+            "silver": "strieborná",
+            "gold": "zlatá",
+            "graphite": "grafitová",
+            "how_can_we_contact_you?": "Ako vás môžeme kontaktovať?",
+            "name": "názov",
+            "last_name": "Priezvisko",
+            "address": "Adresa",
+            "code_postal": "Poštový kód",
+            "city": "Mesto",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Prosím zadajte platnú emailovú adresu",
+            "checkbox_policy": " Potvrdzujem, že mám aspoň 18 rokov a súhlasím s podmienkami a zásadami ochrany osobných údajov.",
+            "continue": "Continue",
+            "text_2": "Dramaticky zdokonalená sústava kamier. Displej, ktorý reaguje tak bezprostredne, že ťa zakaždým prekvapí. Najrýchlejší čip v smartfóne na svete. Výnimočná odolnosť. A obrovský skok vo výdrži batérie.",
+            "text_2_pro": "Buď Pro.",
+            "text_3": "Vaša fotografia je výsledkom tímovej práce.",
+            "claim_yours": "Požiadajte o svoje",
+            "limited_offer": "Limitovaná ponuka:"
+        },
+        "TR": {
+            "cta": "Formu doldurun ve yeni iPhone 13 Pro'yu talep edin!",
+            "choose_your_finish": "Bir renk seçin..",
+            "sierra_blue": "Sierra Mavisi",
+            "silver": "Gümüş",
+            "gold": "Altın",
+            "graphite": "Grafit",
+            "how_can_we_contact_you?": "Sizinle nasıl iletişim kurabiliriz?",
+            "name": "İsim",
+            "last_name": "Soy isim",
+            "address": "Adres",
+            "code_postal": "Posta kodu",
+            "city": "Şehir",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Geçerli bir e",
+            "checkbox_policy": " En az 18 yaşında olduğumu onaylıyor ve şartları ve gizlilik politikasını kabul ediyorum.",
+            "continue": "Devam et",
+            "text_2": "Çarpıcı biçimde daha güçlü bir kamera sistemi. Her etkileşimde sizi içine alan süper akıcı bir ekran. Dünyanın en hızlı akıllı telefon çipi. Sıra dışı bir dayanıklılık. Pil ömründe büyük bir gelişme.",
+            "text_2_pro": "O bir Pro.",
+            "text_3": "Fotoğraflarınızın bu kadar harika olmasına şaşmamalı.",
+            "claim_yours": "Seninkini al",
+            "limited_offer": "Sınırlı teklif"
+        },
+        "AE": {
+            "cta": "املأ النموذج واطلب Pro 13 iPhone الجديد!",
+            "choose_your_finish": "اختر النهاية الخاصة بك.",
+            "sierra_blue": "سييرا بلو",
+            "silver": "فضة",
+            "gold": "ذهب",
+            "graphite": "الجرافيت",
+            "how_can_we_contact_you?": "كيف يمكننا الاتصال بك؟",
+            "name": "اسم",
+            "last_name": "الكنية",
+            "address": "عنوان",
+            "code_postal": "الرمز البريدي",
+            "city": "مدينة",
+            "email": "بريد الالكتروني",
+            "please_enter_a_valid_email": "يرجى إدخال عنوان بريد إلكتروني صالح",
+            "checkbox_policy": " أقر بأن عمري لا يقل عن 18 عامًا ، وأوافق على الشروط وسياسة الخصوصية.",
+            "continue": "يكمل",
+            "text_2": "نظام كاميرا أكثر قوة بشكل كبير. شاشة سريعة الاستجابة ، كل تفاعل يبدو جديدًا مرة أخرى. أسرع شريحة هاتف ذكي في العالم. متانة استثنائية. وقفزة هائلة في عمر البطارية.",
+            "text_2_pro": "  هيا بنا للمحترفين.",
+            "text_3": "لا عجب أن صورك تبدو جيدة جدا.",
+            "claim_yours": "احصل على لك",
+            "limited_offer": "عرض محدود"
+        },
+        "ZA": {
+            "cta": "Fill the form and claim the new iPhone 13 Pro!",
+            "choose_your_finish": "Choose your finish.",
+            "sierra_blue": "Sierra Blue",
+            "silver": "Silver",
+            "gold": "Gold",
+            "graphite": "Graphite",
+            "how_can_we_contact_you?": "How can we contact you?",
+            "name": "Name",
+            "last_name": "Last Name",
+            "address": "Address",
+            "code_postal": "Code postal",
+            "city": "City",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Please enter a valid email address",
+            "checkbox_policy": " I certify that I am at least 18 years of age, and accept the terms and privacy policy.",
+            "continue": "Continue",
+            "text_2": "A dramatically more powerful camera system. A display so responsive, every interaction feels new again. The world’s fastest smartphone chip. Exceptional durability. And a huge leap in battery life.",
+            "text_2_pro": "Let’s Pro.",
+            "text_3": "No wonder your photos look so good.",
+            "claim_yours": "Claim yours",
+            "limited_offer": "Limited offer:"
+        },
+        "PL": {
+            "cta": "Wypełnij formularz i odbierz nowego iPhone'a 13 Pro!",
+            "choose_your_finish": "Wybierz wykończenie.",
+            "sierra_blue": "Sierra niebieski",
+            "silver": "Srebro",
+            "gold": "Złoto",
+            "graphite": "Grafit",
+            "how_can_we_contact_you?": "Jak możemy się z Tobą skontaktować?",
+            "name": "Nazwa",
+            "last_name": "Nazwisko",
+            "address": "Adres zamieszkania",
+            "code_postal": "Kod pocztowy",
+            "city": "Miasto",
+            "email": "E-mail",
+            "please_enter_a_valid_email": "Proszę wpisać aktualny adres e-mail",
+            "checkbox_policy": " Oświadczam, że mam ukończone 18 lat i akceptuję regulamin oraz politykę prywatności.",
+            "continue": "Kontynuować",
+            "text_2": "Dramatycznie mocniejszy system kamer. Wyświetlacz tak responsywny, że każda interakcja znów wydaje się nowa. Najszybszy na świecie chip do smartfonów. Wyjątkowa trwałość. I ogromny skok żywotności baterii.",
+            "text_2_pro": "Załóżmy Pro.",
+            "text_3": "Nic dziwnego, że Twoje zdjęcia wyglądają tak dobrze.",
+            "claim_yours": "Odbierz swoje",
+            "limited_offer": "Oferta limitowana:"
+        }
+    }
+
+//timer
+        var setTime = 60 * 4,
+            display = document.querySelector('#timer');
+        startTimer(setTime, display);
+
+    function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        setInterval(function () {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.innerHTML = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                timer = duration;
+            }
+        }, 1000);
+    }
+
+
+
+    document.addEventListener("DOMContentLoaded", function (e) {
+        // insert preferred geo's language "UK"
+        const cc = "UK"
+        const forcedLocale = ""
+        // direction for ar language;
+        let locale;
+        if (forcedLocale) {
+            locale = forcedLocale
+        } else {
+            locale = cc
+        }
+        if (locale == "AE" || locale == "SA" || locale == "QA" || locale == "BH") {
+            document.querySelector("body").classList.add("ar");
+        }
+        document.querySelector("body").classList.add(cc);
+        let textLines = document.querySelectorAll("[data-tr]");
+        let lamps;
+
+        lp_translate()
+        splashText();
+        highlights();
+        animationSeparator();
+        animationsDesk();
+
+        function lp_translate() {
+            textLines.forEach(function (line) {
+                line.innerText = lp_translation[locale][line.getAttribute('data-tr')];
+                if (forcedLocale) {
+                    sessionStorage.setItem("pageLocale", forcedLocale);
+                }
+
+            })
+        }
+
+        function animationSeparator() {
+            if (window.innerWidth >= 450) {
+
+                colorDesktop();
+            } else {
+                colorMobile();
+            }
+            //hiding forms
+            let forms = document.querySelectorAll('fieldset');
+            for (let j = 0; j < forms.length; j++) {
+                setTimeout(function () {
+                    forms[j].style.transition = "1.5s"
+                    forms[j].style.opacity = "1"
+                }, ((j + 1) * 500 + 4300));
+
+            }
+        }
+
+        //random letters
+        function splashText() {
+            let cta = document.querySelector('.cta');
+            let newCta = "<span>" + cta.innerHTML.replaceAll(" ", " </span><span>") + "</span>";
+            cta.innerHTML = newCta;
+            let words = document.querySelectorAll('.cta span');
+            words.forEach(function (word) {
+                if (word.innerHTML == "iPhone " || word.innerHTML == "13 " || word.innerHTML == "Pro " || word.innerHTML == "Pro!" || word.innerHTML == "Pro.") {
+                    word.classList.add("hlighted")
+                }
+                let newWord = "";
+                for (let i = 0; i < word.innerHTML.length; i++) {
+                    let newSym = "<i>" + word.innerHTML[i] + "</i>";
+                    newWord = newWord + newSym;
+                }
+                word.innerHTML = newWord;
+            });
+            //move prize to the new line
+            let br = document.createElement("br")
+            let model = document.querySelectorAll('.cta span.hlighted');
+            let parentDiv = model[0].parentNode;
+            parentDiv.insertBefore(br, model[0])
+
+            lamps = document.querySelectorAll('.cta i');
+            lamps.forEach(function (e) {
+                var randomPoseX = (Math.ceil(Math.random() * 1000));
+                var randomPoseY = (Math.ceil(Math.random() * 1000));
+                e.style.transform = `translate(${randomPoseX}%, ${randomPoseY}%`;
+                var randomDelay = (Math.ceil(Math.random() * 30)) / 10;
+                e.style.animationDelay = randomDelay + "s";
+            });
+        }
+
+        //Color Selector
+        function colorMobile() {
+            fadeIn('.mob-phonebox');
+            let scrolled = false;
+
+            let colorSelect = document.getElementsByClassName('form-selector');
+            let phonebox = document.querySelector('.mob-phonebox');
+            let phones = document.querySelectorAll('[class^="color_"]');
+            for (let i = 0; i < colorSelect.length; i++) {
+                colorSelect[i].addEventListener("click", function () {
+                    phones.forEach(function (e) {
+                        e.classList.remove("visible");
+                        if (!scrolled) {
+                            setTimeout(function () {
+                                phonebox.scrollIntoView({block: "start"})
+                                scrolled = true;
+                            }, 1500)
+                        }
+                    });
+                    phones[i].classList.add("visible");
+                });
+            }
+        }
+
+        function fadeIn(e) {
+            document.querySelector(e).classList.add('visible')
+        }
+
+        sessionStorage.setItem("chosenImage", 'http://img.mobilenobo.net/FqmP0rQvshyopVI.png')
+
+        function colorDesktop() {
+            let phoneImg = document.querySelector('.phoneImage');
+            let colorSelect = document.getElementsByClassName('form-selector');
+            colorSelect[0].addEventListener('click', function () {
+                phoneImg.style.filter = "unset";
+                sessionStorage.setItem("chosenImage", 'http://img.mobilenobo.net/FqmP0rQvshyopVI.png')
+            });
+            colorSelect[1].addEventListener('click', function () {
+                phoneImg.style.filter = "hue-rotate(0deg) brightness(1.1) saturate(0)";
+                sessionStorage.setItem("chosenImage", 'http://img.mobilenobo.net/Ovy8lG1nPMEI47y.png')
+            });
+            colorSelect[2].addEventListener('click', function () {
+                phoneImg.style.filter = "hue-rotate(179deg) brightness(1.1) saturate(1)"
+                sessionStorage.setItem("chosenImage", 'http://img.mobilenobo.net/8QIrhCZ5Or6txOj.png')
+            });
+            colorSelect[3].addEventListener('click', function () {
+                phoneImg.style.filter = "hue-rotate(0) brightness(0.7) saturate(0) contrast(1.4)"
+                sessionStorage.setItem("chosenImage", 'http://img.mobilenobo.net/28a3wGqXGaZK5o2.png')
+            });
+        }
+
+        //Highlight Text
+        function highlights() {
+            let StickyText = document.querySelector('.sticky h3');
+            let newSticky = StickyText.innerHTML
+            if (StickyText.innerHTML[StickyText.innerHTML.length - 1] == ".") {
+                newSticky = newSticky.substring(0, newSticky.length - 1);
+                newSticky = "<span>" + newSticky.replaceAll(".", ".</span><span>") + ".</span>";
+            } else {
+                newSticky = "<span>" + newSticky.replaceAll(".", ".</span><span>") + "</span>";
+            }
+            StickyText.innerHTML = newSticky;
+            let sentences = document.querySelectorAll(".sticky span");
+            sentences.forEach(function (target) {
+                gsap.to(target, {
+                    scrollTrigger: {
+                        trigger: target,
+                        start: "top center",
+                        end: `+=${(target.offsetHeight) * 0.7}`,
+                        scrub: 0,
+                        markers: false,
+                        toggleClass: "highlight",
+                    },
+                    duration: 1,
+                    delay: .3,
+                    repeat: 0,
+                    repeatDelay: 0,
+                    ease: "power0",
+                    duration: 1,
+                    paused: false,
+                });
+            });
+        }
+
+        //animations desktop
+        function animationsDesk() {
+            let phoneHeight = document.querySelector("#phoneImage2").offsetHeight;
+            let marginTop = document.querySelector(".sticky").offsetHeight;
+            console.log(marginTop)
+            if (window.innerWidth>= 420) {
+                var scrollSetting = (marginTop - phoneHeight) -60;
+                var page3scale = 1.7;
+                var page3bottom = "-75%"
+            } else {
+                var scrollSetting = (marginTop - phoneHeight) - 700;
+                var page3scale = 1.7;
+                var page3bottom = "-75%";
+                var page3right = "-184%";
+            }
+
+            //image3
+            gsap.from('#phoneImage3', {
+                scrollTrigger: {
+                    trigger: '#sect3',
+                    start: "-100",
+                    end: "top",
+                    scrub: 1,
+                    markers: false,
+                    toggleActions: "restart none reverse none",
+                },
+                scale: 2,
+                bottom: page3bottom,
+                right: page3right,
+                scale: page3scale,
+                duration: 1,
+                delay: .3,
+                repeat: 0,
+                repeatDelay: 0,
+                ease: "power1",
+                duration: 1,
+                paused: false,
+            });
+            gsap.from('#s3content', {
+                scrollTrigger: {
+                    trigger: '#sect3',
+                    start: "-100",
+                    end: "top",
+                    markers: false,
+                    scrub: 1,
+                    toggleActions: "restart none reverse none",
+                },
+                marginLeft: "10%",
+                opacity: 0,
+                duration: 1,
+                delay: 0,
+                repeat: 0,
+                repeatDelay: 0,
+                duration: 1,
+                paused: false,
+            });
+        }
+    });
+
+</script><!-- BACKGROUND --><!-- BACKGROUND ENDS -->
