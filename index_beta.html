@@ -1,10 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta charset="UTF-8">
     <title>Title</title>
+  <script>
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    window.addEventListener('resize', () => {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+  </script>
 </head>
-<body>
+<style>
+  :root{
+    --vh: 1vh;
+  }
+  body{
+    margin: 0;
 
+  }
+  section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-direction: column;
+  }
+  .grid {
+    padding: 120px 60px;
+    margin: auto;
+    max-width: 960px;
+    display: flex;
+    width: 100%;
+    min-height: calc(var(--vh, 1vh) * 100 - 240px);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+.grid>div{
+  min-width: 200px;
+  margin: 5px;
+}
+  .grid > div:nth-child(odd){
+    background: #999;
+  }
+  .grid > div:nth-child(even){
+    background: #505050;
+  }
+
+</style>
+<body>
+<section>
+
+  <div class="grid">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</section>
 </body>
 </html>

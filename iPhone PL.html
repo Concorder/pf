@@ -25,8 +25,15 @@
         text-align: center;
     }
 
-    header {
+header{
+    background: rgba(0,0,0,0.8);
+}
+    header .container {
+        display: flex;
 
+    }
+    header ul {
+        display: flex;
     }
 
     section.hero {
@@ -71,13 +78,28 @@
         top: 0;
         opacity: 0;
         transition: opacity 1s;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        position: relative;
     }
-
+    .floated {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .header__logo {
+        color: #fff;
+        font-weight: 500;
+        font-size: 21px;
+    }
     #phone.visible {
         opacity: 1;
     }
 
-
+header .container{
+    max-width: 996px;
+}
     .container, #container {
         width: 90%;
         max-width: 1440px;
@@ -100,6 +122,7 @@
 
     section.hero {
         position: relative;
+        padding-top: 60px;
     }
 
     canvas {
@@ -114,16 +137,16 @@
     }
 
     .colors-container {
-        position: absolute;
         filter: brightness(1.5);
         padding: 12px 14px;
         border-radius: 8px;
         left: 50%;
         bottom: 1.5%;
-        transform: translate(-50%, -50%);
         display: flex;
         align-items: center;
         gap: 8px;
+        position: absolute;
+        transform: translate(-50%, 0);
     }
 
     .color-item {
@@ -244,6 +267,7 @@
     .hero__phoneContainer {
         display: flex;
         flex-direction: row;
+        height:-webkit-fill-available;
     }
 
     /*form*/
@@ -485,7 +509,10 @@
 </g>
 </svg>
             <div class="hero__phoneContainer">
-                <div id="phone"></div>
+                <div id="phone">
+                    <div class="colors-container">
+                    </div>
+                </div>
                 <div class="floated">
 
                     <h4>Fill the form and claim the new iPhone 13 Pro!</h4>
@@ -538,8 +565,7 @@
                 </div>
             </div>
 
-            <div class="colors-container">
-            </div>
+
 
     </section>
     <section>

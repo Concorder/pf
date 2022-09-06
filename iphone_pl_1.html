@@ -39,6 +39,8 @@
         max-width: 700px;
         margin: 15px auto;
         text-align: center;
+        opacity: 0;
+        transition: 0.5s;
     }
 
     .wrapper {
@@ -83,6 +85,7 @@
     }
 
     .mob-phonebox span.payment_pa {
+        display: none;
         font-weight: 600;
         position: absolute;
         display: flex;
@@ -574,6 +577,7 @@
         .form-label-small {
             font-size: 12px;
             margin-top: 3px;
+            white-space: nowrap;
         }
 
         .large-6 {
@@ -605,6 +609,7 @@
     <h3 class="cta" data-tr="cta">
         Fill the form and claim the new iPhone 13 Pro!</h3>
     <div class="wrap">
+
         <span class="timerBox" data-tr="limited_offer">Limited offer:</span> <span id="timer">04:00</span></div>
     <img alt="" class="phoneImage" src="http://img.mobilenobo.net/7yHgk8lf4klqCF5.png" />
     <div class="wrapper">
@@ -1735,6 +1740,7 @@
                 setTimeout(function () {
                     forms[j].style.transition = "1.5s"
                     forms[j].style.opacity = "1"
+                    fadeIn(".wrap")
                 }, ((j + 1) * 500 + 4300));
 
             }
