@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<style>
+    body {
+        background: #f5f5f7;
+    }
+
+    .hero {
+        overflow-x: hidden;
+    }
+
+    h3 {
+        font-size: 48px
+    }
+
+    #c {
+
+        z-index: -999;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    header {
+        background: hsl(0deg 0% 0% / 70%);
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        backdrop-filter: blur(10px);
+
+    }
+
+    header .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 10px 15px;
+    }
+
+    header ul {
+        display: flex;
+    }
+
+    section.hero {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .header__logo {
+
+    }
+
+    #loading_animation {
+        display: none;
+    }
+
+    #loading_animation.visible {
+        display: block;
+        position: absolute;
+        transform: translate(-50%, -50%);
+        left: 50%;
+        top: 50%;
+        mix-blend-mode: multiply;
+    }
+
+
+    #phone {
+        min-width: 380px;
+        max-width: 500px;
+        top: 0;
+        opacity: 0;
+        transition: opacity 1s;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        position: relative;
+        min-height: 660px;
+
+    }
+
+
+    .floated {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .floated h4 {
+        width: 100%;
+        font-size: 28px;
+        line-height: 1.3;
+        max-width: 320px;
+        padding: 4px 10px;
+        font-weight: 600;
+        font-family: "Arial", sans-serif;
+        color: #686870;
+        padding: 0 15px;
+        background: #f5f5f77a;
+        backdrop-filter: blur(3px);
+    }
+
+    .header__logo {
+        color: #fff;
+        font-weight: 500;
+        font-size: 21px;
+    }
+
+    #phone.visible {
+        opacity: 1;
+    }
+
+    header .container {
+        max-width: 996px;
+    }
+
+    .container, #container {
+        width: 90%;
+        max-width: 1440px;
+        margin: auto;
+        position: relative;
+    }
+
+    #container {
+        max-width: 960px;
+    }
+
+    section:not(:nth-child(2)) {
+        position: relative;
+    }
+
+    section {
+        padding: 110px 20px 60px;
+        min-height: calc(var(--vh, 1vh) * 100);
+    }
+
+    section.hero {
+        position: relative;
+        padding-top: 60px;
+    }
+
+    canvas {
+        width: 100%;
+    }
+
+    .grid__gradientText {
+        background-image: linear-gradient(180deg, #ffe993, #eb831c);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 64px;
+
+    }
+
+    .gradientText_2 {
+        background-image: linear-gradient(#9f00ff 25%, #ff9feb 80%);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .proBeyond {
+        white-space: nowrap;
+        top: 0;
+        font-size: 160px;
+        display: block;
+        margin: auto;
+        font-weight: 600;
+        fill: #3b5064;
+        transition: 0.5s;
+        left: 50%;
+        position: absolute;
+        z-index: -1;
+        opacity: 0.2;
+        line-height: 1;
+        transform: translate(-50%, 0);
+    }
+
+    .colors-container {
+        filter: brightness(1.5);
+        padding: 12px 14px;
+        border-radius: 8px;
+        left: 50%;
+        bottom: 1.5%;
+        display: flex;
+        align-items: center;
+        z-index: 30;
+        gap: 8px;
+        position: absolute;
+        transform: translate(-50%, 0);
+        padding-top: 130px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .color-item {
+        opacity: 1;
+        width: 35px;
+        height: 35px;
+        cursor: pointer;
+        /* transform: skew(20deg, 0deg); */
+        border-radius: 25px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        grid-auto-rows: 550px;
+        grid-gap: 20px;
+    }
+
+    .grid > div > h3 {
+        font-size: 48px;
+    }
+
+    .grid > div {
+        background: #666;
+        border-radius: 25px;
+        position: relative;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .grid img {
+        width: 100%;
+    }
+
+    .grid > div:nth-child(1) {
+        grid-column-start: 1;
+        grid-column-end: 5;
+        background: #000;
+    }
+
+    .form {
+        max-width: 320px;
+    }
+
+    .grid > div:nth-child(2) {
+        grid-column-start: 5;
+        grid-column-end: 13;
+        background: url(http://img.mobilenobo.net/wLEEKLmScwcLZfq.jpg) no-repeat;
+        background-size: cover;
+        background-position: center;
+        justify-content: flex-end;
+        align-items: flex-start;
+        color: #fff;
+    }
+
+    .grid > div:nth-child(3) {
+        grid-column-start: 1;
+        grid-column-end: 9;
+        align-items: center;
+        justify-content: space-evenly;
+        color: #fff;
+        background: #000;
+        background-size: contain;
+        background-position: 0 300px;
+
+    }
+    timer
+
+    .grid > div h3 {
+        padding: 20px;
+        font-size: 28px;
+        color: #cecece;
+    }
+
+    .grid > div:nth-child(3) img {
+        width: 80%;
+    }
+
+    .grid > div:nth-child(4) {
+        display: flex;
+        grid-column-start: 9;
+        grid-column-end: 13;
+        background: #000;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    .grid > div:nth-child(5) {
+        grid-column-start: 1;
+        grid-column-end: 13;
+        background: url(http://img.mobilenobo.net/spXh4rsj_dOLWJ9.jpg)no-repeat;
+        background-size: cover;
+    }
+
+    .grid > div:nth-child(6) {
+        grid-column-start: 1;
+        grid-column-end: 5;
+
+        color: #fff;
+        background: url("http://img.mobilenobo.net/OAoudn4b15cgaSB.jpg") no-repeat;
+        background-size: cover;
+
+    }
+
+    .grid > div:nth-child(7) {
+        grid-column-start: 5;
+        grid-column-end: 13;
+        text-align: center;
+        align-items: center;
+        color: #ffffff;
+        background: #fff url("http://img.mobilenobo.net/hXVdhGs4M8CY0y2.jpg") no-repeat bottom;
+        background-size: cover;
+    }
+
+    .grid > div:nth-child(8) {
+        grid-column-start: 1;
+        grid-column-end: 13;
+        background: transparent;
+        align-items: center;
+        padding-top: 60px;
+    }
+
+    .benefits {
+        text-align: center;
+    }
+
+    .hero__phoneContainer {
+        display: flex;
+        flex-direction: row;
+        height: -webkit-fill-available;
+    }
+
+    /*form*/
+    .form-fs-group {
+        display: block;
+        position: relative;
+    }
+
+    .form-fs-group label {
+        white-space: normal;
+    }
+
+    input[type="text"], input[type="email"] {
+        width: 100%;
+        padding: 7px 12px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        border: 1px solid #d2d2d7;
+        margin: 15px 0 5px;
+    }
+
+    input:focus {
+        outline: none;
+    }
+
+    .checkbox label {
+        margin-top: 10px;
+    }
+
+    input:placeholder-shown + label.fst-only {
+        position: absolute;
+        top: 22px;
+        left: 9px;
+        transition: 0.5s;
+    }
+
+    input:focus + label.fst-only,
+    input:not(:placeholder-shown) + label.fst-only {
+        top: 5px;
+        left: 3px;
+        font-size: 12px;
+        color: #55a0e5;
+        position: absolute;
+    }
+
+    #email_error {
+        color: red;
+        display: none;
+        margin-bottom: 15px;
+    }
+
+    .flexbow {
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .form-selector-swatch .form-selector-label {
+        min-height: 6.05882rem;
+    }
+
+    .form-selector .form-selector-label {
+        color: #1d1d1f;
+        border-color: #d2d2d7;
+        background-color: hsla(0, 0%, 100%, .8);
+    }
+
+    .form-selector-label {
+        font-size: 17px;
+        line-height: 1.23536;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border-width: 1px;
+        border-style: solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        min-height: 4.88235rem;
+    }
+
+    .rc-dimension .form-selector-swatch img {
+        width: 32px;
+        height: 32px;
+        mix-blend-mode: multiply;
+    }
+
+    fieldset {
+        opacity: 0;
+        border: 1px solid #3f3f3f;
+        box-sizing: border-box;
+        max-width: 370px;
+        margin-bottom: 20px;
+    }
+
+    .form-selector-label {
+        font-size: 17px;
+        line-height: 1.23536;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: SF Pro Text, SF Pro Icons, Helvetica Neue, Helvetica, Arial, sans-serif;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+        border-width: 1px;
+        border-style: solid;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        text-align: center;
+        box-sizing: border-box;
+        cursor: pointer;
+        min-height: 4.88235rem;
+    }
+
+    .large-6 {
+        flex-basis: 46%;
+        margin: 2%;
+        max-width: 50%;
+    }
+
+    .colorSelector {
+        max-width: 320px;
+        margin-right: 20px;
+    }
+
+    .fieldcontainer {
+        display: flex;
+    }
+
+
+    .button:hover {
+        background: #007eff;
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .checkbox span {
+        margin-left: 30px;
+        display: inline-block;
+        font-size: 12px;
+    }
+    header .button{
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 17px;
+        line-height: 1.17648;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: "SF Pro Text","Myriad Set Pro",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","SF Pro Icons","Apple Legacy Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+        min-width: 28px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        border-radius: 980px;
+        background: #0071e3;
+        color: #fff;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        border-radius: 25px;
+        width: auto;
+        text-decoration: none;
+        margin-top: 0;
+    }
+    .timer {
+        font-weight: 600;
+        font-size: 21px;
+        border-top: 2px solid #a759ec;
+        padding-top: 8px;
+    }
+    .button{
+        cursor: pointer;
+        display: inline-block;
+        text-align: center;
+        white-space: nowrap;
+        font-size: 17px;
+        line-height: 1.17648;
+        font-weight: 400;
+        letter-spacing: -.022em;
+        font-family: "SF Pro Text","Myriad Set Pro",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","SF Pro Icons","Apple Legacy Icons","Helvetica Neue","Helvetica","Arial",sans-serif;
+        min-width: 28px;
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        border-radius: 980px;
+        background: #0071e3;
+        color: #fff;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        border-radius: 8px;
+        width: auto;
+        text-decoration: none;
+        border: none;
+        margin-top: 20px;
+        width: 320px;
+    }
+
+    #terms {
+        position: absolute;
+    }
+
+    .cta_two {
+        position: absolute;
+        margin-top: 200px;
+    }
+
+
+    .benefits {
+        text-align: center;
+        display: flex;
+        align-items: center;
+    }
+
+    .benefits h3 {
+        font-size: 42px;
+    }
+
+    h4 {
+        padding: 0 15px;
+        background: #f5f5f77a;
+    }
+
+    canvas {
+        position: relative;
+    }
+
+    canvas::before {
+        content: '';
+        position: absolute;
+        right: 0;
+        height: 100%;
+        width: 30%;
+        background: darkgreen;
+    }
+
+    .benefits {
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .benefits a {
+        font-weight: 600;
+    }
+.priceHolder {
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    transform: translate(100%, 0);
+}
+    .priceHolder {
+        display: flex;
+        flex-direction: column;
+        font-size: 120px;
+        font-weight: 600;
+        position: absolute;
+        background: red;
+        line-height: 1;
+        text-align: center;
+        left: 0;
+        bottom: 25%;
+        transform: translate(0,0);
+        z-index: 99;
+        background-image: linear-gradient(180deg, #7d29ed, #f099ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        align-items: center;
+        gap: 15px;
+        justify-content: center;
+    }
+    #timer{
+        font-size: 44px;
+    }
+    @media screen and (max-width: 460px) {
+        #container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h4 {
+            max-width: 370px;
+        }
+        h4  {
+            background: none;
+        }
+
+        .colors-container {
+            flex-direction: column;
+            right: 0;
+            left: unset;
+            top: 0;
+            position: absolute;
+            transform: none;
+            width: fit-content;
+            padding: 100px 14px 100px 65px;
+            justify-content: flex-end;
+        }
+
+        #phone.visible {
+            flex-direction: row-reverse;
+        }
+
+        .container {
+            width: 100%;
+            padding: 0;
+        }
+
+        header .container {
+            padding: 10px 15px !important;
+        }
+        header {
+            position: sticky;
+        }
+
+        .proBeyond {
+            font-size: 100px;
+        }
+
+        .grid {
+            display: flex;
+            gap: 30px;
+            flex-direction: column;
+        }
+
+        .grid > div {
+            min-height: 550px
+        }
+
+        .hero__phoneContainer {
+            flex-direction: column;
+        }
+
+        #phone {
+            min-height: 600px;
+            padding-top: 0;
+        }
+
+        section.hero {
+            min-height: 70%;
+
+        }
+
+        #page_1 .container {
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero .container {
+            height: 100%;
+        }
+
+        .hero #container {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+    }
+
+</style>
+<body>
+<header>
+    <div class="container"><span class="header__logo">iPhone 14 Pro</span>
+        <a href="#form" class="button">Claim Yours</a>
+    </div>
+</header>
+<div class="container">
+
+    <section class="hero">
+        <img class="visible" id="loading_animation" src="http://img.mobilenobo.net/SzH5lBQU5H7fEcb.gif"
+             alt="loading_animation">
+
+        <span class="proBeyond gradientText_2">Pro.<br>Beyond</span>
+        <div class="hero__phoneContainer">
+            <div id="phone">
+                <div class="priceHolder price_pa">$1 <span class="timer">Expires in:<br><span id="timer">3:00</span></span></div>
+                <div class="colors-container">
+                </div>
+            </div>
+            <div class="floated" id="form">
+
+                <h4>Enter your delivery address: </h4>
+                <div class="form" >
+                    <div method="post" name="customer">
+                        <div class="form-fs-group has-feedback">
+                            <input autocorrect="off" class="form-fst-control required input name" id="name"
+                                   name="name" pattern=".{2,}" placeholder=" " required="required" type="text">
+                            <label class="fst-only" data-tr="name" for="name">Name</label></div>
+                        <div class="form-fs-group has-feedback">
+                            <input autocorrect="off" class="form-fst-control required input lname" id="lname"
+                                   name="lname" pattern=".{2,}" placeholder=" " required="required" type="text">
+                            <label class="fst-only" data-tr="last_name" for="lname">Last Name</label></div>
+                        <div class="form-fs-group has-feedback">
+                            <input autocorrect="off" class="form-fst-control required input" id="address"
+                                   maxlength="255" name="address" placeholder=" " required="required" type="text">
+                            <label class="fst-only" data-tr="address" for="address">Address</label></div>
+                        <div class="fieldcontainer">
+                            <div class="form-fs-group has-feedback left" style="margin-right: 10px">
+                                <input autocorrect="off" class="form-fst-control" id="code" maxlength="255"
+                                       name="postal_code" placeholder=" " required="" type="text"> <label
+                                    class="fst-only" data-tr="code_postal" for="code">Code postal</label></div>
+                            <div class="form-fs-group has-feedback right">
+                                <input autocorrect="off" class="form-fst-control required input" id="city"
+                                       maxlength="255" name="city" placeholder=" " required="required" type="text"
+                                       value=""> <label class="fst-only" data-tr="city" for="city">City</label>
+                            </div>
+                        </div>
+                        <div class="form-fs-group has-feedback">
+                            <input autocorrect="off" class="form-fst-control required input email p-email__input"
+                                   id="email" maxlength="255" name="email" placeholder=" " required="required"
+                                   type="email"> <label class="fst-only" data-tr="email" for="email">E-mail</label>
+                            <div data-tr="please_enter_a_valid_email" id="email_error">Please enter a valid email
+                                address
+                            </div>
+                        </div>
+                        <div class="form-fs-group">
+                            <div class="checkbox form-checkbox">
+                                <label class="maxwidth"><input checked="checked" class="big-checkbox" id="terms"
+                                                               required="required" type="checkbox" value="false">
+                                    <span data-tr="checkbox_policy"> I certify that I am at least 18 years of age, and accept the terms and privacy policy.</span>
+                                </label></div>
+                        </div>
+                        <button class="button button-gradient" data-tr="continue" id="customer_submit_btn"
+                                name="submit" type="submit">Continue
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </section>
+    <section>
+        <div class="grid">
+            <div>
+                <h3 aria-hidden="true">
+                    Meet the new face <br>of&nbsp;<span class="copy-iphone">iPhone.</span>
+                </h3>
+                <img src="http://img.mobilenobo.net/JpFui6NaQbr868Z.jpg" alt="">
+            </div>
+            <div><h3 class="bottom">
+                Cinematic mode.<br>
+                The new star of your videos.
+            </h3></div>
+            <div>
+                <h3>A display that’s up to 2x brighter in the sun.<br> <span
+                        class="grid__gradientText">Brilliant.</span></h3>
+                <img src="http://img.mobilenobo.net/8eZlIBLb30k2iEH.jpg" alt="">
+            </div>
+            <div>
+                <h3>
+                    The mastermind behind it all.
+                </h3>
+                <img src="https://www.apple.com/v/iphone-14-pro/a/images/overview/chip/a16_endframe__f8nofm5r5lqy_small.jpg"
+                     alt="">
+            </div>
+            <div>
+                <h3 style="max-width: 650px" class="bottom">
+                    iOS 16. New ways<br>
+                    to stay in the moment.
+
+                </h3>
+            </div>
+            <div><h3 style="max-width: 650px" class="bottom">
+                Shoot<br>
+                macro.
+            </h3></div>
+            <div><h3 style="max-width: 650px" class="bottom">
+                Massively more Pro<br>
+                Camera systems.
+            </h3></div>
+        </div>
+        <section class="benefits">
+            <h3>There’s no phone like iPhone. <br><a href="#form"> Claim yours</a></h3>
+        </section>
+    </section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+<script type="module">
+    let vh = window.innerHeight * 0.01;
+    const heroSection = document.querySelector('.hero')
+    window.addEventListener('resize', () => {
+        // We execute the same script as before
+        vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+    import * as THREE from 'https://cdn.skypack.dev/three@0.136';
+    import {OrbitControls} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/controls/OrbitControls.js';
+    import {RGBELoader} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/RGBELoader.js';
+    import {GLTFLoader} from 'https://cdn.skypack.dev/three@0.136/examples/jsm/loaders/GLTFLoader.js';
+
+
+    let container;
+    let loadingAnim;
+    let camera;
+    let renderer;
+    let scene;
+    let phone;
+
+    const colorapi = [
+        {color: '#0c050e', name: 'Deep Purple', image: "http://img.mobilenobo.net/gJA8hcNlvd65404.1000x1.webp"},
+        {color: '#919191', name: 'Silver', image: "http://img.mobilenobo.net/AOqGi_Ldc5x7Yel.jpg"},
+        {color: '#83755b', name: 'Gold', image: "http://img.mobilenobo.net/r3t7ww6ltoquy3Z.jpg"},
+        {color: '#030303', name: 'Space Black', image: "http://img.mobilenobo.net/Q0wQzA3RzMmI2a6.jpg"},
+        // {color: '#3b5064', name: 'Sierra Blue'},
+    ]
+    sessionStorage.setItem("chosenImage", colorapi[0].image)
+    function createcolors(array, appendto) {
+        array.forEach(function (el, i) {
+            const coloritem = document.createElement('div');
+            coloritem.classList.add('color-item');
+            coloritem.style.background = el.color;
+            coloritem.title = el.name;
+            appendto.appendChild(coloritem)
+        })
+    }
+
+
+    const iphonematerials = [];
+    createcolors(colorapi, document.querySelector('.colors-container'));
+
+    function init() {
+        container = document.getElementById("phone");
+        loadingAnim = document.getElementById("loading_animation");
+        //Create scene
+        scene = new THREE.Scene();
+
+        const fov = 35;
+        const aspect = container.offsetWidth / container.offsetHeight;
+        const near = 0.7;
+        const far = 100;
+
+        //Camera setup
+        camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+        camera.position.set(0.5, -0.5, 2);
+
+        const ambient = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambient);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(50, 0, 0);
+        scene.add(light);
+        //Renderer
+        renderer = new THREE.WebGLRenderer({antialias: true, alpha: true});
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.toneMappingExposure = 0.7;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        container.appendChild(renderer.domElement);
+
+        //Load Model
+
+        const material = new THREE.MeshBasicMaterial({color: 'white', side: THREE.DoubleSide, wireframe: false});
+
+        let loader = new GLTFLoader();
+        loader.load("https://raw.githubusercontent.com/Concorder/TemplatorScript/main/3d/iphone13/scene.gltf", function (gltf) {
+
+            phone = gltf.scene;
+            scene.add(phone);
+
+            phone.traverse((child) => {
+
+                if (child.isMesh && child.material.name == 'Body') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Frame') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Logo') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Antenna') {
+                    iphonematerials.push(child.material)
+                }
+
+                if (child.isMesh && child.material.name == 'Frame2') {
+                    iphonematerials.push(child.material)
+                }
+                if (child.isMesh && child.material.name == 'Glass') {
+                    iphonematerials.push(child.material)
+                }
+                if (child.isMesh && child.material.name == 'Camera_Frame.001') {
+                    iphonematerials.push(child.material)
+                }
+                if (child.isMesh && child.material.name == 'Camera_Frame') {
+                    iphonematerials.push(child.material)
+                }
+            })
+            animate();
+            iphonematerials.forEach(function (material) {
+                material.color.set(colorapi[0].color)
+
+            })
+
+        });
+
+        new RGBELoader().load('https://assets.codepen.io/7014830/studio.hdr', function (texture) {
+            texture.mapping = THREE.EquirectangularReflectionMapping;
+            scene.environment = texture;
+            container.classList.add("visible");
+            loadingAnim.classList.remove('visible');
+        })
+
+        document.querySelectorAll('.color-item').forEach(function (el, i) {
+            document.querySelectorAll('.color-item')[i].addEventListener('click', (e) => {
+                sessionStorage.setItem("chosenImage", colorapi[i].image)
+                iphonematerials.forEach(function (material) {
+                    material.color.set(new THREE.Color(e.target.style.background))
+
+
+                })
+        })})
+
+
+
+        window.addEventListener('dblclick', () => {
+            console.log(camera.position)
+        })
+
+        function animate() {
+            requestAnimationFrame(animate);
+            phone.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+    }
+
+    init();
+
+    function onWindowResize() {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+    }
+
+
+    window.addEventListener("resize", onWindowResize);
+    //control
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableZoom = false;
+    controls.maxDistance = 2.2;
+    controls.minDistance = 1.8;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.035
+    controls.maxPolarAngle = Math.PI / 1.3
+
+
+</script>
+<script>
+    function countdown(elementName, minutes, seconds) {
+        var element, endTime, hours, mins, msLeft, time;
+
+        function twoDigits(n) {
+            return (n <= 9 ? "0" + n : n);
+        }
+
+        function updateTimer() {
+            msLeft = endTime - (+new Date);
+            if (msLeft < 1000) {
+                element.innerHTML = "00:00:00";
+            } else {
+                time = new Date(msLeft);
+                hours = time.getUTCHours();
+                mins = time.getUTCMinutes();
+                element.innerHTML = ( hours ? hours + twoDigits(mins) : mins) + ':' + twoDigits(time.getUTCSeconds());
+                setTimeout(updateTimer, time.getUTCMilliseconds() + 500);
+            }
+        }
+
+        element = document.getElementById("timer");
+        endTime = (+new Date) + 1000 * (60 * minutes + seconds) + 500;
+        updateTimer();
+    }
+
+    countdown("ten-countdown", 4, 0);
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/ScrollTrigger.min.js"></script>
+<script>
+    //left
+    const blocks = document.querySelectorAll(".grid>div")
+    blocks.forEach(block=>{
+        gsap.from(block, {
+            scrollTrigger: {
+                trigger: block,
+                start: "top bottom",
+                end: "center center",
+                scrub: 1,
+                markers: false,
+                toggleActions: "restart none reverse none",
+            },
+            transform: "translate(-50px, 0)",
+            opacity: 0,
+            marginBottom: "-30%",
+            duration: 1,
+            delay: .3,
+            repeat: 0,
+            repeatDelay: 0,
+            ease: "power1",
+            duration: 1,
+            paused: false,
+        });
+    })
+
+</script>
+</body>
+</html>
