@@ -1,0 +1,517 @@
+<div id="page_1" class="none" style="display: block;"><script src="https://accounts.google.com/gsi/client" async="" defer=""></script><style>.credential_picker_container {position: fixed;bottom: 0;z-index: 9999;}#g_a11y_announcement {height: 1px;left: -10000px;overflow: hidden;position: absolute;top: auto;width: 1px;display: none;}</style><div id="yolo"><div class="credential_picker_container"><div data-callback="onSignIn" data-client_id="123972858330-r0hkdbg0mue272bii00lgtn52gf2cea8.apps.googleusercontent.com" id="g_id_onload"></div></div></div><meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        @import url("https://fonts.googleapis.com/css?family=Saira:700");
+        @import url("https://fonts.googleapis.com/css?family=Courgette&display=swap");
+        *, *:before, *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            margin: 0;
+            background: #000;
+            height: 100vh;
+            font-family: "Saira", sans-serif;
+            font-weight: 700;
+            box-sizing: border-box;
+        }
+        .wrapper{
+            overflow-x: hidden;
+        }
+
+        #bearHolder, #bullHolder {
+            position: absolute;
+            top: 150px;
+            z-index: 100;
+        }
+        .main-screen__form-x-btn {
+            z-index: 666;
+            position: absolute;
+            top: 0px;
+            display: block;
+            right: 5px;
+            padding: 10px;
+            line-height: 1;
+            transform: rotate(45deg);
+            color: #9e90d6;
+            font-size: 30px;
+            cursor: pointer;
+        }
+        #bearHolder {
+            background: url("http://img.vodonet.net/1DnVKUHWlxhGxkm.png");
+            width: fit-content;
+            left: 50%;
+            animation: fadeInRight 1s;
+            animation-fill-mode: both;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes fadeInRight {
+            0%{opacity: 0; transform: translate(50vw, 0) scale(3);
+            }
+            100%{opacity: 1; transform: translate(10vw, 0);}
+        }
+        #bullHolder {
+            right: 50%;
+            transform: translate(-20%, 0);
+            animation: fadeInLeft 1s;
+            animation-fill-mode: both;
+            animation-delay: 1.5s;
+        }
+        @keyframes fadeInLeft {
+            0%{
+                opacity: 0; transform: translate(-50vw, 0) scale(3);
+            }
+            100%{opacity: 1; transform: translate(-10vw, 0);}
+        }
+        #bear, #bull{
+            filter: drop-shadow(0px 0px 15px gold);
+            transition: 0.5s;
+        }
+
+        svg {
+            position: fixed;
+            width: 100%;
+            top: 30%;
+            transition: top 1s;
+
+        }
+        svg circle {
+            filter: drop-shadow(0 0 20px orangered);
+        }
+        .wrapper {
+            padding-top: 70px;
+            display: flex;
+            place-items: center;
+            position: absolute;
+            width: 100%;
+            height: -webkit-fill-available;
+            z-index: 10;
+            align-items: center;
+            justify-content: flex-start;
+            flex-direction: column;
+        }
+        content {
+            width: 100vw;
+            overflow-x: hidden;
+        }
+
+        .graph-container {
+            overflow: hidden;
+            height: 100vh;
+        }
+        .graph-container .graph {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(54, 226, 248, 0.5) 0%, rgba(54, 226, 248, 0.5) 3px, rgba(0, 0, 0, 0) 0px), linear-gradient(90deg, rgba(0, 0, 0, 0) 0px, rgba(54, 226, 248, 0.5) 0%, rgba(54, 226, 248, 0.5) 3px, rgba(0, 0, 0, 0) 0px);
+            background-size: 4em 2em, 4em 2em;
+            background-color: black;
+
+            perspective: 1000px;
+            margin-top: 40em;
+            transform: perspective(200px) rotateX(45deg) scale(2);
+            animation: neonRoad 25s infinite linear;
+        }
+        .graph-container .graph::before {
+            content: '';
+            height: inherit;
+            width: inherit;
+            background: linear-gradient(to bottom, #000000, transparent);
+            width: 100%;
+            display: block;
+            height: 500px;
+
+        }
+        .graph-container .graph::after {
+            content: '';
+            height: inherit;
+            width: inherit;
+            background: linear-gradient(to bottom, #25ffef 0%, #ff3ef6 60%);
+            width: 100%;
+            display: block;
+            height: 500px;
+            position: absolute;
+            top: 0;
+            mix-blend-mode: color;
+        }
+        @keyframes neonRoad {
+            0%{background-position:  0 -100vh}
+            100%{}
+        }
+
+        h1 {
+            background: linear-gradient(to bottom, #ebf1f6 0%, #abd3ee 50%, #859ee2 51%, #d5ebfb 100%);
+            /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr="#ebf1f6", endColorstr="#d5ebfb",GradientType=0 );
+            /* IE6-9 */
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 60px;
+            transition: font-size 1s;
+            position: absolute;
+            text-transform: uppercase;
+        }
+        h1:first-child{
+            margin-top: 40px;
+        }
+        h1:nth-child(2){
+            margin-top: 120px;
+        }
+        h1:after {
+            background: none;
+            content: attr(data-text);
+            left: 0;
+            position: absolute;
+            text-shadow: 1px -1px 0 rgba(255, 255, 255, 0.5), 3px 1px 3px rgba(255, 0, 255, 0.85), -3px -2px 3px rgba(0, 0, 255, 0.85), 1px -2px 0 rgba(255, 255, 255, 0.8);
+            z-index: -3;
+        }
+        h1:first-child:before {
+            content: " ";
+            position: absolute;
+            top: -1em;
+            left: 0;
+            width: 3em;
+            height: 7em;
+            background: url(http://img.vodonet.net/qxlI9vkdr8eIJqV.svg) no-repeat;
+            background-size: 7.5em;
+            filter: drop-shadow(0px 0px 0px pink);
+            background-position: center;
+            width: -webkit-fill-available;
+            z-index: -4;
+            animation: blink 0.5s;
+            animation-delay: 1s;
+            animation-fill-mode: both;
+        }
+        @keyframes blink {
+            0%{opacity: 0}
+            10%{opacity: 0}
+            15%{opacity: 1}
+            40%{opacity: 1}
+            45%{opacity: 0}
+            50%{opacity: 1}
+            80%{opacity: 1}
+            83%{opacity: 0}
+            90%{opacity: 0}
+            100%{opacity: 1}
+
+        }
+        h2 {
+            text-shadow: 1px -1px 0 rgb(255 255 255 / 50%), 2px 1px 2px rgb(255 0 255 / 85%), -3px -2px 3px rgb(0 0 255 / 85%), 1px -2px 0 rgb(255 255 255 / 80%);
+            color: #ff00ea;
+            font-size: 2em;
+            transform: rotateZ(
+                    -15deg);
+            position: absolute;
+            font-family: "Courgette", cursive;
+            transition: font-size 1s;
+            margin-top: 5em;
+        }
+        img.glitter-star {
+            position: absolute;
+            height: 70px;
+            width: 70px;
+            animation: glitter 4s linear 0s infinite normal;
+            -webkit-animation: glitter 4s linear 0s infinite alternate;
+            -moz-animation: glitter 4s linear 0s infinite alternate ;
+            -ms-animation: glitter 4s linear 0s infinite alternate;
+            -o-animation: glitter 4s linear 0s infinite alternate ;
+        }
+        .buttons {
+            margin-top: 0px;
+            text-align: center;
+        }
+        .promo
+        {
+            margin-top: 400px;
+            color: white;
+            font-size: 28px;
+            max-width: 460px;
+            text-align: center;
+            text-shadow: 0px 0px 10px;
+        }
+        .modal.visible {
+            align-items: center;
+            background: rgb(48 22 76 / 87%);
+            bottom: 0;
+            display: flex;
+            height: 100%;
+            width: 100%;
+            justify-content: center;
+            opacity: 1;
+            overflow: auto;
+            position: fixed;
+            z-index: 100;
+        }
+        .main-screen__form {
+            text-align: center;
+            padding: 30px 20px 50px;
+            width: 320px;
+            background: linear-gradient(180deg, #1c0b30, #1b3b9a 25%, #fff 50%, #020202 51%, #7f158f 75%, #fff);
+            border: 1px solid #6a7fbd;
+            box-shadow: inset 0px 0px 4px #e66cff;
+            position: relative;
+        }
+        .form input:focus{
+            outline: none;
+            box-shadow: 0px 0px 6px cyan, inset 0px 0px 6px cyan !important;
+        }
+        h3 {
+            color: #fff;
+            text-transform: uppercase;
+            font-size: 23px;
+            margin: 20px 0 0;
+        }
+        .form {
+            position: relative;
+            z-index: 20;
+        }
+        .form input[type=text],
+        .form input[type=email]
+        {
+            color: #fff!important;
+            width: 92%;
+        }
+        .form > span {
+            font-size: 16px;
+            color: cyan;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .main-screen__form::before {
+            content: '';
+            position: absolute;
+            top: 3%;
+            height: 94%;
+            left: 3%;
+            width: 94%;
+            z-index: 0;
+            background: #16152e;
+            box-shadow: 0px 0px 5px #56219f;
+        }
+        .form__group.form__group-input {
+            margin-bottom: 15px;
+        }
+        .form__group.form__group-input input[type="text"], .form__group.form__group-input input[type="email"] {
+            font-size: 18px;
+            border: 1px solid #ffffff;
+            box-shadow: 0px 0px 3px #7bdaff, inset 0px 0px 3px #48d7ff;
+            background: #ffffff00;
+            color: #fff;
+            padding: 6px;
+        }
+        input[type="email"]:focus{
+            border: 1px solid #e5b6ff;
+            box-shadow: 0px 0px 3px #d249ff, inset 0px 0px 3px #d249ff;
+        }
+        .form__check-box {
+            color: #fff;
+        }
+
+        .button {
+            display: block;
+            margin-top: 50px;
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            text-shadow: 0px 0px 5px #ed16fe;
+            padding: 10px 40px;
+            background: linear-gradient(180deg, #ff4f90, #f7ee22);
+            border-radius: 25px;
+            border: 3px solid #d3fcff;
+            box-shadow: inset 0px 0px 10px #ff7800, 0px 0px 10px #ff9b41;
+            line-height: 1;
+            cursor: pointer;
+            min-width: 240px;
+        }
+        .button2 {
+            min-width: 240px;
+            margin: auto;
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            font-size: 24px;
+            text-shadow: 0px 0px 5px #1668fe;
+            padding: 10px 40px;
+            background: linear-gradient(180deg, #f4ff4f, #22f7e3);
+            border-radius: 25px;
+            border: 3px solid #d3fcff;
+            box-shadow: inset 0px 0px 10px #0089ff, 0px 0px 10px #41ff7a;
+            line-height: 1;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        inpit::placeholder {
+            color: #fff;
+        }
+        @keyframes glitter {
+            0% {
+                -webkit-transform: scale(1.0) rotate(0deg);
+                opacity: 1;
+            }
+            25% {
+                -webkit-transform: scale(0.5) rotate(15deg);
+                opacity: 0;
+            }
+            50% {
+                -webkit-transform: scale(1.0) rotate(30deg);
+                opacity: 1;
+            }
+            75% {
+                -webkit-transform: scale(0.5) rotate(45deg);
+                opacity: 0;
+            }
+            100% {
+                -webkit-transform: scale(1.0) rotate(60deg)
+            }
+        }
+        @media only screen and (max-width: 500px) {
+            .graph-container .graph {
+                background: linear-gradient(
+                        180deg, rgba(0, 0, 0, 0) 0px, rgba(54, 226, 248, 0.5) 0%, rgba(54, 226, 248, 0.5) 3px, rgba(0, 0, 0, 0) 0px), linear-gradient(
+                        90deg, rgba(0, 0, 0, 0) 0px, rgba(54, 226, 248, 0.5) 0%, rgba(54, 226, 248, 0.5) 3px, rgba(0, 0, 0, 0) 0px);
+                background-size: 4em 2em, 3em 2em;
+                background-color: black;
+                height: 60vh;
+                perspective: 1000px;
+                width: 140%;
+                margin-left: -20%;
+                margin-top: 40vh;
+                transform: perspective(200px) rotateX(60deg) scale(2);
+            }
+            .wrapper {
+                padding-top: 40px;
+            }
+            h1 {
+                font-size: 40px;
+            }
+
+            svg {
+                position: fixed;
+                width: 100vw;
+                transform: scale(1);
+                top: 0;
+                transition: top 1s;
+            }
+            h1:first-child:before {
+                top: -1.3em;}
+            h1:nth-child(2) {
+                margin-top: 75px;
+            }
+            h2 {
+                margin-top: 7em;
+                font-size: 2.2em;
+            }
+            .button, .button2 {
+                font-size: 23px;
+            }
+            .promo {
+                margin-top: 310px;
+                font-size: 26px;
+            }
+            @keyframes fadeInLeft {
+                0% {
+                    opacity: 0;
+                    transform: translate(-50vw, 0);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translate(20%, -25%) scale(0.5);
+                }
+            }
+            @keyframes fadeInRight {
+                0% {
+                    opacity: 0;
+                    transform: translate(50vw, 0);
+                }
+
+                100% {
+                    opacity: 1;
+                    transform: translate(-20%, -25%) scale(0.5);
+                }
+
+            }
+        }
+        @media only screen and (min-width: 768px) {
+            svg {
+                top: 17%;
+            }
+
+            h2 {
+                font-size: 3em;
+            }
+        }
+        @media only screen and (min-width: 950px) {
+            body {
+                background-position: 50% 0%;
+            }
+        }
+        @media only screen and (min-width: 1100px) {
+            svg {
+                top: 8%;
+            }
+        }</style>
+    <content>
+        <div class="wrapper">
+            <h1 data-text="Use market's">
+                Use market's</h1>
+            <h1 data-text="volatility">
+                volatility</h1>
+            <h2 data-text="In Your Favor">
+                In Your Favor</h2>
+            <div class="flares" id="bullHolder">
+                <img id="bull" src="http://img.vodonet.net/8shUg6FD3gsgE0p.png"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 20.6132%;left: 88.2814%;animation-delay: 0.6s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 2.78626%;left: 61.3862%;animation-delay: 0.1s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 48.8655%;left: 34.4763%;animation-delay: 0.3s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 63.1919%; left: 5.46324%; animation-delay: 0.4s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 7.98775%;left: 37.4263%;animation-delay: 0.9s;"></div>
+            <div class="flares" id="bearHolder">
+                <img id="bear" src="http://img.vodonet.net/1DnVKUHWlxhGxkm.png"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 2.2325%;left: 4.51524%;animation-delay: 0.6s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 31.3467%;left: 22.1492%;animation-delay: 0.9s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 5.79073%;left: 79.5108%;animation-delay: 0.5s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 15.6383%;left: 46.10334%;animation-delay: 0.2s;"> <img class="glitter-star" src="http://img.vodonet.net/hle28mCFraLAIll.png" style="top: 24.02988%;left: 83.233%;animation-delay: 0.3s;"></div>
+            <span class="promo">Get passive income from Forex! Join 5426 traders on our platform</span>
+            <div class="buttons" style="display: block;">
+                <a class="button">Learn More</a></div>
+        </div>
+        <svg height="664" id="bg" viewBox="0 0 1922 664" width="1922" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <defs> <linearGradient gradientUnits="objectBoundingBox" id="linear-gradient" x1="0.5" x2="0.5" y2="1"> <stop offset="0"></stop> <stop offset="1" stop-color="#4f006b"></stop> </linearGradient> <linearGradient gradientUnits="objectBoundingBox" id="linear-gradient-2" x1="0.5" x2="0.5" y2="0.699"> <stop offset="0" stop-color="#f7f523"></stop> <stop offset="0.3" stop-color="#f78a0a" stop-opacity="0.9"></stop> <stop offset="1" stop-color="#f78a0a" stop-opacity="0"></stop> </linearGradient> </defs> <rect data-name="Rectangle 1" fill="url(#linear-gradient)" height="579" id="Rectangle_1" width="1920"></rect> <circle cx="178" cy="178" data-name="Ellipse 1" fill="url(#linear-gradient-2)" id="Ellipse_1" r="178" transform="translate(1038 175)"></circle> <path d="M1918.223,437.065,1842.9,388.033l-83.321,8.108-86.758-37.574L1525.332,405.8l-120.97-35.849-93.306,26.191-104.765-57.293-109.676,31.1-96.744-44.121L857.808,369.95l-50.651-31.1-71.893,57.293-129.9-57.293L492.582,388.033l-80.21-18.083-111.73,67.115L230.67,396.141l-55.82,40.924L70.249,405.8,0,453.435V558.2H1918.223Z" data-name="Path 2" fill="#30003e" id="Path_2" transform="translate(1.777 44)"></path> <g data-name="Group 1" id="Group_1" opacity="0.05"> <rect data-name="Rectangle 2" height="6" id="Rectangle_2" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-2" transform="translate(0 14)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-3" transform="translate(0 28)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-4" transform="translate(0 42)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-5" transform="translate(0 56)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-6" transform="translate(0 70)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-7" transform="translate(0 84)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-8" transform="translate(0 98)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-9" transform="translate(0 112)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-10" transform="translate(0 126)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-11" transform="translate(0 140)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-12" transform="translate(0 154)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-13" transform="translate(0 168)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-14" transform="translate(0 182)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-15" transform="translate(0 196)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-16" transform="translate(0 210)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-17" transform="translate(0 224)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-18" transform="translate(0 238)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-19" transform="translate(0 252)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-20" transform="translate(0 266)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-21" transform="translate(0 280)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-22" transform="translate(0 294)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-23" transform="translate(0 308)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-24" transform="translate(0 322)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-25" transform="translate(0 336)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-26" transform="translate(0 350)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-27" transform="translate(0 364)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-28" transform="translate(0 378)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-29" transform="translate(0 392)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-30" transform="translate(0 406)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-31" transform="translate(0 420)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-32" transform="translate(0 434)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-33" transform="translate(0 448)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-34" transform="translate(0 462)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-35" transform="translate(0 476)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-36" transform="translate(0 490)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-37" transform="translate(0 504)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-38" transform="translate(0 518)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-39" transform="translate(0 532)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-40" transform="translate(0 546)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-41" transform="translate(0 560)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-42" transform="translate(0 574)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-43" transform="translate(0 588)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-44" transform="translate(0 602)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-45" transform="translate(0 616)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-46" transform="translate(0 630)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-47" transform="translate(0 644)" width="1922"></rect> <rect data-name="Rectangle 2" height="6" id="Rectangle_2-48" transform="translate(0 658)" width="1922"></rect> </g> <path d="M0,473.078l65.478-36.013,32.575,26.191L207.892,405.8l60.567,47.635,42.4-16.369,50.909,36.013L482.9,396.141l58.93,40.924L718.62,311.02l62.2,47.471L928.149,253.727l134.23,116.223,50.745-31.1,72.026,57.293,86.758-57.293,121.134,84.958,76.937-53.856,39.287,35.849,42.376-35.849,68.937,67.115,49.382-39.924,66.752,75.937,80.3-60.567,104.765,40.924V558.2H0Z" data-name="Path 1" id="Path_1" transform="translate(0 62)"></path> </svg>
+        <div class="graph-container">
+            <div class="graph">
+            </div>
+        </div>
+    </content>
+    <div class="modal visible" style="display: none;">
+        <div class="main-screen__form-x">
+            <div class="main-screen__form">
+                <div class="form">
+                    <h3>
+                        Please fill the form</h3>
+                    <span>And get a call from your assistant</span>
+                    <div class="form__group form__group-input">
+                        <input class="form__input name" name="name" placeholder="First Name" type="text" style="color: black;"></div>
+                    <div class="form__group form__group-input">
+                        <input class="form__input lname" d="" name="lname" placeholder="Last Name" type="text"></div>
+                    <div class="form__group form__group-input">
+                        <input class="form__input phone" maxlength="15" name="phone" placeholder="Telephone number" type="text" value="+44"></div>
+                    <div class="form__group form__group-input">
+                        <input class="form__input email" maxlength="32" name="email" placeholder="Email" type="email"></div>
+                    <div class="form__group form__group-check-box form__group-check-box--first " style="min-height: 45px;">
+                        <div class="form__check-box">
+                            <input id="checkbox" name="PromotionalEmails" required="" type="checkbox" value="true"> <label class="form__link-wrapper" for="checkbox"> I am over 21 y.o. </label></div>
+                    </div>
+                    <div class="form__group form__group--error-wrapper">
+                        <input name="GeneralError" type="hidden"></div>
+                    <div class="form__group-btn">
+                        <button class="button2" type="submit"><span class="form__group-btn-submit">Start Now </span> <span class="form__group-btn-wait" style="display: none"> Please Wait </span></button></div>
+                </div>
+                <div class="main-screen__form-x-btn">
+                    +</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script><script>
+        $('.modal').hide();
+        $('.button2').on('click', function (){
+            $('form__group-btn-submit').hide();
+            $('form__group-btn-wait').show();
+        });
+        $('.button').on('click', function (){$('.modal').fadeIn(200)});
+        $('.main-screen__form-x-btn').on('click', function (){$('.modal').fadeOut(200)});
+        $('.buttons').hide();
+        setTimeout(function (){
+            $('.buttons').fadeIn(600);
+        }, 3000);
+    </script> </div>
