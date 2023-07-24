@@ -106,11 +106,11 @@
             background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0px, rgba(54, 226, 248, 0.5) 0%, rgba(54, 226, 248, 0.5) 3px, rgba(0, 0, 0, 0) 0px), linear-gradient(90deg, rgba(0, 0, 0, 0) 0px, rgba(54, 226, 248, 0.5) 0%, rgba(54, 226, 248, 0.5) 3px, rgba(0, 0, 0, 0) 0px);
             background-size: 4em 2em, 4em 2em;
             background-color: black;
-
             perspective: 1000px;
             margin-top: 30%;
             transform: perspective(200px) rotateX(45deg) scale(2);
             animation: neonRoad 25s infinite linear;
+            animation-fill-mode: forwards;
         }
         .graph-container .graph::before {
             content: '';
@@ -135,8 +135,7 @@
             mix-blend-mode: color;
         }
         @keyframes neonRoad {
-            0%{background-position:  0 -100vh}
-            100%{}
+            0%{background-position:  0 -1000px}
         }
 
         h1 {
