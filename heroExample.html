@@ -28,8 +28,15 @@
         z-index: 30;
         position: sticky;
         padding: 6px;
+        top: 0;
+        backdrop-filter: blur(6px);
 
 
+    }
+
+    p {
+        margin: 60px 0;
+        line-height: 1.5;
     }
 
     nav a {
@@ -41,6 +48,12 @@
     a:hover {
         cursor: pointer;
     }
+
+    .secondaryBg {
+        background: #161617;
+        color: #B0B0BA;
+    }
+
 
     .header__logo {
         height: 34px;
@@ -60,21 +73,27 @@
 
     .slider-container {
         overflow: hidden;
+
     }
 
-    h2 {
+    h1 {
         font-size: 48px;
 
     }
-.hero1{
-    background: #f0f0f0;
+h2{
+    font-size: 40px;
 }
-    .hero1 h2 {
+    .hero1 {
+        background: #f0f0f0;
+        position: relative;
+    }
+
+    .hero1 h1 {
         max-width: 50%
     }
 
     .slide {
-        height: 100vh;
+        height: calc(100vh - 97px);
         margin: auto;
         display: flex;
         align-content: center;
@@ -82,7 +101,7 @@
         justify-content: space-around;
     }
 
-    .hero2 h2 {
+    .hero2 h1 {
         max-width: 60%;
         text-align: center;
     }
@@ -131,6 +150,13 @@
         overflow: hidden;
 
     }
+
+    .container {
+        padding: 60px 20px;
+        margin: auto;
+    }
+
+
 
     .slide .heroContent {
         display: flex;
@@ -189,29 +215,53 @@
 
 
     }
-    .hero3 h2 {
+
+    .hero3 h1 {
         max-width: 60%;
         text-align: center;
 
     }
+
     .hero3 video {
         position: absolute;
         width: 100%;
         z-index: -1;
 
     }
-    .hero3 video::before{
+
+    .hero3 video::before {
         content: '';
         background: #1d1d1f;
     }
+
     .hero3 .tone {
         position: absolute;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(255, 255, 255, 0.90);
+        background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9),rgba(255, 255, 255, 0.9), #fff);
         z-index: -1;
+    }
+
+    .flex {
+        display: flex;
+        align-items: center;
+    }
+
+    .hero3 {
+        overflow: hidden;
+    }
+
+    .notificationImg {
+        max-width: 400px;
+        height: fit-content;
+        margin-left: -20%;
+
+    }
+    .globalImg{
+        max-width: 500px;
+        margin-right: -20%;
     }
 
     .prev-button {
@@ -223,6 +273,7 @@
     }
 </style>
 <body>
+<div>
 <header>
     <img class="header__logo" src="./netsmart/logoWhite.png" alt="logo">
 </header>
@@ -233,13 +284,13 @@
     <a href="">Blog</a>
 
 </nav>
-<div class="slider-container">
+<section class="slider-container">
 
-    <section class="hero1 slide">
+    <div class="hero1 slide">
 
 
-        <div class="heroContent"><h2>Netsmart is a global leader in mobile payments and messaging.
-        </h2>
+        <div class="heroContent"><h1>Netsmart is a global leader in mobile payments and messaging.
+        </h1>
             <div class="videobg_one">
                 <div class="box1">
                     <video autoplay muted loop poster="poster.jpg">
@@ -264,26 +315,65 @@
         </div>
 
 
-    </section>
-    <section class="hero2 slide" id="particles-js">
-        <div class="heroContent"><h2>Netsmart is a global leader in mobile payments and messaging.
-        </h2></div>
+    </div>
+    <div class="hero2 slide" id="particles-js">
+        <div class="heroContent"><h1>Netsmart is a global leader in mobile payments and messaging.
+        </h1></div>
 
-    </section>
-    <section class="hero3 slide" >
-        <div class="heroContent"><h2>Netsmart is a global leader in mobile payments and messaging.
-        </h2></div>
+    </div>
+    <div class="hero3 slide">
+        <div class="heroContent"><h1>Netsmart is a global leader in mobile payments and messaging.
+        </h1></div>
         <video autoplay muted loop poster="poster.jpg">
             <source src="./netsmart/messagingxdark.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
         <div class="tone"></div>
-    </section>
+    </div>
+    <button class="prev-button">←</button>
+    <button class="next-button">→</button>
+
+</section>
+<section>
+    <div class="container">
+        <div class="flex gsTrigger"><img class="notificationImg" src="./netsmart/apple-iphone-13-2021-medium.png" alt="">
+            <div>
+                <h2>Our Service</h2>
+            <p>As a mobile payment aggregator, we deliver the technology which enables monetization of content,
+                services, and goods through several billing methods across the globe such as Premium SMS &amp; Direct
+                Carrier Billing.</p> <p>We are also a trustworthy partner for your Bulk SMS business. We provide a safe and
+                effective SMS Gateway that has high levels of throughput as well as direct links to several operators
+                and local partners, ensuring the best quality transfer of Bulk SMS.
+            </p></div>
+        </div>
+
+    </div>
+</section>
+<section class="secondaryBg">
+    <div class="container">
+        <div  class="flex gsTrigger">
+            <div >
+                <h2>Experience and solutions</h2>
+                <p>We are part of an international group of companies operating in the industry for more than 20 years.
+                    Sustainability is safeguarded by the group’s strong financial position, investment in advanced
+                    technology, long-standing relationships with business partners and continuous personal and
+                    professional development of personnel.</p> <p>All our solutions are developed in-house for maximum control, ensuring you get the most reliable
+                service. The solution provides a flexible billing and messaging platform for rapid integration, allowing
+                its partners to focus on their revenue growth. This is supported by highly skilled personnel with
+                diverse educational backgrounds and expertise, ensuring a high-quality service provision in a
+                demanding international environment.
+            </p></div>
+            <img class="globalImg" src="./netsmart/global.png" alt="">
+        </div>
+
+    </div>
+
+</section>
 </div>
-<button class="prev-button">←</button>
-<button class="next-button">→</button>
+
+
+
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-<script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
 <script>
 
 
@@ -311,7 +401,7 @@
     });
 
     showSlide(currentIndex);
-//particles
+    //particles
     particlesJS("particles-js", {
         "particles": {
             "number": {"value": 80, "density": {"enable": true, "value_area": 800}},
@@ -361,6 +451,35 @@
         },
         "retina_detect": true
     });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.8.0/ScrollTrigger.min.js"></script>
+<script>
+    //left
+    const blocks = document.querySelectorAll(".gsTrigger")
+    blocks.forEach(block=>{
+        gsap.from(block, {
+            scrollTrigger: {
+                trigger: block,
+                start: "top bottom",
+                end: "center center",
+                scrub: 1,
+                markers: false,
+                toggleActions: "restart none reverse none",
+            },
+            transform: "translate(0, +50px)",
+            opacity: 0,
+            marginBottom: 0,
+            duration: 1,
+            delay: .3,
+            repeat: 0,
+            repeatDelay: 0,
+            ease: "power1",
+            duration: 1,
+            paused: false,
+        });
+    })
+
 </script>
 </body>
 </html>
