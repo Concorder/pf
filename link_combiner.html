@@ -15,9 +15,9 @@
       rel="stylesheet"
     />
     <style>
-        body{
-            background: rgb(235 243 250);
-        }
+      body {
+        background: rgb(235 243 250);
+      }
       .copy-message {
         font-size: 0.9rem;
         color: #198754;
@@ -86,75 +86,86 @@
     </button>
     <div class="container py-5">
       <h1 class="mb-4 text-center">Nobo Link Combiner</h1>
-
-      <!-- Theme Toggle -->
-
-      <!-- Base Link -->
-      <div class="mb-4 col-md-9">
-        <label for="baseLink" class="form-label">Base Link</label>
-        <input
-          type="text"
-          id="baseLink"
-          class="form-control"
-          placeholder="Enter base link (e.g., https://premium.playme-games.com/r/AE/games?s=)"
-          oninput="updateAllLinks()"
-          required
-        />
-      </div>
-
-      <!-- Path fields container -->
-      <div id="pathFields" class="mb-4 position-relative">
-        <div class="row g-2 align-items-center mb-3">
-          <div class="col-md-8">
+      <div class="row">
+        <div class="col-md-8">
+          <!-- Base Link -->
+          <div class="mb-4">
+            <label for="baseLink" class="form-label">Base Link</label>
             <input
               type="text"
-              class="form-control path"
-              placeholder="Campaign name"
-              oninput="updateSingleLink(this)"
-              onfocus="showSuggestions(this)"
+              id="baseLink"
+              class="form-control"
+              placeholder="Enter base link (e.g., https://premium.playme-games.com/r/AE/games?s=)"
+              oninput="updateAllLinks()"
+              required
             />
-            <ul class="dropdown-menu suggestions-list"></ul>
           </div>
-          <div class="col-md-1">
-            <button
-              class="btn btn-outline-danger remove-btn"
-              onclick="removePathField(this)"
-            >
-              <i class="bi bi-dash-circle"></i>
-            </button>
+
+          <!-- Path fields container -->
+          <div id="pathFields" class="mb-4 position-relative">
+            <div class="row g-2 align-items-center mb-3">
+              <div class="col-md-8">
+                <input
+                  type="text"
+                  class="form-control path"
+                  placeholder="Campaign name"
+                  oninput="updateSingleLink(this)"
+                  onfocus="showSuggestions(this)"
+                />
+                <ul class="dropdown-menu suggestions-list"></ul>
+              </div>
+              <div class="col-md-1">
+                <button
+                  class="btn btn-outline-danger remove-btn"
+                  onclick="removePathField(this)"
+                >
+                  <i class="bi bi-dash-circle"></i>
+                </button>
+              </div>
+              <div class="col-md-1">
+                <button
+                  class="btn btn-outline-warning clear-btn"
+                  onclick="clearPathField(this)"
+                >
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </div>
+              <div class="col-12 d-flex align-items-center">
+                <a
+                  class="result-link me-2 text-decoration-none text-primary"
+                  href="#"
+                  target="_blank"
+                  >Generated link will appear here</a
+                >
+                <button
+                  class="btn btn-outline-secondary copy-btn"
+                  onclick="copyLink(this)"
+                >
+                  <i class="bi bi-clipboard"></i>
+                </button>
+                <span class="copy-message">Copied!</span>
+              </div>
+            </div>
           </div>
-          <div class="col-md-1">
-            <button
-              class="btn btn-outline-warning clear-btn"
-              onclick="clearPathField(this)"
+
+          <!-- Add Path Button -->
+          <button class="btn btn-primary mb-3" onclick="addPathField()">
+            <i class="bi bi-plus-circle"></i> Add Path
+          </button>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-4 col-md-9">
+            <label for="batchText" class="form-label"
+              >Batch Input (Paste your text here)</label
             >
-              <i class="bi bi-x-circle"></i>
-            </button>
-          </div>
-          <div class="col-12 d-flex align-items-center">
-            <a
-              class="result-link me-2 text-decoration-none text-primary"
-              href="#"
-              target="_blank"
-              >Generated link will appear here</a
-            >
-            <button
-              class="btn btn-outline-secondary copy-btn"
-              onclick="copyLink(this)"
-            >
-              <i class="bi bi-clipboard"></i>
-            </button>
-            <span class="copy-message">Copied!</span>
+            <textarea id="batchInput" class="form-control mb-3" placeholder="one per line"></textarea>
+            <button class="btn btn-success me-2" onclick="generateLinksFromBatch()">Generate Links</button>
+            <button class="btn btn-outline-danger" onclick="removeAllFields()">Clear All Fields</button>
+
           </div>
         </div>
       </div>
-
-      <!-- Add Path Button -->
-      <button class="btn btn-primary mb-3" onclick="addPathField()">
-        <i class="bi bi-plus-circle"></i> Add Path
-      </button>
     </div>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
@@ -173,33 +184,33 @@
       // Load fields from local storage
       // Load fields from local storage
       function loadFromLocalStorage() {
-    const savedData = JSON.parse(localStorage.getItem('linkData'));
-    if (savedData) {
-        document.getElementById('baseLink').value = savedData.baseLink;
-        updateAllLinks(); // Recalculate links after setting the base link
+        const savedData = JSON.parse(localStorage.getItem("linkData"));
+        if (savedData) {
+          document.getElementById("baseLink").value = savedData.baseLink;
+          updateAllLinks(); // Recalculate links after setting the base link
 
-        // Clear existing paths and add saved ones
-        const pathFields = document.getElementById('pathFields');
-        pathFields.innerHTML = ''; // Clear all paths
-        savedData.paths.forEach(path => {
+          // Clear existing paths and add saved ones
+          const pathFields = document.getElementById("pathFields");
+          pathFields.innerHTML = ""; // Clear all paths
+          savedData.paths.forEach((path) => {
             addPathField(path);
-        });
+          });
 
-        // Recalculate links after adding saved paths
-        updateAllLinks(); // Ensure all links are recalculated
-    }
-}
+          // Recalculate links after adding saved paths
+          updateAllLinks(); // Ensure all links are recalculated
+        }
+      }
 
       // Add a new path input field with optional value
       function addPathField(value = "") {
         const container = document.createElement("div");
         container.className = "row g-2 align-items-center mb-3";
         container.innerHTML = `
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <input type="text" class="form-control path" placeholder="Campaign name" oninput="updateSingleLink(this)" onfocus="showSuggestions(this)" value="${value}">
                     <ul class="dropdown-menu suggestions-list"></ul>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <button class="btn btn-outline-warning clear-btn" onclick="clearPathField(this)">
                         <i class="bi bi-x-circle"></i>
                     </button>
@@ -222,6 +233,7 @@
       function removePathField(button) {
         const container = button.closest(".row");
         container.remove();
+        saveToLocalStorage(); // Update local storage after removal
       }
 
       // Function to clear a path input field
@@ -252,45 +264,44 @@
 
       // Helper function to combine base link and path
       function updateLink(baseLink, pathInput, resultLink) {
-  const path = pathInput.value.trim();
-  if (baseLink && path) {
-    // Combine base link and path
-    const combinedLink = `${baseLink}/${path}`
-      .replace(/\/+/g, "/")
-      .replace(/:\/\//, "://");
-    
-    resultLink.href = combinedLink;  // Set the href to the correct generated link
-    resultLink.textContent = combinedLink;  // Set the text of the link
-  } else {
-    resultLink.href = "#";  // Fallback if no base or path
-    resultLink.textContent = "Generated link will appear here";
-  }
-}
+        const path = pathInput.value.trim();
+        if (baseLink && path) {
+          // Combine base link and path
+          const combinedLink = `${baseLink}${path}`
+            .replace(/\/+/g, "/")
+            .replace(/:\/\//, "://");
+
+          resultLink.href = combinedLink; // Set the href to the correct generated link
+          resultLink.textContent = combinedLink; // Set the text of the link
+        } else {
+          resultLink.href = "#"; // Fallback if no base or path
+          resultLink.textContent = "Generated link will appear here";
+        }
+      }
 
       // Function to copy the link to the clipboard and show a temporary message
       function copyLink(button) {
-  const resultLink = button.closest(".row").querySelector(".result-link");
-  const link = resultLink.textContent.trim();  // Get only the link text, not the href
-  const message = button.closest(".row").querySelector(".copy-message");
-  
-  if (link !== "Generated link will appear here" && link !== "") {
-    navigator.clipboard
-      .writeText(link)  // Copy the link text
-      .then(() => {
-        // Show the "Copied!" message
-        message.classList.add("visible");
-        setTimeout(() => {
-          message.classList.remove("visible");
-        }, 2000); // Message disappears after 2 seconds
-      })
-      .catch((err) => {
-        console.error("Failed to copy link: ", err);
-      });
-  } else {
-    alert("No valid link to copy!");
-  }
-}
+        const resultLink = button.closest(".row").querySelector(".result-link");
+        const link = resultLink.textContent.trim(); // Get only the link text, not the href
+        const message = button.closest(".row").querySelector(".copy-message");
 
+        if (link !== "Generated link will appear here" && link !== "") {
+          navigator.clipboard
+            .writeText(link) // Copy the link text
+            .then(() => {
+              // Show the "Copied!" message
+              message.classList.add("visible");
+              setTimeout(() => {
+                message.classList.remove("visible");
+              }, 2000); // Message disappears after 2 seconds
+            })
+            .catch((err) => {
+              console.error("Failed to copy link: ", err);
+            });
+        } else {
+          alert("No valid link to copy!");
+        }
+      }
 
       // Theme Toggle Function
       function toggleTheme() {
@@ -329,6 +340,50 @@
 
       // Load data on page load
       document.addEventListener("DOMContentLoaded", loadFromLocalStorage);
+
+      // Function to populate the path fields from the batch text input
+      function populatePathsFromBatch() {
+        const batchText = document.getElementById("batchText").value.trim();
+        const lines = batchText
+          .split("\n")
+          .filter((line) => line.trim() !== ""); // Split text by lines and filter empty lines
+
+        // Get all the current path inputs (if any)
+        const pathInputs = document.querySelectorAll(".path");
+
+        // Clear current path fields
+        pathInputs.forEach((input) => (input.value = ""));
+
+        // If there are fewer inputs than batch lines, add more inputs
+        lines.forEach((line, index) => {
+          if (index < pathInputs.length) {
+            pathInputs[index].value = line.trim(); // Populate existing input fields
+          } else {
+            addPathField(line.trim()); // Add new input fields for extra lines
+          }
+        });
+
+        // Update links for all fields after populating values
+        updateAllLinks();
+      }
+      function generateLinksFromBatch() {
+        const batchInput = document.getElementById("batchInput").value.trim();
+        const batchLines = batchInput
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line !== "");
+
+        batchLines.forEach((line) => {
+          addPathField(line); // Adds each batch line as a new path input field
+        });
+
+        updateAllLinks(); // Update all the generated links after adding the new ones
+      }
+      function removeAllFields() {
+  const pathFields = document.getElementById("pathFields");
+  pathFields.innerHTML = "";  // Clear all the path fields
+  saveToLocalStorage();  // Update the local storage to reflect the changes
+}
     </script>
   </body>
 </html>
