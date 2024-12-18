@@ -110,7 +110,6 @@
                   class="form-control path"
                   placeholder="Campaign name"
                   oninput="updateSingleLink(this)"
-                  onfocus="showSuggestions(this)"
                 />
                 <ul class="dropdown-menu suggestions-list"></ul>
               </div>
@@ -207,7 +206,7 @@
         container.className = "row g-2 align-items-center mb-3";
         container.innerHTML = `
                 <div class="col-md-10">
-                    <input type="text" class="form-control path" placeholder="Campaign name" oninput="updateSingleLink(this)" onfocus="showSuggestions(this)" value="${value}">
+                    <input type="text" class="form-control path" placeholder="Campaign name" oninput="updateSingleLink(this)" value="${value}">
                     <ul class="dropdown-menu suggestions-list"></ul>
                 </div>
                 <div class="col-md-2">
@@ -264,20 +263,21 @@
 
       // Helper function to combine base link and path
       function updateLink(baseLink, pathInput, resultLink) {
-        const path = pathInput.value.trim();
-        if (baseLink && path) {
-          // Combine base link and path
-          const combinedLink = `${baseLink}${path}`
-            .replace(/\/+/g, "/")
-            .replace(/:\/\//, "://");
+  const path = pathInput.value.trim();
+  if (baseLink && path) {
+    // Combine base link and path, ensuring no current page path is included
+    const combinedLink = `${baseLink.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`
+      .replace(/\/+/g, "/") // Remove duplicate slashes
+      .replace(/:\/\//, "://"); // Preserve proper protocol formatting
 
-          resultLink.href = combinedLink; // Set the href to the correct generated link
-          resultLink.textContent = combinedLink; // Set the text of the link
-        } else {
-          resultLink.href = "#"; // Fallback if no base or path
-          resultLink.textContent = "Generated link will appear here";
-        }
-      }
+    resultLink.href = combinedLink; // Set the href to the generated link
+    resultLink.textContent = combinedLink; // Set the text of the link
+  } else {
+    resultLink.href = "#"; // Fallback if no base or path
+    resultLink.textContent = "Generated link will appear here";
+  }
+}
+
 
       // Function to copy the link to the clipboard and show a temporary message
       function copyLink(button) {
