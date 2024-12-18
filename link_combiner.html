@@ -1,154 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dynamic Link Combiner</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
     <style>
-        .copy-message {
-            font-size: 0.9rem;
-            color: #198754;
-            margin-left: 10px;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
+        body{
+            background: rgb(235 243 250);
         }
-        .copy-message.visible {
-            opacity: 1;
-        }
-        /* Styling the dropdown list */
-        .suggestions-list {
-            position: absolute;
-            z-index: 1000;
-            max-height: 150px;
-            overflow-y: auto;
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            width: 100%;
-        }
-        .suggestions-list li {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
-        .suggestions-list li:hover {
-            background-color: #f8f9fa;
-        }
+      .copy-message {
+        font-size: 0.9rem;
+        color: #198754;
+        margin-left: 10px;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+      }
+      .copy-message.visible {
+        opacity: 1;
+      }
+      /* Styling the dropdown list */
+      .suggestions-list {
+        position: absolute;
+        z-index: 1000;
+        max-height: 150px;
+        overflow-y: auto;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 100%;
+      }
+      .suggestions-list li {
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .suggestions-list li:hover {
+        background-color: #f8f9fa;
+      }
 
-        /* Custom Dark Mode Styles */
-        .dark-mode.bg-light {
-            background-color: #121212!important;
-            color: #ffffff;
-        }
-        .dark-mode .form-control {
-            background-color: #2c2c2c;
-            color: #ffffff;
-            border-color: #444;
-        }
-        .dark-mode .btn-outline-danger {
-            border-color: #444;
-            color: #ffffff;
-        }
-        .dark-mode .btn-outline-secondary {
-            border-color: #444;
-            color: #ffffff;
-        }
-        .dark-mode .result-link {
-            color: #0096FF;
-        }
-        #themeToggle {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-        }
+      /* Custom Dark Mode Styles */
+      .dark-mode {
+        background-color: #121212;
+        color: #ffffff;
+      }
+      .dark-mode .form-control {
+        background-color: #2c2c2c;
+        color: #ffffff;
+        border-color: #444;
+      }
+      .dark-mode .btn-outline-danger {
+        border-color: #444;
+        color: #ffffff;
+      }
+      .dark-mode .btn-outline-secondary {
+        border-color: #444;
+        color: #ffffff;
+      }
+      .dark-mode .result-link {
+        color: #0096ff;
+      }
+      #themeToggle {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+      }
     </style>
-</head>
-<body class="bg-light">
-        <button id="themeToggle" class="btn btn-outline-secondary">
-            <i class="bi bi-moon"></i>
-        </button>
+  </head>
+  <body>
+    <button id="themeToggle" class="btn btn-outline-secondary">
+      <i class="bi bi-moon"></i>
+    </button>
     <div class="container py-5">
-        <h1 class="mb-4 text-center">Nobo Link Combiner</h1>
+      <h1 class="mb-4 text-center">Nobo Link Combiner</h1>
 
-        <!-- Theme Toggle -->
+      <!-- Theme Toggle -->
 
+      <!-- Base Link -->
+      <div class="mb-4 col-md-9">
+        <label for="baseLink" class="form-label">Base Link</label>
+        <input
+          type="text"
+          id="baseLink"
+          class="form-control"
+          placeholder="Enter base link (e.g., https://premium.playme-games.com/r/AE/games?s=)"
+          oninput="updateAllLinks()"
+          required
+        />
+      </div>
 
-        <!-- Base Link -->
-        <div class="mb-4 col-md-9">
-            <label for="baseLink" class="form-label">Base Link</label>
-            <input type="text" id="baseLink" class="form-control" placeholder="Enter base link (e.g., https://premium.playme-games.com/r/AE/games?s=)" oninput="updateAllLinks()" required>
+      <!-- Path fields container -->
+      <div id="pathFields" class="mb-4 position-relative">
+        <div class="row g-2 align-items-center mb-3">
+          <div class="col-md-8">
+            <input
+              type="text"
+              class="form-control path"
+              placeholder="Campaign name"
+              oninput="updateSingleLink(this)"
+              onfocus="showSuggestions(this)"
+            />
+            <ul class="dropdown-menu suggestions-list"></ul>
+          </div>
+          <div class="col-md-1">
+            <button
+              class="btn btn-outline-danger remove-btn"
+              onclick="removePathField(this)"
+            >
+              <i class="bi bi-dash-circle"></i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button
+              class="btn btn-outline-warning clear-btn"
+              onclick="clearPathField(this)"
+            >
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
+          <div class="col-12 d-flex align-items-center">
+            <a
+              class="result-link me-2 text-decoration-none text-primary"
+              href="#"
+              target="_blank"
+              >Generated link will appear here</a
+            >
+            <button
+              class="btn btn-outline-secondary copy-btn"
+              onclick="copyLink(this)"
+            >
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <span class="copy-message">Copied!</span>
+          </div>
         </div>
+      </div>
 
-        <!-- Path fields container -->
-        <div id="pathFields" class="mb-4 position-relative">
-            <div class="row g-2 align-items-center mb-3">
-                <div class="col-md-8">
-                    <input type="text" class="form-control path" placeholder="Campaign name" oninput="updateSingleLink(this)" onfocus="showSuggestions(this)">
-                    <ul class="dropdown-menu suggestions-list"></ul>
-                </div>
-                <div class="col-md-1">
-                    <button class="btn btn-outline-danger remove-btn" onclick="removePathField(this)">
-                        <i class="bi bi-dash-circle"></i>
-                    </button>
-                </div>
-                <div class="col-md-1">
-                    <button class="btn btn-outline-warning clear-btn" onclick="clearPathField(this)">
-                        <i class="bi bi-x-circle"></i>
-                    </button>
-                </div>
-                <div class="col-12 d-flex align-items-center">
-                    <a class="result-link me-2 text-decoration-none text-primary" href="#" target="_blank">Generated link will appear here</a>
-                    <button class="btn btn-outline-secondary copy-btn" onclick="copyLink(this)">
-                        <i class="bi bi-clipboard"></i>
-                    </button>
-                    <span class="copy-message">Copied!</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Path Button -->
-        <button class="btn btn-primary mb-3" onclick="addPathField()">
-            <i class="bi bi-plus-circle"></i> Add Path
-        </button>
+      <!-- Add Path Button -->
+      <button class="btn btn-primary mb-3" onclick="addPathField()">
+        <i class="bi bi-plus-circle"></i> Add Path
+      </button>
     </div>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // Save fields to local storage
-        function saveToLocalStorage() {
-            const baseLink = document.getElementById('baseLink').value.trim();
-            const paths = Array.from(document.querySelectorAll('.path')).map(input => input.value.trim());
+      // Save fields to local storage
+      function saveToLocalStorage() {
+        const baseLink = document.getElementById("baseLink").value.trim();
+        const paths = Array.from(document.querySelectorAll(".path")).map(
+          (input) => input.value.trim()
+        );
 
-            const data = { baseLink, paths };
-            localStorage.setItem('linkData', JSON.stringify(data));
-        }
+        const data = { baseLink, paths };
+        localStorage.setItem("linkData", JSON.stringify(data));
+      }
 
-        // Load fields from local storage
-        function loadFromLocalStorage() {
-            const savedData = JSON.parse(localStorage.getItem('linkData'));
-            if (savedData) {
-                document.getElementById('baseLink').value = savedData.baseLink;
-                updateAllLinks(); // Update base link
+      // Load fields from local storage
+      // Load fields from local storage
+      function loadFromLocalStorage() {
+    const savedData = JSON.parse(localStorage.getItem('linkData'));
+    if (savedData) {
+        document.getElementById('baseLink').value = savedData.baseLink;
+        updateAllLinks(); // Recalculate links after setting the base link
 
-                // Clear existing paths and add saved ones
-                const pathFields = document.getElementById('pathFields');
-                pathFields.innerHTML = ''; // Clear all paths
-                savedData.paths.forEach(path => {
-                    addPathField(path);
-                });
-            }
-        }
+        // Clear existing paths and add saved ones
+        const pathFields = document.getElementById('pathFields');
+        pathFields.innerHTML = ''; // Clear all paths
+        savedData.paths.forEach(path => {
+            addPathField(path);
+        });
 
-        // Add a new path input field with optional value
-        function addPathField(value = '') {
-            const container = document.createElement('div');
-            container.className = 'row g-2 align-items-center mb-3';
-            container.innerHTML = `
+        // Recalculate links after adding saved paths
+        updateAllLinks(); // Ensure all links are recalculated
+    }
+}
+
+      // Add a new path input field with optional value
+      function addPathField(value = "") {
+        const container = document.createElement("div");
+        container.className = "row g-2 align-items-center mb-3";
+        container.innerHTML = `
                 <div class="col-md-8">
                     <input type="text" class="form-control path" placeholder="Enter path" oninput="updateSingleLink(this)" onfocus="showSuggestions(this)" value="${value}">
                     <ul class="dropdown-menu suggestions-list"></ul>
@@ -169,109 +210,117 @@
                     <span class="copy-message">Copied!</span>
                 </div>
             `;
-            document.getElementById('pathFields').appendChild(container);
-        }
+        document.getElementById("pathFields").appendChild(container);
+      }
 
-        // Function to remove a path input field
-        function removePathField(button) {
-            const container = button.closest('.row');
-            container.remove();
-        }
+      // Function to remove a path input field
+      function removePathField(button) {
+        const container = button.closest(".row");
+        container.remove();
+      }
 
-        // Function to clear a path input field
-        function clearPathField(button) {
-            const inputField = button.closest('.row').querySelector('.path');
-            inputField.value = '';
-            updateSingleLink(inputField); // Update the link when cleared
-        }
+      // Function to clear a path input field
+      function clearPathField(button) {
+        const inputField = button.closest(".row").querySelector(".path");
+        inputField.value = "";
+        updateSingleLink(inputField); // Update the link when cleared
+      }
 
-        // Function to update all links dynamically
-        function updateAllLinks() {
-            const baseLink = document.getElementById('baseLink').value.trim();
-            const pathContainers = document.querySelectorAll('.path');
-            pathContainers.forEach(input => {
-                const resultLink = input.closest('.row').querySelector('.result-link');
-                updateLink(baseLink, input, resultLink);
+      // Function to update all links dynamically
+      function updateAllLinks() {
+        const baseLink = document.getElementById("baseLink").value.trim();
+        const pathContainers = document.querySelectorAll(".path");
+        pathContainers.forEach((input) => {
+          const resultLink = input
+            .closest(".row")
+            .querySelector(".result-link");
+          updateLink(baseLink, input, resultLink);
+        });
+      }
+
+      // Function to update a single link dynamically
+      function updateSingleLink(input) {
+        const baseLink = document.getElementById("baseLink").value.trim();
+        const resultLink = input.closest(".row").querySelector(".result-link");
+        updateLink(baseLink, input, resultLink);
+      }
+
+      // Helper function to combine base link and path
+      function updateLink(baseLink, pathInput, resultLink) {
+        const path = pathInput.value.trim();
+        if (baseLink && path) {
+          // Combine base link and path
+          const combinedLink = `${baseLink}/${path}`
+            .replace(/\/+/g, "/")
+            .replace(/:\/\//, "://");
+          resultLink.href = combinedLink;
+          resultLink.textContent = combinedLink;
+        } else {
+          resultLink.href = "#";
+          resultLink.textContent = "Generated link will appear here";
+        }
+      }
+
+      // Function to copy the link to the clipboard and show a temporary message
+      function copyLink(button) {
+        const resultLink = button.closest(".row").querySelector(".result-link");
+        const link = resultLink.href;
+        const message = button.closest(".row").querySelector(".copy-message");
+        if (link !== "#") {
+          navigator.clipboard
+            .writeText(link)
+            .then(() => {
+              // Show the "Copied!" message
+              message.classList.add("visible");
+              setTimeout(() => {
+                message.classList.remove("visible");
+              }, 2000); // Message disappears after 2 seconds
+            })
+            .catch((err) => {
+              console.error("Failed to copy link: ", err);
             });
+        } else {
+          alert("No valid link to copy!");
         }
+      }
 
-        // Function to update a single link dynamically
-        function updateSingleLink(input) {
-            const baseLink = document.getElementById('baseLink').value.trim();
-            const resultLink = input.closest('.row').querySelector('.result-link');
-            updateLink(baseLink, input, resultLink);
+      // Theme Toggle Function
+      function toggleTheme() {
+        const body = document.body;
+        const themeToggleButton = document.getElementById("themeToggle");
+
+        body.classList.toggle("dark-mode");
+
+        // Save theme to localStorage
+        const isDarkMode = body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+
+        // Change button text/icon
+        themeToggleButton.innerHTML = isDarkMode
+          ? '<i class="bi bi-sun"></i>'
+          : '<i class="bi bi-moon"></i>';
+      }
+
+      // Load saved theme from localStorage on page load
+      window.onload = () => {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+          document.body.classList.add("dark-mode");
+          document.getElementById("themeToggle").innerHTML =
+            '<i class="bi bi-sun"></i>';
         }
+      };
 
-        // Helper function to combine base link and path
-        function updateLink(baseLink, pathInput, resultLink) {
-            const path = pathInput.value.trim();
-            if (baseLink && path) {
-                // Combine base link and path
-                const combinedLink = `${baseLink}/${path}`.replace(/\/+/g, '/').replace(/:\/\//, '://');
-                resultLink.href = combinedLink;
-                resultLink.textContent = combinedLink;
-            } else {
-                resultLink.href = '#';
-                resultLink.textContent = 'Generated link will appear here';
-            }
-        }
+      // Attach event listener to theme toggle button
+      document
+        .getElementById("themeToggle")
+        .addEventListener("click", toggleTheme);
 
-        // Function to copy the link to the clipboard and show a temporary message
-        function copyLink(button) {
-            const resultLink = button.closest('.row').querySelector('.result-link');
-            const link = resultLink.href;
-            const message = button.closest('.row').querySelector('.copy-message');
-            if (link !== '#') {
-                navigator.clipboard.writeText(link)
-                    .then(() => {
-                        // Show the "Copied!" message
-                        message.classList.add('visible');
-                        setTimeout(() => {
-                            message.classList.remove('visible');
-                        }, 2000); // Message disappears after 2 seconds
-                    })
-                    .catch(err => {
-                        console.error('Failed to copy link: ', err);
-                    });
-            } else {
-                alert('No valid link to copy!');
-            }
-        }
+      // Save data when inputs change
+      document.addEventListener("input", saveToLocalStorage);
 
-        // Theme Toggle Function
-        function toggleTheme() {
-            const body = document.body;
-            const themeToggleButton = document.getElementById('themeToggle');
-            
-            body.classList.toggle('dark-mode');
-            
-            // Save theme to localStorage
-            const isDarkMode = body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-            
-            // Change button text/icon
-            themeToggleButton.innerHTML = isDarkMode 
-                ? '<i class="bi bi-sun"></i>' 
-                : '<i class="bi bi-moon"></i>';
-        }
-
-        // Load saved theme from localStorage on page load
-        window.onload = () => {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                document.getElementById('themeToggle').innerHTML = '<i class="bi bi-sun"></i>';
-            }
-        }
-
-        // Attach event listener to theme toggle button
-        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
-
-        // Save data when inputs change
-        document.addEventListener('input', saveToLocalStorage);
-
-        // Load data on page load
-        document.addEventListener('DOMContentLoaded', loadFromLocalStorage);
+      // Load data on page load
+      document.addEventListener("DOMContentLoaded", loadFromLocalStorage);
     </script>
-</body>
+  </body>
 </html>
