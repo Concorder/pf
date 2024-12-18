@@ -57,6 +57,10 @@
         color: #ffffff;
         border-color: #444;
       }
+      .dark-mode .form-control::placeholder {
+        color: #838383;
+      }
+
       .dark-mode .btn-outline-danger {
         border-color: #444;
         color: #ffffff;
@@ -68,6 +72,7 @@
       .dark-mode .result-link {
         color: #0096ff;
       }
+
       #themeToggle {
         position: absolute;
         top: 15px;
@@ -191,7 +196,7 @@
         container.className = "row g-2 align-items-center mb-3";
         container.innerHTML = `
                 <div class="col-md-8">
-                    <input type="text" class="form-control path" placeholder="Enter path" oninput="updateSingleLink(this)" onfocus="showSuggestions(this)" value="${value}">
+                    <input type="text" class="form-control path" placeholder="Campaign name" oninput="updateSingleLink(this)" onfocus="showSuggestions(this)" value="${value}">
                     <ul class="dropdown-menu suggestions-list"></ul>
                 </div>
                 <div class="col-md-1">
@@ -247,42 +252,45 @@
 
       // Helper function to combine base link and path
       function updateLink(baseLink, pathInput, resultLink) {
-        const path = pathInput.value.trim();
-        if (baseLink && path) {
-          // Combine base link and path
-          const combinedLink = `${baseLink}/${path}`
-            .replace(/\/+/g, "/")
-            .replace(/:\/\//, "://");
-          resultLink.href = combinedLink;
-          resultLink.textContent = combinedLink;
-        } else {
-          resultLink.href = "#";
-          resultLink.textContent = "Generated link will appear here";
-        }
-      }
+  const path = pathInput.value.trim();
+  if (baseLink && path) {
+    // Combine base link and path
+    const combinedLink = `${baseLink}/${path}`
+      .replace(/\/+/g, "/")
+      .replace(/:\/\//, "://");
+    
+    resultLink.href = combinedLink;  // Set the href to the correct generated link
+    resultLink.textContent = combinedLink;  // Set the text of the link
+  } else {
+    resultLink.href = "#";  // Fallback if no base or path
+    resultLink.textContent = "Generated link will appear here";
+  }
+}
 
       // Function to copy the link to the clipboard and show a temporary message
       function copyLink(button) {
-        const resultLink = button.closest(".row").querySelector(".result-link");
-        const link = resultLink.href;
-        const message = button.closest(".row").querySelector(".copy-message");
-        if (link !== "#") {
-          navigator.clipboard
-            .writeText(link)
-            .then(() => {
-              // Show the "Copied!" message
-              message.classList.add("visible");
-              setTimeout(() => {
-                message.classList.remove("visible");
-              }, 2000); // Message disappears after 2 seconds
-            })
-            .catch((err) => {
-              console.error("Failed to copy link: ", err);
-            });
-        } else {
-          alert("No valid link to copy!");
-        }
-      }
+  const resultLink = button.closest(".row").querySelector(".result-link");
+  const link = resultLink.textContent.trim();  // Get only the link text, not the href
+  const message = button.closest(".row").querySelector(".copy-message");
+  
+  if (link !== "Generated link will appear here" && link !== "") {
+    navigator.clipboard
+      .writeText(link)  // Copy the link text
+      .then(() => {
+        // Show the "Copied!" message
+        message.classList.add("visible");
+        setTimeout(() => {
+          message.classList.remove("visible");
+        }, 2000); // Message disappears after 2 seconds
+      })
+      .catch((err) => {
+        console.error("Failed to copy link: ", err);
+      });
+  } else {
+    alert("No valid link to copy!");
+  }
+}
+
 
       // Theme Toggle Function
       function toggleTheme() {
