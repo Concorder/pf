@@ -273,6 +273,26 @@
     .evelin {
       margin-top: -220px;
     }
+    .snitch {
+      display: none;
+      position: absolute;
+      z-index: 99;
+      opacity: 1;
+      filter: saturate(1);
+      max-width: 200px;
+      cursor: pointer;
+      transition: 2s;
+      animation: ease-in-out snitch 0.5s infinite alternate;
+    }
+
+    @keyframes snitch {
+      0% {transform: rotate(30deg)};
+      100% {transform: rotate(-30deg)};
+    }
+    .snitch.twitch {
+      top: -200px;
+      display: inline-block;
+    }
     @media (max-width: 500px) {
       h1 {
         font-size: 44px;
@@ -285,14 +305,21 @@
         font-size: 24px;
       }
       .ksu {
-      margin-top: -180px;
-    }
-    .evelin{
-      margin-top: -160px;
-    }
+        margin-top: -180px;
+      }
+      .evelin {
+        margin-top: -160px;
+      }
     }
   </style>
   <body>
+    <audio id="myAudio" autoplay>
+      <source
+        src="./sound/Harry_Potter_Theme_Song_Ost_Tik_tok_trend.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+    <img onclick="playAudio()" class="snitch twitch" src="https://img.vodonet.net/ZSthFegte6tDHKQ.png" alt="" />
     <div class="container my-4">
       <!-- Hero Banner -->
       <div class="line"></div>
@@ -382,7 +409,6 @@
                 <div class="toner ms-5"></div>
                 <h3 class="vertical yakovlieva">Ksu Bulatova</h3>
                 <video
-                 
                   class="ksu ms-5 left"
                   src="https://img.vodonet.net/LcrekRwrLF6nLI5.mp4"
                   autoplay
@@ -615,6 +641,45 @@
         </div>
       </div>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <script>
+        const audio = document.getElementById('myAudio');
+        const snitch = document.querySelector(".snitch");
+
+        let flyingInterval;
+
+        function getRandomPosition(containerWidth, containerHeight, elementWidth, elementHeight) {
+            const randomX = Math.random() * (containerWidth - elementWidth);
+            const randomY = Math.random() * (containerHeight / 10 - elementHeight); // Stay in the upper half
+            return { x: randomX, y: randomY };
+        }
+
+        function moveSnitch() {
+            const container = document.querySelector('.container');
+            const { width: containerWidth, height: containerHeight } = container.getBoundingClientRect();
+            const { width: snitchWidth, height: snitchHeight } = snitch.getBoundingClientRect();
+
+            const { x, y } = getRandomPosition(containerWidth, containerHeight, snitchWidth, snitchHeight);
+
+            snitch.style.left = `${x}px`;
+            snitch.style.top = `${y}px`;
+        }
+
+        function startFlying() {
+            flyingInterval = setInterval(moveSnitch, 1000); // Move every 1 second
+        }
+
+        function stopFlying() {
+            clearInterval(flyingInterval);
+            snitch.classList.remove("twitch");
+            audio.play();
+        }
+
+        // Start flying when the page loads
+        startFlying();
+
+        // Stop flying and play audio when the snitch is clicked
+        snitch.addEventListener('click', stopFlying);
+    </script>
     </div>
   </body>
 </html>
