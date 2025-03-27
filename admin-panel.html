@@ -176,6 +176,17 @@
                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                 ></textarea>
               </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700"
+                  >Greeting Message</label
+                >
+                <textarea
+                id="profile-greeting-input"
+                  type="text"
+                  placeholder="Enter greeting message"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                ></textarea>
+            </div>
           </div>
         </div>
       </div>
@@ -287,37 +298,42 @@
         {
           id: 1,
           name: "Coach 1",
-          description: "3k hours Fortnite, 2k hours APEX Legends coach",
-          role: "Fortnite, APEX Legends",
+          description: "Expert in MOBA Coach (e.g., League of Legends, Dota 2, Smite etc.)",
+          role: "MOBA Coach",
           avatar: "https://img.vodonet.net/gTt20tRkcKcdVwz.jpg",
+          greeting: "Hello! I'm ready to help you improve in Fortnite and APEX Legends!"
         },
         {
           id: 2,
           name: "Coach 2",
-          description: "",
-          role: "CoD, BF2042",
+          description: " Expert in FPS Coach (e.g., Counter-Strike: Global Offensive, Call of Duty, Overwatch etc.)",
+          role: "FPS Coach",
           avatar: DEFAULT_AVATAR,
+          greeting: ""
         },
         {
           id: 3,
           name: "Coach 3",
-          description: "Hello, I'm a FIFA coach",
-          role: "FIFA",
+          description: "Expert in Racing/Simulation Coach (e.g., Forza, Gran Turismo, iRacing etc.)",
+          role: "Racing/Simulation Coach",
           avatar: DEFAULT_AVATAR,
+          greeting: ""
         },
         {
           id: 4,
           name: "Coach 4",
-          description: "I'm a PUBG coach with 5k hours game time",
-          role: "Fortnite, PUBG",
+          description: "Expert in Battle Royale Coach (e.g., Fortnite, Apex Legends, PUBG etc.)",
+          role: "Battle Royale Coach",
           avatar: DEFAULT_AVATAR,
+          greeting: ""
         },
         {
           id: 5,
           name: "Coach 5",
-          description: "Helping players to get easy start in RPG games",
-          role: "RPG games guide",
+          description: "Expert in Sandbox/Survival Games Coach (e.g., Minecraft, Terraria, Ark: Survival Evolved etc.)",
+          role: "Sandbox/Survival Coach",
           avatar: DEFAULT_AVATAR,
+          greeting: ""
         },
       ];
 
@@ -357,6 +373,7 @@
                 document.querySelector('#profile-name-input').value = selectedBot.name;
                 document.querySelector('#profile-description-input').value = selectedBot.description;
                 document.querySelector('#profile-role-input').value = selectedBot.role;
+                document.querySelector('#profile-greeting-input').value = selectedBot.greeting;
                 hasUnsavedChanges = false;
                 renderBots();
             }
@@ -400,6 +417,7 @@
                 description: "Untitled",
                 role: "undefined",
                 avatar: DEFAULT_AVATAR,
+                greeting: ""
             };
             bots.push(newBot);
             selectedBot = newBot;
@@ -409,6 +427,7 @@
             document.querySelector('#profile-name-input').value = newBot.name;
             document.querySelector('#profile-description-input').value = newBot.description;
             document.querySelector('#profile-role-input').value = newBot.role;
+            document.querySelector('#profile-greeting-input').value = newBot.greeting;
             hasUnsavedChanges = false;
         };
 
@@ -453,6 +472,7 @@
                     document.querySelector('#profile-name-input').value = "";
                     document.querySelector('#profile-description-input').value = "";
                     document.querySelector('#profile-role-input').value = "";
+                    document.querySelector('#profile-greeting-input').value = "";
                     showModal(); // Show success message
                 } catch (error) {
                     alert("Error deleting bot");
@@ -478,6 +498,7 @@
         selectedBot.name = document.querySelector('#profile-name-input').value;
         selectedBot.description = document.querySelector('#profile-description-input').value;
         selectedBot.role = document.querySelector('#profile-role-input').value;
+        selectedBot.greeting = document.querySelector('#profile-greeting-input').value;
 
         try {
           // Mock API call
