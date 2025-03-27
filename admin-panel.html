@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot Admin Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .chatbot-list {
+        min-height: 200px;  /* Minimum height to show at least a few bots */
+        max-height: 600px;  /* Maximum height to prevent too much scrolling */
+        overflow-y: auto;
+      }
+      .bot-item {
+        transition: all 0.2s ease-in-out;
+        border-left: 4px solid transparent;
+      }
+      .bot-item.active {
+        background-color: rgb(219 234 254);
+        border-left: 4px solid rgb(59 130 246);
+      }
+      .avatar-upload {
+        position: relative;
+        width: 180px;
+        height: 180px;
+        margin-bottom: 2rem;
+        border: 2px solid #4e80ee;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .bot-item-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+      .right-panel  input:focus, .right-panel textarea:focus {
+        outline: none;
+        border-left: 4px solid blue;
+        padding-left: 4px;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div class="container max-w-[960px] mx-auto p-4">
+      <div class="flex flex-col md:flex-row gap-6 align-start">
+        <!-- Left Panel -->
+        <div class="w-full md:w-1/3 bg-white rounded-lg shadow-md p-4 h-fit">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2196f3">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            Coach List
+          </h2>
+          <div class="chatbot-list space-y-3"></div>
+          <div class="flex gap-2 mt-4 pt-4 border-t">
+            <button
+              class="bg-blue-500 text-white px-4 py-2 rounded-lg flex-1 hover:bg-blue-600"
+            >
+              Add Coach
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div
+          class="w-full md:w-2/3 bg-white rounded-lg shadow-md p-4 right-panel h-fit"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#2196f3">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Profile
+            </h2>
+            <div class="flex gap-2">
+              <button
+                onclick="saveBot()"
+                class="text-green-500 hover:text-green-700 p-2"
+                title="Save Coach Profile"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </button>
+              <button
+                onclick="deleteBot()"
+                class="text-red-500 hover:text-red-700 p-2"
+                title="Delete Coach"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="flex flex-col items-center mb-6">
+            <div class="avatar-upload" style="background-image: url('https://img.vodonet.net/FM4Ek6rlSokBakd.png')">
+              <button title="Edit image"
+                class="upload-btn bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 absolute bottom-0 right-0"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Name</label
+              >
+              <input id="profile-name-input"
+                type="text"
+                placeholder="Name"
+                class="mt-1 p-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700"
+                >Role</label
+              >
+              <input
+                id="profile-role-input"
+                type="text"
+                placeholder="Role"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+                <label  class="block text-sm font-medium text-gray-700"
+                  >Description</label
+                >
+                <textarea
+                id="profile-description-input"
+                  type="text"
+                  placeholder="Description"
+                  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                ></textarea>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div
+      id="successModal"
+      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
+        <div class="mt-3 text-center">
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100"
+          >
+            <svg
+              class="h-6 w-6 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Success!</h3>
+          <div class="mt-2 px-7 py-3">
+            <p class="text-sm text-gray-500">
+              Coach data has been saved successfully.
+            </p>
+          </div>
+          <div class="items-center px-4 py-3">
+            <button
+              id="closeModal"
+              class="px-4 py-2 bg-green-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Confirmation Modal -->
+    <div
+      id="confirmModal"
+      class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
+        <div class="mt-3 text-center">
+          <div
+            class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100"
+          >
+            <svg
+              class="h-6 w-6 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              ></path>
+            </svg>
+          </div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            Delete Confirmation
+          </h3>
+          <div class="mt-2 px-7 py-3">
+            <p id="confirmText" class="text-sm text-gray-500"></p>
+          </div>
+          <div class="items-center px-4 py-3 flex gap-4 justify-center">
+            <button
+              id="confirmDelete"
+              class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            >
+              Save
+            </button>
+            <button
+              id="discardChanges"
+              class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+            >
+              Discard
+            </button>
+            <button
+              id="cancelDelete"
+              class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const DEFAULT_AVATAR = "https://img.vodonet.net/FM4Ek6rlSokBakd.png";
+      
+      // Dummy bots data
+      const bots = [
+        {
+          id: 1,
+          name: "Coach 1",
+          description: "3k hours Fortnite, 2k hours APEX Legends coach",
+          role: "Fortnite, APEX Legends",
+          avatar: "https://img.vodonet.net/gTt20tRkcKcdVwz.jpg",
+        },
+        {
+          id: 2,
+          name: "Coach 2",
+          description: "",
+          role: "CoD, BF2042",
+          avatar: DEFAULT_AVATAR,
+        },
+        {
+          id: 3,
+          name: "Coach 3",
+          description: "Hello, I'm a FIFA coach",
+          role: "FIFA",
+          avatar: DEFAULT_AVATAR,
+        },
+        {
+          id: 4,
+          name: "Coach 4",
+          description: "I'm a PUBG coach with 5k hours game time",
+          role: "Fortnite, PUBG",
+          avatar: DEFAULT_AVATAR,
+        },
+        {
+          id: 5,
+          name: "Coach 5",
+          description: "Helping players to get easy start in RPG games",
+          role: "RPG games guide",
+          avatar: DEFAULT_AVATAR,
+        },
+      ];
+
+      let selectedBot = null;
+      let hasUnsavedChanges = false;
+      let pendingAction = null;
+
+      // Render bot list
+      function renderBots() {
+        const botList = document.querySelector(".chatbot-list");
+        botList.innerHTML = bots
+          .map(
+            (bot) => `
+                <div class="bot-item flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer ${
+                  selectedBot?.id === bot.id ? "active" : ""
+                }"
+                     onclick="selectBot(${bot.id})">
+                    <div class="bot-item-avatar" style="background-image: url('${bot.avatar}')"></div>
+                    <div class="ml-3">
+                        <h3 class="font-medium">${bot.name}</h3>
+                        <p class="text-sm text-gray-500">${bot.role}</p>
+                    </div>
+                </div>
+            `
+          )
+          .join("");
+      }
+
+      // Select bot and populate edit form
+      function selectBot(id) {
+        if (selectedBot?.id === id) return;
+        
+        const selectNewBot = () => {
+            selectedBot = bots.find((bot) => bot.id === id);
+            if (selectedBot) {
+                document.querySelector(".avatar-upload").style.backgroundImage = `url('${selectedBot.avatar}')`;
+                document.querySelector('#profile-name-input').value = selectedBot.name;
+                document.querySelector('#profile-description-input').value = selectedBot.description;
+                document.querySelector('#profile-role-input').value = selectedBot.role;
+                hasUnsavedChanges = false;
+                renderBots();
+            }
+        };
+
+        if (selectedBot) {
+            checkUnsavedChanges(selectNewBot);
+        } else {
+            selectNewBot();
+        }
+      }
+
+      // Handle file upload
+      function handleFileUpload() {
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.onchange = (e) => {
+          const file = e.target.files[0];
+          if (file && selectedBot) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              selectedBot.avatar = e.target.result;
+              document.querySelector(".avatar-upload").style.backgroundImage = `url('${e.target.result}')`;
+              hasUnsavedChanges = true; // Mark changes when avatar is updated
+              renderBots();
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+        input.click();
+      }
+
+      // Add new bot
+      function addBot() {
+        const createNewBot = () => {
+            const newId = bots.length > 0 ? Math.max(...bots.map((b) => b.id)) + 1 : 1;
+            const newBot = {
+                id: newId,
+                name: "New Coach",
+                description: "Untitled",
+                role: "undefined",
+                avatar: DEFAULT_AVATAR,
+            };
+            bots.push(newBot);
+            selectedBot = newBot;
+            renderBots();
+            // Update form fields directly
+            document.querySelector(".avatar-upload").style.backgroundImage = `url('${DEFAULT_AVATAR}')`;
+            document.querySelector('#profile-name-input').value = newBot.name;
+            document.querySelector('#profile-description-input').value = newBot.description;
+            document.querySelector('#profile-role-input').value = newBot.role;
+            hasUnsavedChanges = false;
+        };
+
+        if (selectedBot) {
+            checkUnsavedChanges(createNewBot);
+        } else {
+            createNewBot();
+        }
+      }
+
+      // Delete bot
+      function deleteBot() {
+        if (!selectedBot) return;
+        document.getElementById('confirmText').textContent = `Are you sure you want to delete ${selectedBot.name}?`;
+        document.getElementById('confirmDelete').textContent = 'Delete';
+        document.getElementById('confirmDelete').classList.remove('bg-blue-500', 'hover:bg-blue-600');
+        document.getElementById('confirmDelete').classList.add('bg-red-500', 'hover:bg-red-600');
+        document.getElementById('discardChanges').classList.add('hidden');
+        document.querySelector('#confirmModal h3').textContent = 'Delete Confirmation';
+        document.getElementById('confirmModal').classList.remove('hidden');
+      }
+
+      async function confirmDelete() {
+        if (document.getElementById('confirmDelete').textContent === 'Save') {
+            // Handle save confirmation
+            document.getElementById('confirmModal').classList.add('hidden');
+            document.getElementById('confirmDelete').textContent = 'Delete';
+            saveBot();
+        } else {
+            // Handle delete confirmation
+            const index = bots.findIndex((bot) => bot.id === selectedBot.id);
+            if (index > -1) {
+                try {
+                    // Mock API call for delete
+                    await mockSaveToServer(bots.filter(b => b.id !== selectedBot.id));
+                    bots.splice(index, 1);
+                    selectedBot = null;
+                    hasUnsavedChanges = false;
+                    renderBots();
+                    // Clear form
+                    document.querySelector(".avatar-upload").style.backgroundImage = `url('${DEFAULT_AVATAR}')`;
+                    document.querySelector('#profile-name-input').value = "";
+                    document.querySelector('#profile-description-input').value = "";
+                    document.querySelector('#profile-role-input').value = "";
+                    showModal(); // Show success message
+                } catch (error) {
+                    alert("Error deleting bot");
+                }
+            }
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+      }
+
+      // Show/hide modal
+      function showModal() {
+        document.getElementById("successModal").classList.remove("hidden");
+        setTimeout(() => {
+          document.getElementById("successModal").classList.add("hidden");
+        }, 2000);
+      }
+
+      // Save bot changes
+      async function saveBot() {
+        if (!selectedBot) return;
+
+        // Update bot data from form
+        selectedBot.name = document.querySelector('#profile-name-input').value;
+        selectedBot.description = document.querySelector('#profile-description-input').value;
+        selectedBot.role = document.querySelector('#profile-role-input').value;
+
+        try {
+          // Mock API call
+          await mockSaveToServer(bots);
+          hasUnsavedChanges = false;
+          renderBots();
+          showModal();
+          
+          // Execute pending action if exists
+          if (pendingAction) {
+              const action = pendingAction;
+              pendingAction = null;
+              action();
+          }
+        } catch (error) {
+          alert("Error saving bot data");
+        }
+      }
+
+      // Mock server interaction
+      function mockSaveToServer(data) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            console.log("Saved to server:", data);
+            resolve({ success: true });
+          }, 500);
+        });
+      }
+
+      // Check unsaved changes
+      function checkUnsavedChanges(callback) {
+        if (hasUnsavedChanges) {
+            pendingAction = callback;
+            document.getElementById('confirmText').textContent = 'You have unsaved changes. What would you like to do?';
+            document.getElementById('confirmDelete').textContent = 'Save';
+            document.getElementById('confirmDelete').classList.remove('bg-red-500', 'hover:bg-red-600');
+            document.getElementById('confirmDelete').classList.add('bg-blue-500', 'hover:bg-blue-600');
+            document.getElementById('discardChanges').classList.remove('hidden');
+            document.querySelector('#confirmModal h3').textContent = 'Unsaved Changes';
+            document.getElementById('confirmModal').classList.remove('hidden');
+        } else {
+            callback();
+        }
+      }
+
+      // Track form changes
+      function setupFormChangeTracking() {
+        // Track input fields and textarea
+        const inputs = document.querySelectorAll('.right-panel input, .right-panel textarea');
+        inputs.forEach(input => {
+            input.addEventListener('input', () => {
+                if (selectedBot) {
+                    hasUnsavedChanges = true;
+                }
+            });
+        });
+        
+        // Track avatar changes
+        document.querySelector('.upload-btn').addEventListener('click', () => {
+            if (selectedBot) {
+                hasUnsavedChanges = true;
+            }
+        });
+      }
+
+      // Add event listeners
+      document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("successModal").classList.add("hidden");
+      });
+      document
+        .getElementById("confirmDelete")
+        .addEventListener("click", confirmDelete);
+      document.getElementById("cancelDelete").addEventListener("click", () => {
+        document.getElementById("confirmModal").classList.add("hidden");
+        document.getElementById('confirmDelete').textContent = 'Delete';
+        if (pendingAction) {
+            pendingAction = null;
+            if (selectedBot) {
+                renderBots(); // Refresh selected state
+            }
+        }
+      });
+      // Add event listener for discard button
+      document.getElementById("discardChanges").addEventListener("click", () => {
+        document.getElementById('confirmModal').classList.add('hidden');
+        if (pendingAction) {
+            hasUnsavedChanges = false;
+            const action = pendingAction;
+            pendingAction = null;
+            action();
+        }
+      });
+
+      // Initialize
+      document
+        .querySelector(".upload-btn")
+        .addEventListener("click", handleFileUpload);
+      document
+        .querySelector("button.bg-blue-500")
+        .addEventListener("click", addBot);
+      renderBots();
+      setupFormChangeTracking();
+      // Auto-select first bot if exists
+      if (bots.length > 0) {
+        selectBot(bots[0].id);
+      }
+    </script>
+  </body>
+</html>
