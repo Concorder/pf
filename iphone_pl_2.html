@@ -333,8 +333,7 @@
           min-width: 180px;
           font-weight: 600;
           transition: 0.3s;
-          font-size: 3em;
-          height: 42px;
+          font-size: 1.5em;
         }
         .fp .btn-primary:hover {
           background-color: #8bca17;
@@ -356,6 +355,26 @@
           left: 0;
           top: 0;
           width: 100%;
+          /* Prepare for transitions: opacity + subtle transform */
+          transition: opacity 2s cubic-bezier(.2,.9,.2,1);
+          will-change: opacity, transform;
+          opacity: 1;
+          transform: translateY(0) scale(1);
+          /* Prevent external animation libraries from overriding these images */
+          animation: none !important;
+        }
+
+        /* Hidden state: smooth fade + slight move down */
+        .invisible {
+          opacity: 0 !important;
+          pointer-events: none;
+        }
+
+        /* Visible state used by our code */
+        .visible {
+          opacity: 1 !important;
+          transform: translateY(0) scale(1) !important;
+          pointer-events: auto;
         }
         .phone-container h4 {
           font-size: 2.1em;
@@ -409,7 +428,7 @@
           width: 100%;
           display: flex;
           justify-content: space-evenly;
-          margin-bottom: 30px;
+          margin-top: 30px;
         }
         .color-select {
           display: flex;
@@ -485,7 +504,6 @@
         }
 
         .fp .form-control {
-          font-size: 28px !important;
           line-height: 1 !important;
         }
         .fieldcontainer {
@@ -763,52 +781,67 @@ window.onload = setGradientBgHeight;
 window.onresize = setGradientBgHeight;
   </script>
   <script type="text/javascript">
-    $(document).ready(function () {
-      sessionStorage.setItem(
-        "chosenImage",
-        document.getElementById("phone-1").getAttribute("src")
-      );
-      const pickedColor = $("#pickedColor");
-      $(".color-1").click(function () {
-        $(".colors").removeClass("animated").addClass("invisible");
-        $("#phone-1").removeClass("invisible").addClass("animated");
-        pickedColor.html("Desert Titanium");
-        sessionStorage.setItem(
-          "chosenImage",
-          document.getElementById("phone-1").getAttribute("src")
-        );
-      });
+    // Vanilla JS replacement for the old jQuery handlers so the color buttons work
+    // even when jQuery isn't loaded.
+    (function () {
+      function setChosenImage(src) {
+        if (!src) return;
+        try {
+          sessionStorage.setItem('chosenImage', src);
+        } catch (e) {
+          // ignore storage errors
+        }
+      }
 
-      $(".color-2").click(function () {
-        $(".colors").removeClass("animated").addClass("invisible");
-        $("#phone-2").removeClass("invisible").addClass("animated");
-        pickedColor.html("Natural Titanium");
-        sessionStorage.setItem(
-          "chosenImage",
-          document.getElementById("phone-2").getAttribute("src")
-        );
-      });
+      window.addEventListener('load', function () {
+        var firstPhone = document.getElementById('phone-1');
+        if (firstPhone) setChosenImage(firstPhone.getAttribute('src'));
 
-      $(".color-3").click(function () {
-        $(".colors").removeClass("animated").addClass("invisible");
-        $("#phone-3").removeClass("invisible").addClass("animated");
-        pickedColor.html("White Titanium");
-        sessionStorage.setItem(
-          "chosenImage",
-          document.getElementById("phone-3").getAttribute("src")
-        );
-      });
+        var pickedColorEl = document.getElementById('pickedColor'); // may not exist
+        var phoneImgs = Array.prototype.slice.call(document.querySelectorAll('.colors'));
 
-      $(".color-4").click(function () {
-        $(".colors").removeClass("animated").addClass("invisible");
-        $("#phone-4").removeClass("invisible").addClass("animated");
-        pickedColor.html("Black Titanium");
-        sessionStorage.setItem(
-          "chosenImage",
-          document.getElementById("phone-4").getAttribute("src")
-        );
+        function hideAllPhones() {
+          phoneImgs.forEach(function (img) {
+            // remove external animation classes that may fight our transitions
+            img.classList.remove('animated', 'wow', 'fadeInLeft', 'visible');
+            img.classList.add('invisible');
+          });
+        }
+
+        function showPhone(n, label) {
+          hideAllPhones();
+          var phone = document.getElementById('phone-' + n);
+          if (!phone) return;
+          // ensure no conflicting animations
+          phone.classList.remove('invisible');
+          // Force a small animation frame so the browser registers the class change
+          requestAnimationFrame(function () {
+            phone.classList.add('visible');
+          });
+          setChosenImage(phone.getAttribute('src'));
+          if (pickedColorEl && label) pickedColorEl.innerHTML = label;
+        }
+
+        // map color class -> phone index and label
+        var mappings = [
+          { cls: 'color-1', idx: 1, label: 'Desert Titanium' },
+          { cls: 'color-2', idx: 2, label: 'Natural Titanium' },
+          { cls: 'color-3', idx: 3, label: 'White Titanium' },
+          { cls: 'color-4', idx: 4, label: 'Black Titanium' }
+        ];
+
+        mappings.forEach(function (m) {
+          var els = document.querySelectorAll('.' + m.cls);
+          els.forEach(function (el) {
+            el.addEventListener('click', function (e) {
+              // prevent following empty anchors if present
+              if (e.target && e.target.tagName === 'A') e.preventDefault();
+              showPhone(m.idx, m.label);
+            });
+          });
+        });
       });
-    });
+    })();
   </script>
 </html>
 <!-- BACKGROUND --> <!-- BACKGROUND ENDS -->
