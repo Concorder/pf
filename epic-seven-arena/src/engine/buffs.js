@@ -11,7 +11,7 @@ export const BUFFS = {
     stat: "evasion",
     amount: 70,
     icon: "stic_demonpower_keep",
-    permanent: true,
+    permanent: false,
     undispellable: true,
     manual: false,
   },

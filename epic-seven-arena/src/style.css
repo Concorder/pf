@@ -2519,3 +2519,36 @@ h3 small {
   max-width: 100%;
   flex-wrap: wrap;
 }
+
+.progression-summary,
+.ee-editor {
+  border: 1px solid #4b637c;
+  border-radius: 7px;
+  padding: 13px;
+  margin: 14px 0;
+  background: #132638;
+}
+.progression-summary {
+  display: grid;
+  gap: 7px;
+}
+.progression-summary b {
+  font-size: 12px;
+  color: #c6dfa5;
+}
+.progression-summary span {
+  font-size: 10px;
+  color: #9db1c2;
+  line-height: 1.6;
+}
+.ee-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 12px;
+  margin-bottom: 14px;
+}
+.ee-toggle input {
+  width: 17px;
+  height: 17px;
+}

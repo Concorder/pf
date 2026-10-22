@@ -1,3 +1,4 @@
+import { defaultSkillSettings } from "./progression.js";
 export const SIDES = ["left", "right"];
 export const SKILLS = ["S1", "S2", "S3"];
 export const FIELDS = {
@@ -61,36 +62,22 @@ export function presetStats(heroes, name, preset) {
   return s;
 }
 export function makeHero(heroes, name, preset = "damage") {
+  const hero = heroes[name],
+    eeEnabled = !!hero.exclusiveEquipment,
+    eeOption = hero.exclusiveEquipment?.options[0]?.index ?? 0,
+    settings = defaultSkillSettings(hero, { eeEnabled, eeOption });
   return {
     name,
-    code: heroes[name].code,
-    attribute: heroes[name].attribute,
+    code: hero.code,
+    attribute: hero.attribute,
     stats: presetStats(heroes, name, preset),
-    sourceDefaults: Object.fromEntries(
-      SKILLS.map((s) => [
-        s,
-        {
-          ...(heroes[name].skills?.[s]?.defaults || {
-            gain: s === "S1" ? 1 : 0,
-            cost: 0,
-            cd: 0,
-          }),
-        },
-      ]),
-    ),
+    skillsMaxed: true,
+    eeEnabled,
+    eeOption,
+    sourceDefaults: clone(settings),
     artifact: "",
     artifactSouls: 0,
-    skills: {
-      S1: {
-        ...(heroes[name].skills?.S1?.defaults || { gain: 1, cost: 0, cd: 0 }),
-      },
-      S2: {
-        ...(heroes[name].skills?.S2?.defaults || { gain: 0, cost: 0, cd: 0 }),
-      },
-      S3: {
-        ...(heroes[name].skills?.S3?.defaults || { gain: 0, cost: 0, cd: 0 }),
-      },
-    },
+    skills: clone(settings),
   };
 }
 

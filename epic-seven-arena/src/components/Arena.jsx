@@ -1,3 +1,4 @@
+import { equippedEE } from "../engine/progression.js";
 import SelfSkillDialog from "./SelfSkillDialog.jsx";
 import { isCermiaSelfSkill } from "../engine/mechanics.js";
 import BuffDialog from "./BuffDialog.jsx";
@@ -289,7 +290,9 @@ function Skills() {
   return (
     <div className="skill-station">
       <div className="skill-station-heading">
-        <span className="eyebrow">CHOOSE AN ACTION</span>
+        <span className="eyebrow">
+          SKILLS · MAX{equippedEE(l.heroes[u.name], u) ? " · EE EQUIPPED" : ""}
+        </span>
         <button
           id="pass"
           className="hud-text-button"
@@ -348,12 +351,26 @@ function Skills() {
                   ? "Self buff + cooldown reset + extra turn implemented"
                   : data?.passive
                     ? l.heroes[u.name].code === "c2007" && s === "S2"
-                      ? "Opening Archdemon’s Might implemented; revive and Focus pending"
+                      ? "EE opening buff: 2 turns when equipped; revive and Focus pending"
                       : "Passive — triggers not automated"
                     : data?.damageSupport === "supported"
                       ? "Base damage supported"
                       : data?.supportReason || "Source data unavailable"}
               </span>
+              <p>
+                MAX +{data?.enhancementLevel || 0} · damage +
+                {Math.round((data?.enhancementDamage || 0) * 100)}%
+                {data?.eeDamage
+                  ? ` · EE damage +${Math.round(data.eeDamage * 100)}%`
+                  : ""}
+              </p>
+              {data?.equipmentEffect && (
+                <p>
+                  EE: {data.equipmentEffect.description}
+                  <br />
+                  {data.equipmentEffect.reason}
+                </p>
+              )}
               <p>{data?.description}</p>
               <small>{data?.note}</small>
               <pre>{data?.sourceText}</pre>

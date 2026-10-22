@@ -1,3 +1,5 @@
+import { syncTeamDefaults } from "../data/cecilia.js";
+import { equippedEE } from "../engine/progression.js";
 import React, { useState, useRef } from "react";
 import { useLab } from "../context.js";
 import {
@@ -77,6 +79,85 @@ export default function HeroEditor() {
               ))}
           </select>
         </label>
+        <div className="progression-summary">
+          <b>All skills: MAX enhancements</b>
+          <span>
+            Damage bonuses, cooldown reductions and soul gains use all
+            enhancement levels. Unimplemented trigger/healing effects remain
+            marked as pending.
+          </span>
+        </div>
+        {l.heroes[draft.name].exclusiveEquipment ? (
+          <section className="ee-editor">
+            <label className="ee-toggle">
+              <input
+                id="eeEnabled"
+                type="checkbox"
+                checked={draft.eeEnabled !== false}
+                onChange={(e) => {
+                  const enabled = e.target.checked;
+                  setDraft(
+                    (d) =>
+                      syncTeamDefaults(
+                        { team: [{ ...d, eeEnabled: enabled }] },
+                        l.heroes,
+                      ).team[0],
+                  );
+                }}
+              />
+              Equip {l.heroes[draft.name].exclusiveEquipment.name}
+            </label>
+            {draft.eeEnabled !== false && (
+              <>
+                <label>
+                  EE skill effect
+                  <select
+                    id="eeOption"
+                    value={
+                      draft.eeOption ??
+                      l.heroes[draft.name].exclusiveEquipment.options[0].index
+                    }
+                    onChange={(e) => {
+                      const index = Number(e.target.value);
+                      setDraft(
+                        (d) =>
+                          syncTeamDefaults(
+                            { team: [{ ...d, eeOption: index }] },
+                            l.heroes,
+                          ).team[0],
+                      );
+                    }}
+                  >
+                    {l.heroes[draft.name].exclusiveEquipment.options.map(
+                      (o) => (
+                        <option key={o.index} value={o.index}>
+                          Option {o.index + 1} · {o.skill}
+                        </option>
+                      ),
+                    )}
+                  </select>
+                </label>
+                <p className="fine">
+                  {equippedEE(l.heroes[draft.name], draft)?.option.description}
+                </p>
+                <p className="fine">
+                  {equippedEE(l.heroes[draft.name], draft)?.option.reason}
+                </p>
+                <p className="fine">
+                  Entered stats are final combat totals, including EE stats. The
+                  EE stat is not added a second time.
+                </p>
+              </>
+            )}
+          </section>
+        ) : (
+          ["light", "dark"].includes(l.heroes[draft.name].attribute) && (
+            <p className="fine">
+              No Exclusive Equipment is available in the current source data for
+              this hero.
+            </p>
+          )
+        )}
         <div className="preset-row">
           <span>Stat preset</span>
           {[
@@ -193,10 +274,11 @@ export default function HeroEditor() {
           ))}
         </div>
         <p className="fine">
-          Soul gains and cooldowns start from CeciliaBot’s awakened, unenhanced
-          skills. You can override them here. Soulburn, passive triggers and
-          secondary effects are not automated. Base combat stats currently use
-          the bundled Fribbels cache; presets are illustrative builds.
+          Soul gains and cooldowns start from CeciliaBot’s awakened, fully
+          enhanced skills. You can override them here. Soulburn, passive
+          triggers and secondary effects are not automated. Base combat stats
+          currently use the bundled Fribbels cache; presets are illustrative
+          builds.
         </p>
         <div className="dialog-actions">
           <button

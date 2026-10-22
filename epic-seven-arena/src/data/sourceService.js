@@ -42,7 +42,13 @@ export function readCache(storage = globalThis.localStorage) {
   }
 }
 export function mergeCache(snapshot, cache) {
-  const records = { ...snapshot.heroes, ...(cache?.records || {}) };
+  const records = { ...snapshot.heroes };
+  for (const [key, h] of Object.entries(cache?.records || {}))
+    records[key] = {
+      ...records[key],
+      ...h,
+      ex_equip: h.ex_equip ?? records[key]?.ex_equip,
+    };
   for (const h of cache?.list || [])
     if (!records[h._id])
       records[h._id] = { ...h, skills: [], sourceDetailPending: true };
@@ -146,7 +152,16 @@ export async function refreshSource(
     /* Cached snapshot remains available if storage is full. */
   }
   return {
-    records: { ...records, ...live },
+    records: Object.fromEntries(
+      Object.keys({ ...records, ...live }).map((key) => [
+        key,
+        {
+          ...records[key],
+          ...live[key],
+          ex_equip: live[key]?.ex_equip ?? records[key]?.ex_equip,
+        },
+      ]),
+    ),
     list: entry.list,
     checkedAt,
     mode: failures ? "partial" : "live",

@@ -36,7 +36,7 @@ test("Cermia S2 is a targetless action: buff, soul gain, S3 reset and immediate 
   assert.equal(next.active, battle.active);
   const actor = activeUnit(next);
   assert.equal(actor.cooldowns.S3, 0);
-  assert.equal(actor.cooldowns.S2, 5);
+  assert.equal(actor.cooldowns.S2, 4);
   assert.equal(hasBuff(actor, "stic_att_up2"), true);
   assert.equal(actor.buffs.find((b) => b.id === "stic_att_up2").turns, 2);
   assert.equal(effectiveStats(actor).atk, actor.stats.atk * 1.75);
@@ -68,11 +68,11 @@ test("Cermia extra turn uses increased S3 damage then returns to normal order; S
   );
   assert.equal(done.souls.right, 5);
 });
-test("Arbiter starts with permanent undispellable Archdemon’s Might, 70% evasion and light damage bonus", () => {
+test("Arbiter starts with two-turn EE undispellable Archdemon’s Might, 70% evasion and light damage bonus", () => {
   const b = fixture(),
     arb = b.units.find((u) => u.name === "Arbiter Vildred"),
     buff = arb.buffs.find((x) => x.id === "stic_demonpower_keep");
-  assert.equal(buff.turns, null);
+  assert.equal(buff.turns, 2);
   assert.equal(effectiveStats(arb).evasion, 70);
   assert.equal(changeBuff(b, arb.id, buff.id, 2, true), b);
   const attacker = {
@@ -84,13 +84,28 @@ test("Arbiter starts with permanent undispellable Archdemon’s Might, 70% evasi
     d = { rate: 1, pow: 1 };
   assert.equal(damage(attacker, light, d, "normal"), 1496);
   assert.equal(damage(attacker, dark, d, "normal"), 935);
-  let passed = b;
-  for (let i = 0; i < 12; i++) passed = executeAttack(heroes, passed, "wait");
+  let passed = b,
+    turns = 0;
+  while (turns < 2) {
+    if (activeUnit(passed).id === arb.id) turns++;
+    passed = executeAttack(heroes, passed, "wait");
+  }
   assert.equal(
-    passed.units
-      .find((u) => u.id === arb.id)
-      .buffs.find((x) => x.id === buff.id).turns,
-    null,
+    hasBuff(
+      passed.units.find((u) => u.id === arb.id),
+      buff.id,
+    ),
+    false,
+  );
+  const teams = defaultTeams(heroes);
+  teams.right.find((u) => u?.name === "Arbiter Vildred").eeEnabled = false;
+  const unequipped = createBattle(teams, { left: 0, right: 0 }, heroes);
+  assert.equal(
+    hasBuff(
+      unequipped.units.find((u) => u.name === "Arbiter Vildred"),
+      buff.id,
+    ),
+    false,
   );
   assert.equal(
     b.log.filter((e) => e.message.includes("gains Archdemon")).length,

@@ -1,3 +1,8 @@
+import {
+  maxEnhancements,
+  normalizeEquipment,
+  defaultSkillSettings,
+} from "../engine/progression.js";
 export const API = "https://cecilia-bot-api.vercel.app/api/v1";
 export const ASSETS =
   "https://raw.githubusercontent.com/CeciliaBot/E7Assets-Temp/main/assets";
@@ -107,11 +112,13 @@ export function compactHero(h) {
       "zodiac",
       "updated_dt",
       "skills",
+      "ex_equip",
     ].map((k) => [k, h[k]]),
   );
 }
 export function normalizeSkill(hero, raw, index) {
   const s = { ...raw, ...(raw.awakened || {}) },
+    enhancement = maxEnhancements(s),
     parsed = parseMultipliers(s.multipliers),
     description = String(s.description || "").replace(/\*|\+|_/g, ""),
     common = (s.common || []).map((c) => c._id),
@@ -125,6 +132,10 @@ export function normalizeSkill(hero, raw, index) {
         : null;
   const result = {
     ...parsed,
+    enhancementLevel: enhancement.level,
+    enhancementDamage: enhancement.damage,
+    enhancements: enhancement.entries,
+    effectChanceBonus: enhancement.effectChance,
     name: s.name || `S${index + 1}`,
     description,
     buffRefs: (s.buff || []).map((b) => b._id),
@@ -135,13 +146,16 @@ export function normalizeSkill(hero, raw, index) {
     iconFile: `${s.icon || raw.icon || `sk_${hero.id}_${s.skill || raw.skill || index + 1}`}.png`,
     iconUrl: `${ASSETS}/skill/${encodeURIComponent(s.icon || raw.icon || `sk_${hero.id}_${s.skill || raw.skill || index + 1}`)}.png`,
     defaults: {
-      gain: Number(s.soul_gain ?? raw.soul_gain ?? 0),
-      cd: Number(s.cooldown ?? raw.cooldown ?? 0),
+      gain: Number(s.soul_gain ?? raw.soul_gain ?? 0) + enhancement.soulGain,
+      cd: Math.max(
+        0,
+        Number(s.cooldown ?? raw.cooldown ?? 0) + enhancement.cooldown,
+      ),
       cost: 0,
     },
     targets: targets || 1,
     hitTypes: ["crit", "crushing", "normal", "miss"],
-    note: "Normal cast, awakened skill, +0 enhancements; only explicitly implemented buffs are automated; other secondary effects are not.",
+    note: "Normal cast, awakened skill, MAX enhancements; only explicitly implemented buffs are automated; other secondary effects are not.",
   };
   if (passive) {
     result.damageSupport = "passive";
@@ -208,6 +222,7 @@ export function createCatalog(baseline, records) {
       rarity: h.rarity,
       zodiac: h.zodiac,
       source: "CeciliaBot",
+      exclusiveEquipment: normalizeEquipment(h),
       sourceDetailPending: !!h.sourceDetailPending,
       skills: Object.fromEntries(
         h.skills
@@ -228,9 +243,14 @@ export function syncTeamDefaults(teams, heroes) {
         S2: { gain: 0, cost: 0, cd: 0 },
         S3: { gain: 0, cost: 0, cd: 0 },
       };
+      const hero = heroes[h.name];
+      h.eeEnabled ??= !!hero.exclusiveEquipment;
+      h.eeOption ??= hero.exclusiveEquipment?.options[0]?.index ?? 0;
+      h.skillsMaxed = true;
+      const resolvedDefaults = defaultSkillSettings(hero, h);
       h.sourceDefaults = {};
       for (const skill of ["S1", "S2", "S3"]) {
-        const defaults = heroes[h.name]?.skills?.[skill]?.defaults;
+        const defaults = resolvedDefaults[skill];
         if (!defaults) continue;
         h.sourceDefaults[skill] = { ...defaults };
         for (const k of ["gain", "cost", "cd"])

@@ -77,7 +77,7 @@ test("engine blocks passives and unparsed formulas and uses imported soul gains"
   assert.equal(canUse(catalog, battle, actor, "S2"), false);
   const next = executeAttack(catalog, battle, "S3", "right-0", "normal");
   assert.equal(next.souls.left, 2);
-  assert.equal(next.units.find((u) => u.id === actor.id).cooldowns.S3, 6);
+  assert.equal(next.units.find((u) => u.id === actor.id).cooldowns.S3, 5);
   assert.equal(battle.souls.left, 0);
 });
 test("refresh validates responses, caches selected details and discovers new heroes", async () => {

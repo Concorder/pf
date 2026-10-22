@@ -1,3 +1,4 @@
+import { equippedSkill, equippedEE } from "./progression.js";
 import { isCermiaSelfSkill } from "./mechanics.js";
 import {
   effectiveStats,
@@ -9,7 +10,7 @@ import {
 import { SIDES, SKILLS, clone, roster, teamName } from "./heroes.js";
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
-export const skillData = (heroes, u, s) => heroes[u.name].skills?.[s];
+export const skillData = (heroes, u, s) => equippedSkill(heroes[u.name], u, s);
 export function canUse(heroes, battle, u, s) {
   if (!u || !battle || battle.winner) return false;
   if (s === "wait") return true;
@@ -105,18 +106,18 @@ export function createBattle(teams, souls, heroes = {}) {
     "Starting souls include each hero’s configured artifact contribution. Only explicitly implemented passives and skill effects are automated.",
   );
   for (const u of units)
-    if (u.code === "c2007") {
+    if (u.code === "c2007" && equippedEE(heroes[u.name], u)?.option.opening) {
       grantBuff(
         battle,
         u,
         "stic_demonpower_keep",
-        null,
-        "Dark Contract · battle start",
+        2,
+        "Archdemon’s Eye EE · battle start",
       );
       log(
         battle,
         `${u.name} gains Archdemon’s Might at battle start.`,
-        "Dark Contract · permanent / undispellable",
+        "Exclusive Equipment · 2 turns / undispellable",
       );
     }
   nextTurn(battle);
@@ -156,7 +157,12 @@ export function damage(attacker, defender, d, hit) {
   return Math.max(
     0,
     Math.floor(
-      ((attack + scaling) * 1.871 * d.pow * hitMultiplier * lightBonus) /
+      ((attack + scaling) *
+        1.871 *
+        d.pow *
+        hitMultiplier *
+        lightBonus *
+        (1 + (d.enhancementDamage || 0) + (d.eeDamage || 0))) /
         (1 + (t.def * (1 - penetration)) / 300),
     ),
   );

@@ -43,7 +43,7 @@ The app loads a bundled snapshot of all 388 API heroes and 1,113 skill icons, th
 
 The API stores multipliers as text. The adapter supports explicit numeric ATK rate / POW, simple HP/DEF/Speed scaling, labelled normal-cast vs soulburn coefficients, and explicit unconditional defense penetration. It never executes source expressions. Unknown lines, conditional variants, missing scaling or target counts disable damage calculations rather than silently dropping terms. Passive skills remain visible with a passive marker; only the explicitly listed opening passive below is implemented. The Skill data & support disclosure explains each skill’s status and shows its source text.
 
-Defaults use awakened skills with **+0 enhancements**. API cooldowns and soul gains replace old placeholder defaults, while custom settings are preserved. Soulburn is not implemented. Icons try the live asset repository first, then bundled copies, then vector placeholders.
+Defaults use awakened skills with **maximum enhancements** (damage bonuses, cooldown reductions and soul gains). API cooldowns and soul gains replace old placeholder defaults, while custom settings are preserved. Soulburn is not implemented. Icons try the live asset repository first, then bundled copies, then vector placeholders.
 
 Base combat stats remain supplied by the bundled Fribbels cache: CeciliaBot’s raw stat attributes are not ready-to-use max-level combat totals. Newly discovered heroes without these totals require manual stats or illustrative presets. Damage scaling support does not implement buffs, triggers or other effects described by the skill.
 
@@ -81,7 +81,9 @@ Reviewed automatic grants currently cover **Ras S3: Defense Up on living allies 
 
 Cermia’s awakened **S2 Hot Streak!** is an implemented self-cast action. Click S2 and confirm without selecting an enemy or a hit outcome. It grants Greater Attack for 2 turns, resets All-In! (S3), gains configured souls, and immediately gives Cermia an extra turn without advancing the battle clock. Other heroes retain their CR and pending turns. Normal scheduling resumes after that turn; a sufficiently fast Cermia can naturally act again before slower heroes. New buffs retain both turns for the extra turn, then count down after her actions. S2 uses its imported cooldown. Cancel does nothing; Undo restores the entire action, including buff, souls, cooldowns and extra turn.
 
-Arbiter Vildred starts with permanent, undispellable **Archdemon’s Might**. The source buff defines +70% Evasion; S2 multiplier notes specify +60% damage against Light targets. Damage previews apply the Light-target bonus. Hit outcomes remain manual: targeting him displays the evasion value but never silently changes a chosen Normal/Critical outcome to Miss. The badge displays ∞ and cannot be removed by manual buff controls. The API’s passive prose omits the opening grant even though its hero buff list and multiplier text reference it, so this is an explicit reviewed rule. Revival, Focus generation/consumption and the full-Focus S3 variant are not implemented.
+Moonlight heroes equip their source-provided Exclusive Equipment by default. Choose one effect in the hero editor when multiple options exist. Simple damage bonuses and cooldown reductions are applied; additional mechanics are explicitly marked pending. Enter final stats including EE stats to avoid double counting.
+
+Arbiter Vildred’s Archdemon’s Eye EE grants undispellable **Archdemon’s Might for 2 bearer turns** at battle start. It grants +70% Evasion and +60% damage against Light targets. Hit outcomes remain manual. Revival, Focus and the EE revival trigger remain pending.
 
 The snowy courtyard is shown when battle starts. Its CSS image URL is resolved absolutely against the page URL, preventing built stylesheets from requesting the incorrect `build-assets/assets/…` path. Setup uses a neutral background; resetting returns to setup.
 
