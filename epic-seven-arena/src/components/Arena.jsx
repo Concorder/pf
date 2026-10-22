@@ -1,3 +1,4 @@
+import ElementIcon from "./ElementIcon.jsx";
 import { equippedEE } from "../engine/progression.js";
 import SelfSkillDialog from "./SelfSkillDialog.jsx";
 import { isCermiaSelfSkill } from "../engine/mechanics.js";
@@ -94,7 +95,7 @@ function HeroUnit({ side, slot }) {
                 </span>
               ))}
             </div>
-            <span className="unit-level">60</span>
+            <ElementIcon element={l.heroes[h.name].attribute} className="unit-element" />
             <div className="unit-bars">
               <div className="health">
                 <span
@@ -200,7 +201,7 @@ function ActiveHero() {
           className="active-portrait"
           name={u.name}
         />
-        <span className="portrait-level">60</span>
+        <ElementIcon element={l.heroes[u.name].attribute} className="portrait-element" />
       </div>
       <div className="active-info">
         <span id="activeSide" className="eyebrow">

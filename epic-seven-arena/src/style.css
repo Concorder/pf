@@ -477,20 +477,18 @@ p {
   position: relative;
   z-index: 2;
 }
-.unit-level {
-  font-size: 8px;
-  font-weight: 700;
-  background: #47652a;
-  border: 1px solid #d0e8a1;
-  color: #efffd5;
-  border-radius: 2px;
-  line-height: 13px;
-  text-shadow: 0 1px 2px #000;
+.element-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: #101b29;
+  box-shadow: 0 1px 4px #0008;
 }
-.enemy .unit-level {
-  background: #795037;
-  border-color: #ecc99d;
-}
+.element-icon svg { width: 82%; height: 82%; }
+.unit-element { width: 100%; aspect-ratio: 1; }
 .unit-bars {
   min-width: 0;
 }
@@ -744,17 +742,12 @@ p {
     0 8px 15px #0004;
   background: #152c3e;
 }
-.portrait-level {
+.portrait-element {
   position: absolute;
   bottom: 0;
   right: -3px;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 2px 4px;
-  background: #a9bf7a;
-  color: #132416;
-  border: 1px solid #d4e1b4;
-  border-radius: 3px;
+  width: 24px;
+  height: 24px;
 }
 .active-info {
   flex: 1;
@@ -1472,10 +1465,6 @@ h3 small {
     grid-template-columns: 15px 1fr;
     gap: 3px;
   }
-  .unit-level {
-    font-size: 7px;
-    line-height: 10px;
-  }
   .health {
     height: 5px;
   }
@@ -1666,10 +1655,6 @@ h3 small {
     grid-template-columns: 13px 1fr;
     gap: 3px;
   }
-  .unit-level {
-    font-size: 6px;
-    line-height: 9px;
-  }
   .health {
     height: 5px;
   }
@@ -1778,8 +1763,9 @@ h3 small {
   .active-health {
     height: 5px;
   }
-  .portrait-level {
-    font-size: 7px;
+  .portrait-element {
+    width: 19px;
+    height: 19px;
   }
   .soul-station {
     padding-left: 9px;
