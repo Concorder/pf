@@ -1,5 +1,20 @@
 import { clone } from "./heroes.js";
+export const hasBuff = (unit, id) =>
+  (unit.buffs || []).some(
+    (b) => b.id === id && (b.turns === null || b.turns > 0),
+  );
 export const BUFFS = {
+  stic_demonpower_keep: {
+    name: "Archdemon’s Might",
+    description:
+      "Undispellable: Evasion +70%; damage against Light +60%. Hit outcomes remain manual.",
+    stat: "evasion",
+    amount: 70,
+    icon: "stic_demonpower_keep",
+    permanent: true,
+    undispellable: true,
+    manual: false,
+  },
   stic_att_up: {
     name: "Attack Up",
     description: "Attack +50%",
@@ -47,9 +62,9 @@ export const BUFFS = {
   },
 };
 export function effectiveStats(unit) {
-  const s = { ...unit.stats };
+  const s = { ...unit.stats, evasion: unit.stats.evasion || 0 };
   for (const [id, def] of Object.entries(BUFFS)) {
-    if (!(unit.buffs || []).some((b) => b.id === id && b.turns > 0)) continue;
+    if (!hasBuff(unit, id)) continue;
     if (
       def.family &&
       (unit.buffs || []).some(
@@ -60,10 +75,11 @@ export function effectiveStats(unit) {
       )
     )
       continue;
-    s[def.stat] = ["chc", "chd"].includes(def.stat)
+    s[def.stat] = ["chc", "chd", "evasion"].includes(def.stat)
       ? s[def.stat] + def.amount
       : s[def.stat] * (1 + def.amount);
   }
+  s.evasion = Math.min(100, s.evasion);
   s.chc = Math.min(100, s.chc);
   s.chd = Math.min(350, s.chd);
   return s;
@@ -94,9 +110,9 @@ export function grantBuff(battle, unit, id, turns, source = "manual") {
   }
   const existing = unit.buffs.find((b) => b.id === id);
   if (existing) {
-    existing.turns = Math.max(existing.turns, turns);
+    existing.turns = def.permanent ? null : Math.max(existing.turns, turns);
     existing.source = source;
-  } else unit.buffs.push({ id, turns, source });
+  } else unit.buffs.push({ id, turns: def.permanent ? null : turns, source });
   preserveReadiness(battle, unit, oldSpeed);
   return true;
 }
@@ -104,6 +120,7 @@ export function expireBuffs(battle, unit) {
   const speed = effectiveStats(unit).spd,
     expired = [];
   unit.buffs = (unit.buffs || []).filter((b) => {
+    if (b.turns === null) return true;
     b.turns--;
     if (b.turns <= 0) {
       expired.push(BUFFS[b.id]?.name || b.id);
@@ -119,6 +136,7 @@ export function changeBuff(previous, targetId, id, turns = 2, remove = false) {
     !previous ||
     previous.winner ||
     !BUFFS[id] ||
+    BUFFS[id].manual === false ||
     !Number.isInteger(turns) ||
     turns < 1 ||
     turns > 10

@@ -1,3 +1,5 @@
+import SelfSkillDialog from "./SelfSkillDialog.jsx";
+import { isCermiaSelfSkill } from "../engine/mechanics.js";
 import BuffDialog from "./BuffDialog.jsx";
 import { BUFFS, effectiveStats } from "../engine/buffs.js";
 import React, { useEffect, useRef, useState } from "react";
@@ -81,13 +83,13 @@ function HeroUnit({ side, slot }) {
                 <span
                   key={b.id}
                   className="buff-badge"
-                  title={`${BUFFS[b.id]?.name} · ${b.turns} turns · ${BUFFS[b.id]?.description}`}
+                  title={`${BUFFS[b.id]?.name} · ${b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}`}
                 >
                   <img
                     src={asset(`data/buff-icons/${b.id}.png`)}
                     alt={BUFFS[b.id]?.name}
                   />
-                  <b>{b.turns}</b>
+                  <b>{b.turns ?? "∞"}</b>
                 </span>
               ))}
             </div>
@@ -310,7 +312,7 @@ function Skills() {
               disabled={!canUse(l.heroes, l.battle, l.active, s)}
               title={
                 data?.source
-                  ? `${data.name} · ${data.passive ? "Passive" : data.damageSupport === "supported" ? "Damage supported" : data.supportReason}\n${data.description}\n${data.sourceText}`
+                  ? `${data.name} · ${isCermiaSelfSkill(l.heroes, u, s) ? "Self buff, S3 reset and extra turn" : data.passive ? "Passive" : data.damageSupport === "supported" ? "Damage supported" : data.supportReason}\n${data.description}\n${data.sourceText}`
                   : data?.rate
                     ? `${data.targets || 1} target(s) · ATK rate ${data.rate} · POW ${data.pow} · +${u.skills[s].gain} souls · cost ${u.skills[s].cost}${data.note ? " · " + data.note : ""}`
                     : "Passive or unsupported action"
@@ -322,7 +324,8 @@ function Skills() {
                 {s}
                 {data?.passive
                   ? " · P"
-                  : data?.damageSupport === "unsupported"
+                  : data?.damageSupport === "unsupported" &&
+                      !isCermiaSelfSkill(l.heroes, u, s)
                     ? " · !"
                     : ""}
               </span>
@@ -341,11 +344,15 @@ function Skills() {
                 {s} · {data?.name || "Unknown skill"}
               </b>
               <span>
-                {data?.passive
-                  ? "Passive — triggers not automated"
-                  : data?.damageSupport === "supported"
-                    ? "Base damage supported"
-                    : data?.supportReason || "Source data unavailable"}
+                {isCermiaSelfSkill(l.heroes, u, s)
+                  ? "Self buff + cooldown reset + extra turn implemented"
+                  : data?.passive
+                    ? l.heroes[u.name].code === "c2007" && s === "S2"
+                      ? "Opening Archdemon’s Might implemented; revive and Focus pending"
+                      : "Passive — triggers not automated"
+                    : data?.damageSupport === "supported"
+                      ? "Base damage supported"
+                      : data?.supportReason || "Source data unavailable"}
               </span>
               <p>{data?.description}</p>
               <small>{data?.note}</small>
@@ -359,9 +366,11 @@ function Skills() {
           ? l.battle?.winner
             ? "Reset to try another matchup"
             : "Start the battle to use skills"
-          : d && settings
-            ? `${l.selectedSkill} · click an enemy · ${d.targets || 1} target${d.targets > 1 ? "s" : ""} · +${settings.gain} souls`
-            : "Select a skill, then click an enemy"}
+          : isCermiaSelfSkill(l.heroes, u, l.selectedSkill)
+            ? `S2 · self buff · +${settings?.gain || 0} souls · extra turn`
+            : d && settings
+              ? `${l.selectedSkill} · click an enemy · ${d.targets || 1} target${d.targets > 1 ? "s" : ""} · +${settings.gain} souls`
+              : "Select a skill, then click an enemy"}
       </div>
     </div>
   );
@@ -443,7 +452,8 @@ export default function Arena() {
         <ActiveHero />
         <Skills />
       </div>
-      {l.pending && <HitDialog />}
+      {l.pending &&
+        (l.pending.kind === "self" ? <SelfSkillDialog /> : <HitDialog />)}
       {l.buffTarget && <BuffDialog />}
       <section
         id="battleControls"

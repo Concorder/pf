@@ -1,4 +1,11 @@
-import { effectiveStats, expireBuffs, applySkillBuffs } from "./buffs.js";
+import { isCermiaSelfSkill } from "./mechanics.js";
+import {
+  effectiveStats,
+  expireBuffs,
+  applySkillBuffs,
+  grantBuff,
+  hasBuff,
+} from "./buffs.js";
 import { SIDES, SKILLS, clone, roster, teamName } from "./heroes.js";
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
@@ -10,11 +17,12 @@ export function canUse(heroes, battle, u, s) {
   return (
     !!d &&
     !d.passive &&
-    (!d.damageSupport || d.damageSupport === "supported") &&
-    Number.isFinite(d.rate) &&
-    d.rate > 0 &&
-    Number.isFinite(d.pow) &&
-    d.pow > 0 &&
+    (isCermiaSelfSkill(heroes, u, s) ||
+      ((!d.damageSupport || d.damageSupport === "supported") &&
+        Number.isFinite(d.rate) &&
+        d.rate > 0 &&
+        Number.isFinite(d.pow) &&
+        d.pow > 0)) &&
     !u.cooldowns[s] &&
     battle.souls[u.side] >= u.skills[s].cost
   );
@@ -34,7 +42,7 @@ export function readiness(unit, battle, units) {
 function log(battle, message, details = "") {
   battle.log.unshift({ message, details, turn: battle.turn });
 }
-function nextTurn(battle) {
+function nextTurn(battle, forcedId = null) {
   const live = battle.units.filter((u) => u.currentHp > 0),
     lost = SIDES.find((s) => !live.some((u) => u.side === s));
   if (lost) {
@@ -47,12 +55,14 @@ function nextTurn(battle) {
     );
     return;
   }
-  const next = [...live].sort(
-    (a, b) =>
-      a.readyAt - b.readyAt ||
-      effectiveStats(b).spd - effectiveStats(a).spd ||
-      a.id.localeCompare(b.id),
-  )[0];
+  const next =
+    live.find((u) => u.id === forcedId) ||
+    [...live].sort(
+      (a, b) =>
+        a.readyAt - b.readyAt ||
+        effectiveStats(b).spd - effectiveStats(a).spd ||
+        a.id.localeCompare(b.id),
+    )[0];
   battle.active = next.id;
   battle.time = next.readyAt;
   battle.turn++;
@@ -61,12 +71,14 @@ function nextTurn(battle) {
 }
 export const clampSouls = (value) =>
   Math.min(99, Math.max(0, Math.floor(Number(value) || 0)));
-export function createBattle(teams, souls) {
+export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
     u.readyAt = 10000 / u.stats.spd;
     u.cooldowns = { S1: 0, S2: 0, S3: 0 };
     u.buffs = [];
+    u.code = heroes[u.name]?.code || u.code;
+    u.attribute = heroes[u.name]?.attribute || u.attribute;
   }
   const battle = {
     units,
@@ -90,8 +102,23 @@ export function createBattle(teams, souls) {
   log(
     battle,
     "The battle begins.",
-    "Starting souls include each hero’s configured artifact contribution. No automatic passive or artifact effects.",
+    "Starting souls include each hero’s configured artifact contribution. Only explicitly implemented passives and skill effects are automated.",
   );
+  for (const u of units)
+    if (u.code === "c2007") {
+      grantBuff(
+        battle,
+        u,
+        "stic_demonpower_keep",
+        null,
+        "Dark Contract · battle start",
+      );
+      log(
+        battle,
+        `${u.name} gains Archdemon’s Might at battle start.`,
+        "Dark Contract · permanent / undispellable",
+      );
+    }
   nextTurn(battle);
   return battle;
 }
@@ -114,6 +141,10 @@ export function damage(attacker, defender, d, hit) {
     a.def * (d.selfDefScaling || 0) +
     t.hp * (d.targetHpScaling || 0);
   const penetration = Math.max(0, Math.min(1, d.penetration || 0));
+  const lightBonus =
+    hasBuff(attacker, "stic_demonpower_keep") && defender.attribute === "light"
+      ? 1.6
+      : 1;
   const hitMultiplier =
     hit === "crit"
       ? a.chd / 100
@@ -125,7 +156,7 @@ export function damage(attacker, defender, d, hit) {
   return Math.max(
     0,
     Math.floor(
-      ((attack + scaling) * 1.871 * d.pow * hitMultiplier) /
+      ((attack + scaling) * 1.871 * d.pow * hitMultiplier * lightBonus) /
         (1 + (t.def * (1 - penetration)) / 300),
     ),
   );
@@ -149,11 +180,13 @@ export function executeAttack(
 ) {
   const actor = activeUnit(previous);
   if (!canUse(heroes, previous, actor, skill)) return previous;
+  const selfSkill = isCermiaSelfSkill(heroes, actor, skill);
   const originalTarget = previous.units.find(
     (t) => t.id === targetId && t.currentHp > 0 && t.side !== actor.side,
   );
   if (
     skill !== "wait" &&
+    !selfSkill &&
     (!originalTarget ||
       !(
         skillData(heroes, actor, skill).hitTypes?.includes(hit) ??
@@ -165,7 +198,17 @@ export function executeAttack(
     u = activeUnit(battle);
   if (skill === "wait")
     log(battle, `${u.name} passes.`, `${teamName(u.side)} · no souls gained`);
-  else {
+  else if (selfSkill) {
+    battle.souls[u.side] = clampSouls(
+      battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
+    );
+    u.cooldowns[skill] = u.skills[skill].cd + 1;
+    log(
+      battle,
+      `${u.name} uses Hot Streak!: Greater Attack, S3 cooldown reset and extra turn.`,
+      `${teamName(u.side)} · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls`,
+    );
+  } else {
     const d = skillData(heroes, u, skill),
       target = battle.units.find((t) => t.id === targetId),
       targets = affectedTargets(battle, u, target, d),
@@ -197,7 +240,14 @@ export function executeAttack(
       skill,
       skillData(heroes, u, skill),
     );
-  u.readyAt = battle.time + 10000 / effectiveStats(u).spd;
-  nextTurn(battle);
+  if (selfSkill) {
+    grantBuff(battle, u, "stic_att_up2", 2, "Hot Streak!");
+    u.cooldowns.S3 = 0;
+    u.readyAt = battle.time;
+    nextTurn(battle, u.id);
+  } else {
+    u.readyAt = battle.time + 10000 / effectiveStats(u).spd;
+    nextTurn(battle);
+  }
   return battle;
 }

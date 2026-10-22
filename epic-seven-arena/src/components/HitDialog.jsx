@@ -50,6 +50,12 @@ export default function HitDialog() {
           ? `This skill hits ${targets.length} enemies: ${targets.map((t) => t.name).join(", ")}. The chosen outcome applies to all targets.`
           : "Single-target attack"}
       </p>
+      {effectiveStats(target).evasion > 0 && (
+        <p className="fine">
+          Target has {effectiveStats(target).evasion}% Evasion. Hit outcomes are
+          chosen manually; no automatic evasion roll is made.
+        </p>
+      )}
       <div id="hitOptions" className="hit-options">
         {[
           ["crit", "Critical", "✦", `${effectiveStats(u).chd}% crit damage`],

@@ -63,6 +63,8 @@ export function presetStats(heroes, name, preset) {
 export function makeHero(heroes, name, preset = "damage") {
   return {
     name,
+    code: heroes[name].code,
+    attribute: heroes[name].attribute,
     stats: presetStats(heroes, name, preset),
     sourceDefaults: Object.fromEntries(
       SKILLS.map((s) => [

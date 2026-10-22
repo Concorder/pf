@@ -66,21 +66,23 @@ export default function BuffDialog() {
         />
       </label>
       <div className="buff-options">
-        {Object.entries(BUFFS).map(([id, b]) => (
-          <button
-            key={id}
-            className="buff-option"
-            aria-label={`Apply ${b.name}`}
-            disabled={!Number.isInteger(turns) || turns < 1 || turns > 10}
-            onClick={() => l.editBuff(unit.id, id, turns, false)}
-          >
-            <img src={asset(`data/buff-icons/${id}.png`)} alt="" />
-            <span>
-              <b>{b.name}</b>
-              <small>{b.description}</small>
-            </span>
-          </button>
-        ))}
+        {Object.entries(BUFFS)
+          .filter(([, b]) => b.manual !== false)
+          .map(([id, b]) => (
+            <button
+              key={id}
+              className="buff-option"
+              aria-label={`Apply ${b.name}`}
+              disabled={!Number.isInteger(turns) || turns < 1 || turns > 10}
+              onClick={() => l.editBuff(unit.id, id, turns, false)}
+            >
+              <img src={asset(`data/buff-icons/${id}.png`)} alt="" />
+              <span>
+                <b>{b.name}</b>
+                <small>{b.description}</small>
+              </span>
+            </button>
+          ))}
       </div>
       <h3>Active buffs</h3>
       <div className="active-buffs">
@@ -88,13 +90,15 @@ export default function BuffDialog() {
           unit.buffs.map((b) => (
             <div key={b.id}>
               <span>
-                {BUFFS[b.id]?.name} · {b.turns} turns
+                {BUFFS[b.id]?.name} ·{" "}
+                {b.turns === null ? "permanent" : `${b.turns} turns`}
               </span>
               <button
+                disabled={BUFFS[b.id]?.undispellable}
                 aria-label={`Remove ${BUFFS[b.id]?.name}`}
                 onClick={() => l.editBuff(unit.id, b.id, 2, true)}
               >
-                Remove
+                {BUFFS[b.id]?.undispellable ? "Undispellable" : "Remove"}
               </button>
             </div>
           ))

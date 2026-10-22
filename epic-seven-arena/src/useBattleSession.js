@@ -6,7 +6,7 @@ export default function useBattleSession(heroes) {
   return {
     ...session,
     start: (teams, souls) =>
-      setSession({ battle: createBattle(teams, souls), history: [] }),
+      setSession({ battle: createBattle(teams, souls, heroes), history: [] }),
     reset: () => setSession({ battle: null, history: [] }),
     undo: () =>
       setSession((s) =>

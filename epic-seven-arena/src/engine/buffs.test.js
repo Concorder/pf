@@ -77,7 +77,10 @@ test("Ras S3 grants 2-turn Defense to living allies after damage, no immediate s
       [["stic_def_up", 2]],
     );
   for (const u of next.units.filter((u) => u.side === "right"))
-    assert.equal(u.buffs.length, 0);
+    assert.equal(
+      u.buffs.filter((b) => b.id !== "stic_demonpower_keep").length,
+      0,
+    );
   assert.equal(b.units[2].buffs.length, 0);
 });
 test("Mercedes S3 grants Attack; rules do not guess grants from changed source descriptions", () => {
@@ -94,7 +97,7 @@ test("Mercedes S3 grants Attack; rules do not guess grants from changed source d
   changed.Mercedes.skills.S3.description = "No buff is granted.";
   assert.ok(
     executeAttack(changed, b, "S3", "right-0", "normal").units.every(
-      (u) => !u.buffs.length,
+      (u) => !u.buffs.some((b) => b.id !== "stic_demonpower_keep"),
     ),
   );
 });
@@ -112,5 +115,8 @@ test("critical buff stats are capped and invalid edits do nothing", () => {
   assert.equal(changeBuff(b, "missing", "stic_att_up", 2), b);
   assert.equal(changeBuff(b, "left-2", "not-a-buff", 2), b);
   assert.equal(changeBuff(b, "left-2", "stic_att_up", 0), b);
-  assert.equal(Object.keys(BUFFS).length, 6);
+  assert.equal(
+    Object.values(BUFFS).filter((b) => b.manual !== false).length,
+    6,
+  );
 });

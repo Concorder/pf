@@ -1,3 +1,4 @@
+import { isCermiaSelfSkill } from "./engine/mechanics.js";
 import React, { useEffect, useRef, useState } from "react";
 import { LabContext, asset } from "./context.js";
 import { clone, defaultTeams, validTeams, roster } from "./engine/heroes.js";
@@ -195,7 +196,24 @@ export default function App() {
     setInspected(`${side}-${empty}`);
     setEditing(null);
   }
+  function chooseSkill(skill) {
+    setSelectedSkill(skill);
+    if (
+      active &&
+      canUse(heroes, battle, active, skill) &&
+      isCermiaSelfSkill(heroes, active, skill)
+    )
+      setPending({
+        kind: "self",
+        actorId: active.id,
+        targetId: active.id,
+        skill,
+        turn: battle.turn,
+      });
+  }
   function chooseTarget(targetId) {
+    if (active && isCermiaSelfSkill(heroes, active, selectedSkill))
+      return chooseSkill(selectedSkill);
     if (!active) return;
     if (!selectedSkill || !canUse(heroes, battle, active, selectedSkill))
       return toast("Select an available skill first.");
@@ -275,7 +293,7 @@ export default function App() {
     preview,
     souls,
     selectedSkill,
-    setSelectedSkill,
+    setSelectedSkill: chooseSkill,
     pending,
     setPending,
     editing,
@@ -297,7 +315,9 @@ export default function App() {
     <LabContext.Provider value={context}>
       <div
         style={{
-          "--arena-background": `url("${asset("assets/frozen-courtyard.png")}")`,
+          "--arena-background": battle
+            ? `url("${new URL(asset("assets/frozen-courtyard.png"), document.baseURI).href}")`
+            : "none",
         }}
       >
         <header>
@@ -395,11 +415,11 @@ export default function App() {
           </div>
           <Timeline />
           <p className="fine scope-description">
-            Prototype combat: common stat buffs can be managed manually.
-            Automatic grants currently cover Ras S3 Defense Up and Mercedes S3
-            Attack Up only. Passives, debuffs, counters, combat-readiness skill
-            effects and artifact effects are not automated. Soul gains and
-            cooldowns default to API values and can be overridden.
+            Implemented: common stat buffs, Ras S3 and Mercedes S3 team buffs,
+            Cermia S2 self-buff/reset/extra turn, and Arbiter Vildred’s opening
+            Archdemon’s Might. Evasion and critical outcomes remain manual.
+            Revival, Focus, other passives, debuffs, counters and artifact
+            effects remain unsupported.
           </p>
           <footer>
             <span>BUILT FOR THE NEXT “WHAT IF?”</span>
