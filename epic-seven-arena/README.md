@@ -104,3 +104,5 @@ Hit multiplier: normal 1, crit configured Crit Damage / 100, miss 0.75, crushing
 `public/data/heroes.json` is a snapshot of the public [Fribbels Epic 7 Gear Optimizer hero cache](https://github.com/fribbels/Fribbels-Epic-7-Optimizer/blob/main/data/cache/herodata.json), fetched 2026-10-22. 391 records at download time. Hero portraits are bundled from the same upstream cache; all game assets belong to their respective owners. This is an unofficial fan prototype. No upstream application code was copied. CeciliaBot skill data is refreshed automatically as described above; new records do not imply implemented battle mechanics. Review upstream data / asset reuse permissions before public distribution.
 
 CeciliaBot attribution: [hero database](https://ceciliabot.github.io/#/hero/), [deployed website repository](https://github.com/CeciliaBot/CeciliaBot.github.io), [asset repository](https://github.com/CeciliaBot/E7Assets-Temp). The app uses structured data and game assets; no CeciliaBot application code was copied.
+
+Element badges use CeciliaBot’s `assets/img/cm_icon_prom{attribute}.png` images, with bundled copies as an offline fallback.
