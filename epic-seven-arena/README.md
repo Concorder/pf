@@ -1,16 +1,38 @@
 # Epic Seven Battle Lab
 
-A standalone, dependency-free HTML/CSS/JavaScript prototype for a manually controlled 3v3 battle. Three heroes per team occupy four formation slots arranged as a diamond: index 0 back, 1 upper, 2 front and 3 lower. The enemy formation is mirrored. Teams have separate editable soul pools, initially zero. Builds persist in browser local storage.
+A React + Vite prototype for a manually controlled 3v3 battle. Three heroes per team occupy four formation slots arranged as a diamond: index 0 back, 1 upper, 2 front and 3 lower. The enemy formation is mirrored. Teams have separate editable soul pools, initially zero. Builds persist in browser local storage.
 
-## Run
+## Develop locally
 
-From `/workspace/pf`:
+Requires Node.js 20.19+ (or 22.12+). From the `epic-seven-arena` directory:
 
 ```sh
-python3 -m http.server 8000 --bind 127.0.0.1
+npm ci
+npm run dev
 ```
 
-Open `/epic-seven-arena/` through your development server. No build step. Hero records and portraits are bundled locally; optional fonts require Internet access. Portrait initials and system fonts provide fallbacks.
+Open the local address Vite prints. The development server uses `src/index.html`, supports hot reload, and serves local hero data and portraits from `public/`.
+
+```sh
+npm test        # framework-independent battle-engine regressions
+npm run build  # production build and refresh the static GitHub Pages files
+npm run preview # inspect the production build locally
+```
+
+## Structure and publication
+
+- `src/App.jsx`: application state and coordination; existing saved teams use the unchanged `e7-lab-builds-v1` storage key.
+- `src/components/`: arena / hero units, readiness rail, current hero and skills, editor, hit-outcome dialog, portraits and timeline.
+- `src/useBattleSession.js`: React session state, immutable battle history and undo.
+- `src/engine/`: plain JavaScript data model, presets and battle calculations. No React or DOM dependency.
+- `src/style.css`: interface styles.
+- `public/data/` and `public/assets/`: source hero data, portraits and background.
+- `dist/`: ignored Vite output, served by `npm run preview`.
+- Root `index.html`, `build-assets/`, `data/` and `assets/`: **generated deployment files** committed to keep the existing branch-based GitHub Pages URL working. `npm run build` refreshes them; edit the source files rather than these outputs.
+
+GitHub Pages currently serves the root of `Concorder/pf` on `main`, so deploying only a Vite source entry would break the existing app URL. The build copies the standalone static output into this app folder; other `pf` pages remain unchanged. Run the tests and build before committing and pushing. A future standalone repository can instead deploy `dist/` directly.
+
+The built app can still be served with Python's HTTP server from this folder; installing Node is only required for development and rebuilding. Hero records and portraits are bundled locally; optional fonts require Internet access. Portrait initials and system fonts provide fallbacks.
 
 ## Controls
 
@@ -19,7 +41,7 @@ Open `/epic-seven-arena/` through your development server. No build step. Hero r
 - Presets are illustrative builds, not community averages.
 - The cleaned snowy courtyard is an image-generated background based on the provided battle screenshot, saved in `assets/frozen-courtyard.png`. All original units and interface elements were removed from the background. Portrait avatars represent heroes; these are not animated battle sprites.
 - HP and a thin blue readiness meter sit above each avatar. The left combat-readiness rail reflects the current deterministic speed scheduler; markers are separated for readability while labels retain actual percentages. Starting readiness is Speed / fastest living hero Speed × 100 across both teams. The fastest hero starts at 100%; subsequent turns use the deterministic speed scheduler.
-- The bottom HUD shows the current hero’s portrait, HP, souls and three skill controls. Generic vector skill symbols are placeholders, not original hero skill artwork. Select one of the three skill buttons, click a living enemy avatar (or its readiness marker), then choose Critical, Normal, Miss or Crushing in the popup to execute. Only outcomes supported by the source skill are enabled. Escape, Cancel or clicking outside the popup returns without spending souls or advancing the turn. Multi-target attacks list all affected enemies; the chosen outcome applies to all of them. Pass turn and Undo are available in the HUD. Fullscreen uses the browser Fullscreen API where supported.
+- The lower-left arena panel shows the current hero’s portrait and HP; the lower-right panel contains the three skill controls. Team souls are below the arena. Generic vector skill symbols are placeholders, not original hero skill artwork. Select one of the three skill buttons, click a living enemy avatar (or its readiness marker), then choose Critical, Normal, Miss or Crushing in the popup to execute. Only outcomes supported by the source skill are enabled. Escape, Cancel or clicking outside the popup returns without spending souls or advancing the turn. Multi-target attacks list all affected enemies; the chosen outcome applies to all of them. Pass turn and Undo are available in the HUD. Fullscreen uses the browser Fullscreen API where supported.
 - Start battle; manually control both teams. Choose a skill, click an enemy, then choose a hit outcome in the popup. Multiple-target skills hit the selected enemy followed by living enemies in formation order.
 - Pass turn, undo actions / soul edits, or reset. Reset keeps builds and restores pre-battle soul values, so artifact contributions are not counted twice. Artifact starting souls are added each time a new battle starts.
 
@@ -37,4 +59,4 @@ Hit multiplier: normal 1, crit configured Crit Damage / 100, miss 0.75, crushing
 
 ## Data and attribution
 
-`data/heroes.json` is a snapshot of the public [Fribbels Epic 7 Gear Optimizer hero cache](https://github.com/fribbels/Fribbels-Epic-7-Optimizer/blob/main/data/cache/herodata.json), fetched 2026-10-22. 391 records at download time. Hero portraits are bundled from the same upstream cache; all game assets belong to their respective owners. This is an unofficial fan prototype. No upstream application code was copied. There is no automatic data refresh yet; new records do not imply implemented battle mechanics. Review upstream data / asset reuse permissions before public distribution.
+`public/data/heroes.json` is a snapshot of the public [Fribbels Epic 7 Gear Optimizer hero cache](https://github.com/fribbels/Fribbels-Epic-7-Optimizer/blob/main/data/cache/herodata.json), fetched 2026-10-22. 391 records at download time. Hero portraits are bundled from the same upstream cache; all game assets belong to their respective owners. This is an unofficial fan prototype. No upstream application code was copied. There is no automatic data refresh yet; new records do not imply implemented battle mechanics. Review upstream data / asset reuse permissions before public distribution.
