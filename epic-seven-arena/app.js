@@ -110,7 +110,7 @@ function skillData(u,s){return heroes[u.name].skills?.[s];}
 function canUse(u,s){if(s==='wait')return true;const d=skillData(u,s);return !!d&&Number.isFinite(d.rate)&&d.rate>0&&Number.isFinite(d.pow)&&d.pow>0&&!u.cooldowns[s]&&battle.souls[u.side]>=u.skills[s].cost;}
 function readiness(unit){
  if(unit.currentHp<=0)return 0;
- if(!battle)return 0;
+ if(!battle){const fastest=Math.max(...roster().map(u=>u.stats.spd));return unit.stats.spd/fastest*100;}
  return Math.min(100,Math.max(0,100-(unit.readyAt-battle.time)*unit.stats.spd/100));
 }
 function renderReadiness(){
@@ -122,7 +122,7 @@ function renderReadiness(){
  if(positions.length&&positions.at(-1)>height-8){positions[positions.length-1]=height-8;for(let i=positions.length-2;i>=0;i--)positions[i]=Math.min(positions[i],positions[i+1]-gap);}
  live.forEach((u,i)=>{
   const marker=document.createElement('button');marker.type='button';marker.className='cr-marker'+(u.side==='right'?' enemy-marker':'')+(u.id===battle?.active?' is-active':'');marker.style.top=`${positions[i]}px`;
-  const cr=Math.round(readiness(u));marker.setAttribute('aria-label',`${u.name}, ${teamName(u.side)}, ${cr}% combat readiness`);marker.title=`${u.name} · ${teamName(u.side)} · ${cr}% CR${!battle?' · battle not started':''}`;
+  const cr=Math.round(readiness(u));marker.setAttribute('aria-label',`${u.name}, ${teamName(u.side)}, ${cr}% combat readiness`);marker.title=`${u.name} · ${teamName(u.side)} · ${cr}% CR${!battle?' · starting order':''}`;
   marker.innerHTML=`<img alt=""><span class="cr-value">${cr}%</span>`;avatar(marker.querySelector('img'),u.name);
   marker.onclick=()=>{if(!battle)openEditor(u.side,u.slot);else if(u.side!==activeUnit()?.side){$('target').value=u.id;$('target').dataset.previous=u.id;highlightTarget();}};track.append(marker);
  });
