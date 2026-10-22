@@ -1,3 +1,5 @@
+import BuffDialog from "./BuffDialog.jsx";
+import { BUFFS, effectiveStats } from "../engine/buffs.js";
 import React, { useEffect, useRef, useState } from "react";
 import { useLab, asset } from "../context.js";
 import { teamName, SKILLS } from "../engine/heroes.js";
@@ -74,6 +76,21 @@ function HeroUnit({ side, slot }) {
       ) : (
         <>
           <div className="unit-status">
+            <div className="unit-buffs">
+              {(unit.buffs || []).map((b) => (
+                <span
+                  key={b.id}
+                  className="buff-badge"
+                  title={`${BUFFS[b.id]?.name} · ${b.turns} turns · ${BUFFS[b.id]?.description}`}
+                >
+                  <img
+                    src={asset(`data/buff-icons/${b.id}.png`)}
+                    alt={BUFFS[b.id]?.name}
+                  />
+                  <b>{b.turns}</b>
+                </span>
+              ))}
+            </div>
             <span className="unit-level">60</span>
             <div className="unit-bars">
               <div className="health">
@@ -201,8 +218,16 @@ function ActiveHero() {
           <span id="activeHp">
             {u.currentHp.toLocaleString()} / {u.stats.hp.toLocaleString()}
           </span>
-          <span id="activeSpeed">{u.stats.spd} SPD</span>
+          <span id="activeSpeed">{Math.round(effectiveStats(u).spd)} SPD</span>
         </div>
+        <button
+          id="manageBuffs"
+          className="hud-text-button"
+          disabled={!l.active}
+          onClick={() => l.setBuffTarget(l.active.id)}
+        >
+          ✦ Manage buffs
+        </button>
         <button
           id="undo"
           className="hud-text-button"
@@ -419,6 +444,7 @@ export default function Arena() {
         <Skills />
       </div>
       {l.pending && <HitDialog />}
+      {l.buffTarget && <BuffDialog />}
       <section
         id="battleControls"
         className="battle-hud"

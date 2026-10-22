@@ -127,6 +127,7 @@ export function normalizeSkill(hero, raw, index) {
     ...parsed,
     name: s.name || `S${index + 1}`,
     description,
+    buffRefs: (s.buff || []).map((b) => b._id),
     passive,
     source: "CeciliaBot",
     sourceText: s.multipliers || "",
@@ -140,7 +141,7 @@ export function normalizeSkill(hero, raw, index) {
     },
     targets: targets || 1,
     hitTypes: ["crit", "crushing", "normal", "miss"],
-    note: "Normal cast, awakened skill, +0 enhancements; secondary effects are not automated.",
+    note: "Normal cast, awakened skill, +0 enhancements; only explicitly implemented buffs are automated; other secondary effects are not.",
   };
   if (passive) {
     result.damageSupport = "passive";
@@ -200,6 +201,7 @@ export function createCatalog(baseline, records) {
       name,
       sourceName: h.name,
       code: h.id,
+      portraitCode: old.portraitCode || old.code || h.id,
       _id: h._id,
       attribute: h.attribute,
       role: h.role,

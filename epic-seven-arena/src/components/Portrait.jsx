@@ -15,7 +15,9 @@ export default function Portrait({ name, ...props }) {
       src={
         failed === name
           ? fallback
-          : asset(`data/portraits/${heroes[name].code}.png`)
+          : asset(
+              `data/portraits/${heroes[name].portraitCode || heroes[name].code}.png`,
+            )
       }
       onError={() => setFailed(name)}
     />

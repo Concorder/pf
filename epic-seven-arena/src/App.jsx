@@ -18,6 +18,7 @@ export default function App() {
     [souls, setStartingSouls] = useState({ left: 0, right: 0 }),
     [selectedSkill, setSelectedSkill] = useState(null),
     [pending, setPending] = useState(null),
+    [buffTarget, setBuffTarget] = useState(null),
     [editing, setEditing] = useState(null),
     [inspected, setInspected] = useState(null),
     [message, setMessage] = useState("");
@@ -225,12 +226,14 @@ export default function App() {
   }
   function reset() {
     if (battle) setStartingSouls(battle.initialSouls);
+    setBuffTarget(null);
     session.reset();
     setPending(null);
     setSelectedSkill(null);
     toast("Battle reset. Your builds are kept.");
   }
   function undo() {
+    setBuffTarget(null);
     session.undo();
     setSelectedSkill(null);
     setPending(null);
@@ -260,6 +263,9 @@ export default function App() {
     );
   const context = {
     heroes,
+    buffTarget,
+    setBuffTarget,
+    editBuff: session.editBuff,
     ensureHero,
     teams,
     units,
@@ -389,11 +395,11 @@ export default function App() {
           </div>
           <Timeline />
           <p className="fine scope-description">
-            Prototype combat: simplified damage coefficients. Passives, buffs,
-            counters, combat-readiness changes and artifact combat effects are
-            not automated. Numeric source skills are not necessarily active
-            abilities. Soul gains and cooldowns are manually configurable in the
-            hero editor.
+            Prototype combat: common stat buffs can be managed manually.
+            Automatic grants currently cover Ras S3 Defense Up and Mercedes S3
+            Attack Up only. Passives, debuffs, counters, combat-readiness skill
+            effects and artifact effects are not automated. Soul gains and
+            cooldowns default to API values and can be overridden.
           </p>
           <footer>
             <span>BUILT FOR THE NEXT “WHAT IF?”</span>

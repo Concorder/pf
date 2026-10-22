@@ -1,3 +1,4 @@
+import { effectiveStats, expireBuffs, applySkillBuffs } from "./buffs.js";
 import { SIDES, SKILLS, clone, roster, teamName } from "./heroes.js";
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
@@ -24,7 +25,10 @@ export function readiness(unit, battle, units) {
     return (unit.stats.spd / Math.max(...units.map((u) => u.stats.spd))) * 100;
   return Math.min(
     100,
-    Math.max(0, 100 - ((unit.readyAt - battle.time) * unit.stats.spd) / 100),
+    Math.max(
+      0,
+      100 - ((unit.readyAt - battle.time) * effectiveStats(unit).spd) / 100,
+    ),
   );
 }
 function log(battle, message, details = "") {
@@ -46,7 +50,7 @@ function nextTurn(battle) {
   const next = [...live].sort(
     (a, b) =>
       a.readyAt - b.readyAt ||
-      b.stats.spd - a.stats.spd ||
+      effectiveStats(b).spd - effectiveStats(a).spd ||
       a.id.localeCompare(b.id),
   )[0];
   battle.active = next.id;
@@ -62,6 +66,7 @@ export function createBattle(teams, souls) {
   for (const u of units) {
     u.readyAt = 10000 / u.stats.spd;
     u.cooldowns = { S1: 0, S2: 0, S3: 0 };
+    u.buffs = [];
   }
   const battle = {
     units,
@@ -101,8 +106,8 @@ export function setSouls(previous, side, value) {
   return battle;
 }
 export function damage(attacker, defender, d, hit) {
-  const a = attacker.stats,
-    t = defender.stats;
+  const a = effectiveStats(attacker),
+    t = effectiveStats(defender);
   const attack = a.atk * d.rate * (1 + a.spd * (d.selfSpdScaling || 0));
   const scaling =
     a.hp * (d.selfHpScaling || 0) +
@@ -182,7 +187,17 @@ export function executeAttack(
       `${teamName(u.side)} · ${hit} hit · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls · simplified damage${d.note ? " · source note: " + d.note : ""}`,
     );
   }
-  u.readyAt = battle.time + 10000 / u.stats.spd;
+  for (const name of expireBuffs(battle, u))
+    log(battle, `${u.name}: ${name} expired.`, "End of bearer turn");
+  if (skill !== "wait")
+    applySkillBuffs(
+      battle,
+      u,
+      heroes[u.name].code,
+      skill,
+      skillData(heroes, u, skill),
+    );
+  u.readyAt = battle.time + 10000 / effectiveStats(u).spd;
   nextTurn(battle);
   return battle;
 }

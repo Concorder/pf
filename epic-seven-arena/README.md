@@ -69,6 +69,14 @@ The refresh script validates response identity and PNG signatures and keeps TLS 
 - Start battle; manually control both teams. Choose a skill, click an enemy, then choose a hit outcome in the popup. Multiple-target skills hit the selected enemy followed by living enemies in formation order.
 - Pass turn, undo actions / soul edits, or reset. Reset keeps builds and restores pre-battle soul values, so artifact contributions are not counted twice. Artifact starting souls are added each time a new battle starts.
 
+## Buffs (first implementation)
+
+Use **Manage buffs** in the current hero panel during battle. Select any living hero, choose a 1–10 turn duration, and apply/remove Attack Up (+50%), Greater Attack Up (+75%), Defense Up (+60%), Speed Up (+30%), Critical Chance Up (+50 percentage points) or Critical Damage Up (+70 percentage points). Values and source icons were checked against CeciliaBot buff metadata. Critical chance and damage are capped at 100% and 350%; hit outcomes remain manually selected. Defense/Speed scaling skills use effective buffed stats.
+
+Buff icons and remaining durations appear above each unit. Identical buffs refresh to the longer duration, not additive stacks. Greater Attack replaces normal Attack; normal Attack cannot overwrite Greater Attack. Speed changes preserve current CR and reschedule pending turns. Buffs expire after their bearer’s actions, including passing; a skill’s newly granted buffs are applied after the duration tick. Manual changes and automatic grants are part of the battle snapshot and undo together with attacks. Reset clears combat buffs and preserves saved builds.
+
+Reviewed automatic grants currently cover **Ras S3: Defense Up on living allies for 2 turns** and **Mercedes S3: Attack Up on living allies for 2 turns**. These rules require matching source buff references, ally targeting and duration text; changed source descriptions do not silently retain an assumed grant. Other heroes’ grants, Cermia S2, passive effects, debuffs, healing and unique buffs are not automated. Use manual controls for supported stat buffs. Buff constants and grant rules are engine mechanics; source descriptions are not executable code.
+
 ## Combat scope
 
 This is a damage sandbox, not an accurate Epic Seven battle engine. Speed schedules deterministic turns without initial speed randomness. Base calculation:
@@ -79,7 +87,7 @@ scaling = maxHP × selfHpScaling + DEF × selfDefScaling + targetMaxHP × target
 damage = floor((attack + scaling) × 1.871 × pow × hitMultiplier / (1 + targetDEF × (1 - penetration) / 300))
 ```
 
-Hit multiplier: normal 1, crit configured Crit Damage / 100, miss 0.75, crushing 1.3. Crit chance / effectiveness / resistance are editable build metadata; no random status or critical rolls occur. Only the listed coefficients are applied. Conditional skill options, enhancement bonuses, elemental advantage, buffs, debuffs, healing, shields, passives, triggers, revival, counters, dual attacks, combat-readiness changes, damage sharing / reduction and artifact combat effects are **not** implemented. A source entry is not a verified active ability: passives with numeric coefficients may appear as selectable damage actions. No claim of complete hero support is made. Cooldowns and soul gains default to API values and can be overridden. Soul costs are manual settings; soulburn is not automated. Non-damaging skills are disabled; use Pass turn and manual soul changes as needed.
+Hit multiplier: normal 1, crit configured Crit Damage / 100, miss 0.75, crushing 1.3. Crit chance / effectiveness / resistance are editable build metadata; no random status or critical rolls occur. Only the listed coefficients are applied. Conditional skill options, enhancement bonuses, elemental advantage, debuffs, healing, shields, passives, triggers, revival, counters, dual attacks, combat-readiness skill effects, damage sharing / reduction and artifact combat effects are **not** implemented. Buff support is limited to the section above. A source entry is not a verified active ability: passives with numeric coefficients may appear as selectable damage actions. No claim of complete hero support is made. Cooldowns and soul gains default to API values and can be overridden. Soul costs are manual settings; soulburn is not automated. Non-damaging skills are disabled; use Pass turn and manual soul changes as needed.
 
 ## Data and attribution
 

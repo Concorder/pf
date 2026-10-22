@@ -1,3 +1,4 @@
+import { changeBuff } from "./engine/buffs.js";
 import { useState } from "react";
 import { createBattle, executeAttack, setSouls } from "./engine/battle.js";
 export default function useBattleSession(heroes) {
@@ -16,6 +17,13 @@ export default function useBattleSession(heroes) {
     attack: (skill, target, hit) =>
       setSession((s) => {
         const battle = executeAttack(heroes, s.battle, skill, target, hit);
+        return battle === s.battle
+          ? s
+          : { battle, history: [...s.history, s.battle] };
+      }),
+    editBuff: (target, id, turns, remove) =>
+      setSession((s) => {
+        const battle = changeBuff(s.battle, target, id, turns, remove);
         return battle === s.battle
           ? s
           : { battle, history: [...s.history, s.battle] };

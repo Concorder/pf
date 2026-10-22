@@ -1,3 +1,4 @@
+import { effectiveStats } from "../engine/buffs.js";
 import React from "react";
 import { useLab } from "../context.js";
 import { skillData, affectedTargets, damage } from "../engine/battle.js";
@@ -51,7 +52,7 @@ export default function HitDialog() {
       </p>
       <div id="hitOptions" className="hit-options">
         {[
-          ["crit", "Critical", "✦", `${u.stats.chd}% crit damage`],
+          ["crit", "Critical", "✦", `${effectiveStats(u).chd}% crit damage`],
           ["normal", "Normal", "◇", "Standard damage"],
           ["miss", "Miss", "↝", "75% damage"],
           ["crushing", "Crushing", "◆", "130% damage"],
