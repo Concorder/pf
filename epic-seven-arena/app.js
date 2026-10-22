@@ -3,7 +3,7 @@ const $ = id => document.getElementById(id);
 const clone = value => JSON.parse(JSON.stringify(value));
 const SIDES = ['left', 'right'];
 const FIELDS = {hp:['Health',1,100000],atk:['Attack',1,20000],def:['Defense',0,10000],spd:['Speed',1,500],chc:['Crit chance %',0,100],chd:['Crit damage %',100,350],eff:['Effectiveness %',0,500],efr:['Resistance %',0,500]};
-let heroes, teams, battle = null, history = [], editing = null, selectedSkill = 'S1', drag = null, inspected = null;
+let heroes, teams, battle = null, history = [], editing = null, selectedSkill = null, drag = null, inspected = null, pendingAttack = null;
 let savedDraft;
 try { savedDraft = JSON.parse(localStorage.getItem('e7-lab-builds-v1')); } catch {}
 const escapeHTML = text => String(text).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -40,7 +40,7 @@ function render(){
     if(battle?.active===unit.id)card.classList.add('active-card');
     card.draggable=!battle;
     card.ondragstart=()=>{drag={side,slot};};
-    card.onclick=()=>{if(!battle)return openEditor(side,slot);if(unit.side!==activeUnit()?.side&&hp>0){$('target').value=unit.id;$('target').dataset.previous=unit.id;highlightTarget();toast(`${unit.name} targeted`);}else toast('Reset the battle to edit builds.');};
+    card.onclick=()=>{if(!battle)return openEditor(side,slot);if(unit.side!==activeUnit()?.side&&hp>0){chooseTarget(unit.id);}else toast('Reset the battle to edit builds.');};
    }
    card.ondragover=e=>{if(!battle)e.preventDefault();};
    card.ondrop=e=>{e.preventDefault();if(!drag||battle||drag.side!==side)return;[teams[side][slot],teams[side][drag.slot]]=[teams[side][drag.slot],teams[side][slot]];drag=null;persist();render();};
@@ -52,7 +52,7 @@ function render(){
  $('setupTab').classList.toggle('selected',!battle);$('battleTab').classList.toggle('selected',!!battle);
  $('status').textContent=battle?(battle.winner?`${teamName(battle.winner).toUpperCase()} WINS`:'BATTLE IN PROGRESS'):'PREPARING THE ARENA';
  $('round').textContent=battle?`TURN ${battle.turn} · ${battle.units.filter(u=>u.currentHp>0).length} HEROES STANDING`:'3 V 3 · FORMATION';
- $('hint').textContent=battle?'Choose a skill and target. You control both teams.':'Select a hero to customize their build. Drag heroes between formation slots.';
+ $('hint').textContent=battle?'Choose a skill, click an enemy, then choose the hit outcome.':'Select a hero to customize their build. Drag heroes between formation slots.';
  for(const side of SIDES)if(battle)$(`souls-${side}`).value=battle.souls[side];
  renderControls();renderReadiness();renderLog();
 }
@@ -88,7 +88,7 @@ function nextTurn(){
  const next=[...live].sort((a,b)=>a.readyAt-b.readyAt||b.stats.spd-a.stats.spd||a.id.localeCompare(b.id))[0];
  battle.active=next.id;battle.time=next.readyAt;battle.turn++;
  for(const s of ['S1','S2','S3'])next.cooldowns[s]=Math.max(0,next.cooldowns[s]-1);
- selectedSkill=['S1','S2','S3'].find(s=>canUse(next,s))||'wait';
+ selectedSkill=null;
 }
 function startBattle(){
  const units=clone(roster());
@@ -99,7 +99,7 @@ function startBattle(){
 }
 $('start').onclick=startBattle;
 $('battleTab').onclick=()=>{if(!battle)toast('Set up your teams, then click Start battle.');else $('battleControls').scrollIntoView({behavior:'smooth',block:'center'});};
-function resetBattle(){if(battle)for(const side of SIDES)$(`souls-${side}`).value=battle.initialSouls[side];battle=null;history=[];render();toast('Battle reset. Your builds are kept.');}
+function resetBattle(){cancelAttack();selectedSkill=null;if(battle)for(const side of SIDES)$(`souls-${side}`).value=battle.initialSouls[side];battle=null;history=[];render();toast('Battle reset. Your builds are kept.');}
 $('reset').onclick=resetBattle;
 $('setupTab').onclick=()=>{if(battle)toast('Use Reset battle to return to formation.');};
 for(const side of SIDES)$(`souls-${side}`).onchange=e=>{
@@ -124,11 +124,11 @@ function renderReadiness(){
   const marker=document.createElement('button');marker.type='button';marker.className='cr-marker'+(u.side==='right'?' enemy-marker':'')+(u.id===battle?.active?' is-active':'');marker.style.top=`${positions[i]}px`;
   const cr=Math.round(readiness(u));marker.setAttribute('aria-label',`${u.name}, ${teamName(u.side)}, ${cr}% combat readiness`);marker.title=`${u.name} · ${teamName(u.side)} · ${cr}% CR${!battle?' · starting order':''}`;
   marker.innerHTML=`<img alt=""><span class="cr-value">${cr}%</span>`;avatar(marker.querySelector('img'),u.name);
-  marker.onclick=()=>{if(!battle)openEditor(u.side,u.slot);else if(u.side!==activeUnit()?.side){$('target').value=u.id;$('target').dataset.previous=u.id;highlightTarget();}};track.append(marker);
+  marker.onclick=()=>{if(!battle)openEditor(u.side,u.slot);else if(u.side!==activeUnit()?.side){chooseTarget(u.id);}};track.append(marker);
  });
 }
 function highlightTarget(){
- document.querySelectorAll('.hero-card').forEach(card=>card.classList.toggle('target-card',!!battle&&!battle.winner&&`${card.dataset.side}-${card.dataset.slot}`===$('target').value));
+ document.querySelectorAll('.hero-card').forEach(card=>card.classList.toggle('target-card',!!pendingAttack&&`${card.dataset.side}-${card.dataset.slot}`===pendingAttack.targetId));
 }
 const SKILL_ICONS={S1:'<path d="M14 37L36 8l4-2-1 5-22 29-7 1 2-7M12 31l12 9M8 42l8-8"/>',S2:'<path d="M24 5l15 6v12c0 9-8 15-15 20-7-5-15-11-15-20V11zM24 14v18M16 23h16"/><circle cx="24" cy="23" r="12"/>',S3:'<path d="M24 4l4 13 14-3-9 11 8 11-14-3-4 12-4-13-14 2 9-10-7-11 13 4z"/><circle cx="24" cy="24" r="6"/>'};
 function renderControls(){
@@ -150,21 +150,13 @@ function renderControls(){
   b.onclick=()=>{selectedSkill=skill;renderControls();};$('skills').append(b);
  }
  $('pass').disabled=!unit;
- $('target').replaceChildren();
- if(!unit){$('cast').disabled=true;$('target').disabled=true;$('hit').disabled=true;const o=document.createElement('option');o.textContent=battle?.winner?'Battle complete':'Start battle to choose';$('target').append(o);$('skillSummary').textContent=battle?.winner?'Reset to try another matchup':'Start the battle to use skills';highlightTarget();return;}
- const previous=$('target').dataset.previous;
- for(const u of battle.units.filter(u=>u.side!==unit.side&&u.currentHp>0)){
-  const o=document.createElement('option');o.value=u.id;o.textContent=`${u.name} · ${u.currentHp.toLocaleString()} HP`;$('target').append(o);
- }
- if([...$('target').options].some(o=>o.value===previous))$('target').value=previous;
- $('target').disabled=selectedSkill==='wait';$('hit').disabled=selectedSkill==='wait';$('cast').disabled=!canUse(unit,selectedSkill);
- $('cast').textContent=selectedSkill==='wait'?'Pass turn →':'Use skill →';
+ if(!unit){document.querySelectorAll('.targetable').forEach(card=>card.classList.remove('targetable'));$('skillSummary').textContent=battle?.winner?'Reset to try another matchup':'Start the battle to use skills';highlightTarget();return;}
  const d=skillData(unit,selectedSkill),settings=unit.skills[selectedSkill];
- $('skillSummary').textContent=d&&settings?`${selectedSkill} · ${d.targets||1} target${d.targets>1?'s':''} · +${settings.gain} souls${settings.cost?` · ${settings.cost} soul cost`:''}${settings.cd?` · ${settings.cd} turn cooldown`:''}`:'No available damage skill · pass turn';
+ $('skillSummary').textContent=d&&settings?`${selectedSkill} · click an enemy · ${d.targets||1} target${d.targets>1?'s':''} · +${settings.gain} souls`:'Select a skill, then click an enemy';
+ document.querySelectorAll('.hero-card').forEach(card=>card.classList.toggle('targetable',!!selectedSkill&&canUse(unit,selectedSkill)&&card.dataset.side!==unit.side&&!card.classList.contains('dead')&&!card.classList.contains('empty-slot')));
  highlightTarget();
 }
-$('target').onchange=e=>{$('target').dataset.previous=e.target.value;highlightTarget();};
-$('pass').onclick=()=>{if(!activeUnit())return;selectedSkill='wait';$('cast').onclick();};
+$('pass').onclick=()=>executeAttack('wait');
 $('fullscreen').onclick=async()=>{try{if(document.fullscreenElement)await document.exitFullscreen();else await $('arena').requestFullscreen();}catch{toast('Fullscreen is unavailable in this browser.');}};
 new ResizeObserver(()=>{if(teams)renderReadiness();}).observe($('scene'));
 function damage(attacker,defender,d,hit){
@@ -172,25 +164,58 @@ function damage(attacker,defender,d,hit){
  const attack=a.atk*d.rate*(1+a.spd*(d.selfSpdScaling||0));
  const scaling=a.hp*(d.selfHpScaling||0)+a.def*(d.selfDefScaling||0)+t.hp*(d.targetHpScaling||0);
  const penetration=Math.max(0,Math.min(1,d.penetration||0));
- const hitMultiplier=hit==='crit'?a.chd/100:hit==='miss'?.75:1;
+ const hitMultiplier=hit==='crit'?a.chd/100:hit==='miss'?.75:hit==='crushing'?1.3:1;
  return Math.max(0,Math.floor((attack+scaling)*1.871*d.pow*hitMultiplier/(1+t.def*(1-penetration)/300)));
 }
-$('cast').onclick=()=>{
- const u=activeUnit();if(!u||!canUse(u,selectedSkill))return;
- const s=selectedSkill;history.push(clone(battle));
+function affectedTargets(u,target,d){
+ const enemies=battle.units.filter(t=>t.currentHp>0&&t.side!==u.side);
+ return [target,...enemies.filter(t=>t.id!==target.id)].slice(0,Math.max(1,d.targets||1));
+}
+function chooseTarget(targetId){
+ const u=activeUnit();if(!u)return;
+ if(!selectedSkill||!canUse(u,selectedSkill))return toast('Select an available skill first.');
+ const target=battle.units.find(t=>t.id===targetId&&t.currentHp>0&&t.side!==u.side);if(!target)return;
+ pendingAttack={actorId:u.id,targetId,skill:selectedSkill,turn:battle.turn};
+ const d=skillData(u,selectedSkill),targets=affectedTargets(u,target,d);
+ $('hitActor').textContent=`${u.name} · ${selectedSkill}`;
+ $('hitTargetName').textContent=target.name;
+ $('hitTargetHp').textContent=`${target.currentHp.toLocaleString()} / ${target.stats.hp.toLocaleString()} HP`;
+ avatar($('hitPortrait'),target.name);
+ $('hitAffected').textContent=targets.length>1?`This skill hits ${targets.length} enemies: ${targets.map(t=>t.name).join(', ')}. The chosen outcome applies to all targets.`:'Single-target attack';
+ $('hitOptions').replaceChildren();
+ for(const [hit,label,icon,note] of [['crit','Critical','✦',`${u.stats.chd}% crit damage`],['normal','Normal','◇','Standard damage'],['miss','Miss','↝','75% damage'],['crushing','Crushing','◆','130% damage']]){
+  const button=document.createElement('button');button.type='button';button.className='hit-option '+hit;
+  const allowed=d.hitTypes?.includes(hit)??(hit==='normal');button.disabled=!allowed;
+  const total=targets.reduce((sum,t)=>sum+damage(u,t,d,hit),0);
+  button.innerHTML=`<span class="hit-symbol">${icon}</span><b>${label}</b><span>${allowed?total.toLocaleString()+' damage':'Not available'}</span><small>${targets.length>1?'Total across targets · ':''}${note}</small>`;
+  button.setAttribute('aria-label',`${label} hit`);button.onclick=()=>{
+   const pending=pendingAttack;if(!pending||activeUnit()?.id!==pending.actorId||battle.turn!==pending.turn)return cancelAttack();
+   $('hitDialog').close();pendingAttack=null;executeAttack(pending.skill,pending.targetId,hit);
+  };$('hitOptions').append(button);
+ }
+ highlightTarget();$('hitDialog').showModal();
+}
+function cancelAttack(){pendingAttack=null;if($('hitDialog').open)$('hitDialog').close();highlightTarget();}
+$('cancelHit').onclick=cancelAttack;
+$('hitDialog').addEventListener('cancel',()=>{pendingAttack=null;highlightTarget();});
+$('hitDialog').addEventListener('close',()=>{pendingAttack=null;highlightTarget();});
+$('hitDialog').addEventListener('click',e=>{if(e.target!==$('hitDialog'))return;const r=$('hitDialog').getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)cancelAttack();});
+function executeAttack(s,targetId=null,hit='normal'){
+ const u=activeUnit();if(!u||!canUse(u,s))return;
+ const target=s==='wait'?null:battle.units.find(t=>t.id===targetId&&t.currentHp>0&&t.side!==u.side);
+ if(s!=='wait'&&!target)return;
+ history.push(clone(battle));
  if(s==='wait')addLog(`${u.name} passes.`,`${teamName(u.side)} · no souls gained`);
  else{
-  const d=skillData(u,s),target=battle.units.find(t=>t.id===$('target').value&&t.currentHp>0&&t.side!==u.side);
-  if(!target){history.pop();return toast('Choose a living enemy target.');}
-  const enemies=battle.units.filter(t=>t.currentHp>0&&t.side!==u.side), targets=[target,...enemies.filter(t=>t.id!==target.id)].slice(0,Math.max(1,d.targets||1));
-  const results=[];for(const t of targets){const amount=damage(u,t,d,$('hit').value);t.currentHp=Math.max(0,t.currentHp-amount);results.push(`${t.name}: ${amount.toLocaleString()} damage${t.currentHp===0?' · defeated':''}`);}
+  const d=skillData(u,s),targets=affectedTargets(u,target,d);
+  const results=[];for(const t of targets){const amount=damage(u,t,d,hit);t.currentHp=Math.max(0,t.currentHp-amount);results.push(`${t.name}: ${amount.toLocaleString()} damage${t.currentHp===0?' · defeated':''}`);}
   battle.souls[u.side]=Math.min(99,battle.souls[u.side]-u.skills[s].cost+u.skills[s].gain);
   u.cooldowns[s]=u.skills[s].cd+1;
-  addLog(`${u.name} uses ${s}. ${results.join(' / ')}`,`${teamName(u.side)} · ${$('hit').value} hit · +${u.skills[s].gain} / −${u.skills[s].cost} souls · simplified damage${d.note?' · source note: '+d.note:''}`);
+  addLog(`${u.name} uses ${s}. ${results.join(' / ')}`,`${teamName(u.side)} · ${hit} hit · +${u.skills[s].gain} / −${u.skills[s].cost} souls · simplified damage${d.note?' · source note: '+d.note:''}`);
  }
  u.readyAt=battle.time+10000/u.stats.spd;nextTurn();render();
-};
-$('undo').onclick=()=>{if(!history.length)return;battle=history.pop();const u=activeUnit();selectedSkill=u?['S1','S2','S3'].find(s=>canUse(u,s))||'wait':'wait';render();};
+}
+$('undo').onclick=()=>{if(!history.length)return;cancelAttack();battle=history.pop();selectedSkill=null;render();};
 function renderLog(){
  if(!battle){$('log').innerHTML='<div class="empty-log"><span>☷</span><div>The arena is yours.<p>Start a battle to see actions and damage here.</p></div></div>';$('eventCount').textContent='LIVE LOG';return;}
  $('log').innerHTML=battle.log.map(e=>`<div class="log-entry"><small>TURN ${String(e.turn).padStart(2,'0')} · ${escapeHTML(e.details)}</small>${escapeHTML(e.message)}</div>`).join('');$('eventCount').textContent=`${battle.log.length} EVENTS`;

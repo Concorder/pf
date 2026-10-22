@@ -16,11 +16,12 @@
 <div class="skill-station"><div class="skill-station-heading"><span class="eyebrow">CHOOSE AN ACTION</span><button id="pass" class="hud-text-button">Pass turn ⇥</button></div><div id="skills" class="skills"></div><div id="skillSummary" class="skill-summary">Start the battle to use skills</div></div>
 <div class="scene-caption"><span id="hint">Click a hero to edit. Drag between the four formation positions.</span><span class="formation-key">BACK <span>◇</span> FRONT</span></div>
 </div>
+<dialog id="hitDialog" aria-labelledby="hitTitle"><div class="dialog-heading"><div><span class="eyebrow" id="hitActor">RESOLVE ATTACK</span><h2 id="hitTitle">Choose the hit outcome</h2></div><button type="button" id="cancelHit" class="subtle" aria-label="Cancel attack" autofocus>✕</button></div><div class="hit-target"><img id="hitPortrait" alt=""><div><b id="hitTargetName"></b><p id="hitTargetHp"></p></div></div><p id="hitAffected" class="fine"></p><div id="hitOptions" class="hit-options"></div><p class="fine">Choose an outcome to apply the attack. Cancel or press Esc to return without using the skill.</p></dialog>
 <section id="battleControls" class="battle-hud" aria-label="Active hero and battle controls">
 
 <div class="soul-station"><span class="eyebrow">TEAM SOULS</span><div class="soul-pools"><label class="souls"><span class="orb"></span><span class="soul-value"><input id="souls-left" aria-label="Your team souls" type="number" min="0" max="99" value="0"><span>YOUR TEAM</span></span></label><span class="soul-divider"></span><label class="souls"><span class="orb"></span><span class="soul-value"><input id="souls-right" aria-label="Opponent souls" type="number" min="0" max="99" value="0"><span>OPPONENT</span></span></label></div><span class="soul-note">Click a number to adjust</span></div>
 
-<div class="cast-station"><label>Target<select id="target" aria-label="Target"></select></label><div class="cast-row"><label>Hit<select id="hit" aria-label="Hit outcome"><option value="normal">Normal</option><option value="crit">Critical</option><option value="miss">Miss</option></select></label><button id="cast" class="primary">Use skill →</button></div></div>
+<div class="action-guide"><span class="eyebrow">PLAY YOUR NEXT MOVE</span><div><span>01 <b>Select a skill</b></span><span>02 <b>Click an enemy</b></span><span>03 <b>Choose the hit</b></span></div></div>
 </section>
 </section>
 <div class="below-arena"><div class="arena-help"><span class="help-icon">◇</span><p><b>Three heroes. Four positions.</b> Back, upper, front and lower — mirrored for the opponent. Select an enemy avatar to target them during battle.</p></div><div class="scope-note"><span class="live-dot"></span> MANUAL CONTROL · BOTH TEAMS</div></div>
