@@ -8,6 +8,8 @@ export function canUse(heroes, battle, u, s) {
   const d = skillData(heroes, u, s);
   return (
     !!d &&
+    !d.passive &&
+    (!d.damageSupport || d.damageSupport === "supported") &&
     Number.isFinite(d.rate) &&
     d.rate > 0 &&
     Number.isFinite(d.pow) &&

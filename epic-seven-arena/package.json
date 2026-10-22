@@ -7,7 +7,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build && node scripts/publish-build.mjs",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node --test src/engine/*.test.js"
+    "test": "node --test src/engine/*.test.js src/data/*.test.js",
+    "refresh:data": "node scripts/refresh-data.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

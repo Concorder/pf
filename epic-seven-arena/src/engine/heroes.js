@@ -64,12 +64,30 @@ export function makeHero(heroes, name, preset = "damage") {
   return {
     name,
     stats: presetStats(heroes, name, preset),
+    sourceDefaults: Object.fromEntries(
+      SKILLS.map((s) => [
+        s,
+        {
+          ...(heroes[name].skills?.[s]?.defaults || {
+            gain: s === "S1" ? 1 : 0,
+            cost: 0,
+            cd: 0,
+          }),
+        },
+      ]),
+    ),
     artifact: "",
     artifactSouls: 0,
     skills: {
-      S1: { gain: 1, cost: 0, cd: 0 },
-      S2: { gain: 0, cost: 0, cd: 0 },
-      S3: { gain: 0, cost: 0, cd: 0 },
+      S1: {
+        ...(heroes[name].skills?.S1?.defaults || { gain: 1, cost: 0, cd: 0 }),
+      },
+      S2: {
+        ...(heroes[name].skills?.S2?.defaults || { gain: 0, cost: 0, cd: 0 }),
+      },
+      S3: {
+        ...(heroes[name].skills?.S3?.defaults || { gain: 0, cost: 0, cd: 0 }),
+      },
     },
   };
 }

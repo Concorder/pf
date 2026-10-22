@@ -6,10 +6,14 @@ import useBattleSession from "./useBattleSession.js";
 import Arena from "./components/Arena.jsx";
 import HeroEditor from "./components/HeroEditor.jsx";
 import Timeline from "./components/Timeline.jsx";
+import { loadSources, refreshSource } from "./data/sourceService.js";
+import { createCatalog, syncTeamDefaults } from "./data/cecilia.js";
 const STORAGE_KEY = "e7-lab-builds-v1";
 export default function App() {
   const [heroes, setHeroes] = useState(null),
     [teams, setTeams] = useState(null),
+    [sourceInfo, setSourceInfo] = useState(null),
+    [refreshing, setRefreshing] = useState(false),
     [error, setError] = useState(""),
     [souls, setStartingSouls] = useState({ left: 0, right: 0 }),
     [selectedSkill, setSelectedSkill] = useState(null),
@@ -17,29 +21,86 @@ export default function App() {
     [editing, setEditing] = useState(null),
     [inspected, setInspected] = useState(null),
     [message, setMessage] = useState("");
+  const sourceRef = useRef(null),
+    battleRef = useRef(null),
+    refreshController = useRef(null),
+    attemptRef = useRef(false),
+    busyRef = useRef(false);
   const arenaRef = useRef(null),
     session = useBattleSession(heroes),
     { battle, history } = session;
+  battleRef.current = battle;
   useEffect(() => {
     const controller = new AbortController();
-    fetch(asset("data/heroes.json"), { signal: controller.signal })
-      .then((r) => {
-        if (!r.ok) throw Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+    loadSources(import.meta.env.BASE_URL, controller.signal)
       .then((data) => {
         let saved;
         try {
           saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
         } catch {}
-        setHeroes(data);
-        setTeams(validTeams(saved, data) ? saved : defaultTeams(data));
+        sourceRef.current = data;
+        setHeroes(data.heroes);
+        setTeams(
+          syncTeamDefaults(
+            validTeams(saved, data.heroes) ? saved : defaultTeams(data.heroes),
+            data.heroes,
+          ),
+        );
+        setSourceInfo({ mode: data.mode, checkedAt: data.checkedAt });
       })
       .catch((e) => {
         if (e.name !== "AbortError") setError(e.message);
       });
     return () => controller.abort();
   }, []);
+  busyRef.current = !!battle || !!editing || !!pending;
+  async function refreshData(force = false, names = null) {
+    if (!sourceRef.current || busyRef.current || refreshing) return null;
+    const controller = new AbortController();
+    refreshController.current = controller;
+    setRefreshing(true);
+    const timer = setTimeout(() => controller.abort(), 12000);
+    try {
+      const wanted =
+        names ||
+        Object.values(teams)
+          .flat()
+          .filter(Boolean)
+          .map((h) => heroes[h.name]?.sourceName || h.name);
+      const result = await refreshSource(
+        sourceRef.current.snapshot,
+        [...new Set(wanted)],
+        { signal: controller.signal, force },
+      );
+      if (controller.signal.aborted || busyRef.current) return null;
+      sourceRef.current.snapshot = {
+        ...sourceRef.current.snapshot,
+        heroes: result.records,
+      };
+      if (battleRef.current) return heroes;
+      const catalog = createCatalog(sourceRef.current.baseline, result.records);
+      setHeroes(catalog);
+      setTeams((t) => syncTeamDefaults(t, catalog));
+      setSourceInfo({ mode: result.mode, checkedAt: result.checkedAt });
+      return catalog;
+    } catch (e) {
+      if (!busyRef.current) setSourceInfo((i) => ({ ...i, mode: "offline" }));
+      return null;
+    } finally {
+      clearTimeout(timer);
+      if (refreshController.current === controller) setRefreshing(false);
+    }
+  }
+  useEffect(() => {
+    if (teams && !attemptRef.current) {
+      attemptRef.current = true;
+      refreshData();
+    }
+  }, [teams]);
+  useEffect(() => {
+    if (battle || editing || pending) refreshController.current?.abort();
+  }, [battle, editing, pending]);
+  useEffect(() => () => refreshController.current?.abort(), []);
   useEffect(() => {
     if (!teams) return;
     try {
@@ -67,6 +128,31 @@ export default function App() {
     if (battle) return toast("Reset the battle to edit teams.");
     setInspected(`${side}-${slot}`);
     setEditing({ side, slot });
+  }
+  async function ensureHero(name) {
+    if (battleRef.current) return heroes;
+    try {
+      const result = await refreshSource(
+        sourceRef.current.snapshot,
+        [heroes[name]?.sourceName || name],
+        {
+          force: false,
+          signal: AbortSignal.timeout(12000),
+        },
+      );
+      if (battleRef.current) return heroes;
+      const catalog = createCatalog(sourceRef.current.baseline, result.records);
+      sourceRef.current.snapshot = {
+        ...sourceRef.current.snapshot,
+        heroes: result.records,
+      };
+      setHeroes(catalog);
+      setSourceInfo({ mode: result.mode, checkedAt: result.checkedAt });
+      return catalog;
+    } catch {
+      toast("Hero details unavailable. Try again when the API is reachable.");
+      return heroes;
+    }
   }
   function saveHero(draft) {
     const { side, slot } = editing;
@@ -174,6 +260,7 @@ export default function App() {
     );
   const context = {
     heroes,
+    ensureHero,
     teams,
     units,
     battle,
@@ -252,6 +339,8 @@ export default function App() {
                 className="primary"
                 disabled={!!battle}
                 onClick={() => {
+                  busyRef.current = true;
+                  refreshController.current?.abort();
                   session.start(teams, souls);
                   setSelectedSkill(null);
                 }}
@@ -259,6 +348,30 @@ export default function App() {
                 Start battle →
               </button>
             </div>
+          </div>
+          <div className="data-status" role="status">
+            <span>
+              CeciliaBot ·{" "}
+              {sourceInfo?.mode === "live"
+                ? "API refreshed"
+                : sourceInfo?.mode === "cache"
+                  ? "cached API data"
+                  : sourceInfo?.mode === "partial"
+                    ? "partial refresh, fallback retained"
+                    : sourceInfo?.mode === "offline"
+                      ? "API unavailable, using saved data"
+                      : "bundled API snapshot"}
+              {sourceInfo?.checkedAt
+                ? " · checked " +
+                  new Date(sourceInfo.checkedAt).toLocaleDateString()
+                : ""}
+            </span>
+            <button
+              onClick={() => refreshData(true)}
+              disabled={refreshing || !!battle || !!editing}
+            >
+              {refreshing ? "Refreshing…" : "Refresh data"}
+            </button>
           </div>
           <Arena />
           <div className="below-arena">
@@ -285,7 +398,15 @@ export default function App() {
           <footer>
             <span>BUILT FOR THE NEXT “WHAT IF?”</span>
             <span>
-              Community data via{" "}
+              Skill data:{" "}
+              <a
+                href="https://ceciliabot.github.io/#/hero/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                CeciliaBot ↗
+              </a>{" "}
+              · Base stats:{" "}
               <a
                 href="https://github.com/fribbels/Fribbels-Epic-7-Optimizer"
                 target="_blank"

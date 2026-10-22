@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useLab } from "../context.js";
+import { useLab, asset } from "../context.js";
 import { teamName, SKILLS } from "../engine/heroes.js";
 import { readiness, canUse, skillData } from "../engine/battle.js";
 import Portrait from "./Portrait.jsx";
@@ -234,6 +234,26 @@ function SkillIcon({ skill }) {
     </svg>
   );
 }
+function SkillArtwork({ data, skill }) {
+  const [attempt, setAttempt] = useState(0);
+  useEffect(() => setAttempt(0), [data?.iconUrl]);
+  const source =
+    attempt === 0
+      ? data?.iconUrl
+      : attempt === 1 && data?.iconFile
+        ? asset("data/skill-icons/" + encodeURIComponent(data.iconFile))
+        : null;
+  return source ? (
+    <img
+      className="skill-artwork"
+      src={source}
+      alt=""
+      onError={() => setAttempt((n) => n + 1)}
+    />
+  ) : (
+    <SkillIcon skill={skill} />
+  );
+}
 function Skills() {
   const l = useLab(),
     u = l.active || l.preview,
@@ -264,19 +284,51 @@ function Skills() {
               aria-label={`${s}${cd ? `, ${cd} turns remaining` : ""}`}
               disabled={!canUse(l.heroes, l.battle, l.active, s)}
               title={
-                data?.rate
-                  ? `${data.targets || 1} target(s) · ATK rate ${data.rate} · POW ${data.pow} · +${u.skills[s].gain} souls · cost ${u.skills[s].cost}${data.note ? " · " + data.note : ""}`
-                  : "Passive or unsupported action"
+                data?.source
+                  ? `${data.name} · ${data.passive ? "Passive" : data.damageSupport === "supported" ? "Damage supported" : data.supportReason}\n${data.description}\n${data.sourceText}`
+                  : data?.rate
+                    ? `${data.targets || 1} target(s) · ATK rate ${data.rate} · POW ${data.pow} · +${u.skills[s].gain} souls · cost ${u.skills[s].cost}${data.note ? " · " + data.note : ""}`
+                    : "Passive or unsupported action"
               }
               onClick={() => l.setSelectedSkill(s)}
             >
-              <SkillIcon skill={s} />
-              <span className="skill-key">{s}</span>
+              <SkillArtwork data={data} skill={s} />
+              <span className="skill-key">
+                {s}
+                {data?.passive
+                  ? " · P"
+                  : data?.damageSupport === "unsupported"
+                    ? " · !"
+                    : ""}
+              </span>
               {cd > 0 && <span className="skill-cooldown">{cd}</span>}
             </button>
           );
         })}
       </div>
+      <details className="skill-source-details">
+        <summary>Skill data & support</summary>
+        {SKILLS.map((s) => {
+          const data = skillData(l.heroes, u, s);
+          return (
+            <div key={s}>
+              <b>
+                {s} · {data?.name || "Unknown skill"}
+              </b>
+              <span>
+                {data?.passive
+                  ? "Passive — triggers not automated"
+                  : data?.damageSupport === "supported"
+                    ? "Base damage supported"
+                    : data?.supportReason || "Source data unavailable"}
+              </span>
+              <p>{data?.description}</p>
+              <small>{data?.note}</small>
+              <pre>{data?.sourceText}</pre>
+            </div>
+          );
+        })}
+      </details>
       <div id="skillSummary" className="skill-summary">
         {!l.active
           ? l.battle?.winner

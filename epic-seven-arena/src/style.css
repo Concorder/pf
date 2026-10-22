@@ -713,10 +713,9 @@ p {
   position: relative;
   z-index: 9;
   display: grid;
-  grid-template-columns: minmax(230px, 1.2fr) minmax(180px, 0.85fr) minmax(
-      230px,
-      1fr
-    ) minmax(170px, 0.8fr);
+  grid-template-columns:
+    minmax(230px, 1.2fr) minmax(180px, 0.85fr) minmax(230px, 1fr)
+    minmax(170px, 0.8fr);
   gap: 23px;
   align-items: center;
   padding: 23px 23px 19px;
@@ -2310,4 +2309,76 @@ h3 small {
   .hit-option small {
     font-size: 8px;
   }
+}
+
+.skill-artwork {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 7px;
+}
+.skill-button:has(.skill-artwork) {
+  padding: 3px;
+}
+.data-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: -9px 0 14px;
+  font-size: 9px;
+  color: #8fa7bc;
+}
+.data-status button {
+  font-size: 9px;
+  padding: 6px 9px;
+}
+@media (max-width: 480px) {
+  .data-status {
+    font-size: 7px;
+  }
+  .data-status button {
+    font-size: 8px;
+    white-space: nowrap;
+  }
+}
+
+.skill-source-details {
+  font-size: 8px;
+  color: #a9c3d4;
+  margin-top: 9px;
+}
+.skill-source-details > summary {
+  cursor: pointer;
+}
+.skill-source-details[open] {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: min(360px, 80vw);
+  max-height: 300px;
+  overflow: auto;
+  background: #142637f5;
+  border: 1px solid #607c91;
+  border-radius: 8px;
+  padding: 13px;
+  box-shadow: 0 8px 25px #0008;
+}
+.skill-source-details > div {
+  padding: 11px 0;
+  border-bottom: 1px solid #52677d55;
+}
+.skill-source-details b,
+.skill-source-details span {
+  display: block;
+  margin: 4px 0;
+}
+.skill-source-details p {
+  font-size: 9px;
+  line-height: 1.5;
+}
+.skill-source-details pre {
+  white-space: pre-wrap;
+  font-size: 8px;
+  color: #c4d3df;
 }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useLab } from "../context.js";
 import {
   FIELDS,
@@ -12,6 +12,8 @@ export default function HeroEditor() {
   const l = useLab(),
     { side, slot } = l.editing,
     [draft, setDraft] = useState(() => clone(l.teams[side][slot]));
+  const selection = useRef(0);
+  const [loading, setLoading] = useState(false);
   const setStat = (key, value) =>
     setDraft((d) => ({ ...d, stats: { ...d.stats, [key]: Number(value) } }));
   return (
@@ -43,12 +45,32 @@ export default function HeroEditor() {
           <select
             id="heroChoice"
             value={draft.name}
-            onChange={(e) =>
-              setDraft(makeHero(l.heroes, e.target.value, "base"))
-            }
+            onChange={async (e) => {
+              const name = e.target.value,
+                request = ++selection.current;
+              setDraft(
+                makeHero(
+                  l.heroes,
+                  name,
+                  l.heroes[name].calculatedStatus ? "base" : "damage",
+                ),
+              );
+              setLoading(true);
+              const catalog = await l.ensureHero(name);
+              if (selection.current === request) {
+                setDraft(
+                  makeHero(
+                    catalog,
+                    name,
+                    catalog[name].calculatedStatus ? "base" : "damage",
+                  ),
+                );
+                setLoading(false);
+              }
+            }}
           >
             {Object.keys(l.heroes)
-              .filter((n) => l.heroes[n].calculatedStatus)
+
               .sort()
               .map((n) => (
                 <option key={n}>{n}</option>
@@ -67,6 +89,10 @@ export default function HeroEditor() {
               key={key}
               type="button"
               data-preset={key}
+              disabled={
+                loading ||
+                (key === "base" && !l.heroes[draft.name].calculatedStatus)
+              }
               onClick={() =>
                 setDraft((d) => ({
                   ...d,
@@ -81,6 +107,13 @@ export default function HeroEditor() {
         <p className="fine">
           Presets are illustrative builds, not measured player averages.
         </p>
+        {!l.heroes[draft.name].calculatedStatus && (
+          <p className="fine">
+            Base stats are unavailable for this hero. Enter stats manually or
+            use an illustrative preset.
+          </p>
+        )}
+        {loading && <p role="status">Fetching hero details…</p>}
         <div className="stat-grid" id="statFields">
           {Object.entries(FIELDS).map(([key, [label, min, max]]) => (
             <label key={key}>
@@ -160,9 +193,10 @@ export default function HeroEditor() {
           ))}
         </div>
         <p className="fine">
-          Soul gain, cost and cooldown values are user settings; they are not
-          provided by the dataset. S1 defaults to +1 soul; other skills default
-          to 0. Triggered skills and passive effects require manual handling.
+          Soul gains and cooldowns start from CeciliaBot’s awakened, unenhanced
+          skills. You can override them here. Soulburn, passive triggers and
+          secondary effects are not automated. Base combat stats currently use
+          the bundled Fribbels cache; presets are illustrative builds.
         </p>
         <div className="dialog-actions">
           <button
@@ -173,7 +207,7 @@ export default function HeroEditor() {
           >
             Move to empty slot
           </button>
-          <button className="primary" type="submit">
+          <button className="primary" type="submit" disabled={loading}>
             Save hero →
           </button>
         </div>
