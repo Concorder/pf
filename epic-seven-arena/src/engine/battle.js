@@ -1,3 +1,4 @@
+import { rollHit } from "./hits.js";
 import { equippedSkill, equippedEE } from "./progression.js";
 import { isCermiaSelfSkill } from "./mechanics.js";
 import {
@@ -15,6 +16,12 @@ export function canUse(heroes, battle, u, s) {
   if (!u || !battle || battle.winner) return false;
   if (s === "wait") return true;
   const d = skillData(heroes, u, s);
+  if (hasBuff(u, "stic_stun")) return false;
+  if (
+    hasBuff(u, "stic_silence") &&
+    (d?.defaults?.cd > 0 || u.skills[s]?.cd > 0)
+  )
+    return false;
   return (
     !!d &&
     !d.passive &&
@@ -182,7 +189,8 @@ export function executeAttack(
   previous,
   skill,
   targetId = null,
-  hit = "normal",
+  hit = "auto",
+  random = Math.random,
 ) {
   const actor = activeUnit(previous);
   if (!canUse(heroes, previous, actor, skill)) return previous;
@@ -195,15 +203,20 @@ export function executeAttack(
     !selfSkill &&
     (!originalTarget ||
       !(
-        skillData(heroes, actor, skill).hitTypes?.includes(hit) ??
-        hit === "normal"
+        hit === "auto" ||
+        (skillData(heroes, actor, skill).hitTypes?.includes(hit) ??
+          hit === "normal")
       ))
   )
     return previous;
   const battle = clone(previous),
     u = activeUnit(battle);
   if (skill === "wait")
-    log(battle, `${u.name} passes.`, `${teamName(u.side)} · no souls gained`);
+    log(
+      battle,
+      `${u.name} ${hasBuff(u, "stic_stun") ? "loses the turn to Stun" : "passes"}.`,
+      `${teamName(u.side)} · no souls gained`,
+    );
   else if (selfSkill) {
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
@@ -220,10 +233,11 @@ export function executeAttack(
       targets = affectedTargets(battle, u, target, d),
       results = [];
     for (const t of targets) {
-      const amount = damage(u, t, d, hit);
+      const outcome = hit === "auto" ? rollHit(u, t, d, random) : hit;
+      const amount = damage(u, t, d, outcome);
       t.currentHp = Math.max(0, t.currentHp - amount);
       results.push(
-        `${t.name}: ${amount.toLocaleString()} damage${t.currentHp === 0 ? " · defeated" : ""}`,
+        `${t.name}: ${amount.toLocaleString()} damage (${outcome})${t.currentHp === 0 ? " · defeated" : ""}`,
       );
     }
     battle.souls[u.side] = clampSouls(

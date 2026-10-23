@@ -2,7 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { BUFFS, effectiveStats, changeBuff } from "./buffs.js";
-import { createBattle, damage, executeAttack, readiness } from "./battle.js";
+import {
+  createBattle,
+  damage,
+  executeAttack,
+  readiness,
+  canUse,
+  activeUnit,
+} from "./battle.js";
 import { defaultTeams, clone } from "./heroes.js";
 import { createCatalog } from "../data/cecilia.js";
 const baseline = JSON.parse(
@@ -116,7 +123,74 @@ test("critical buff stats are capped and invalid edits do nothing", () => {
   assert.equal(changeBuff(b, "left-2", "not-a-buff", 2), b);
   assert.equal(changeBuff(b, "left-2", "stic_att_up", 0), b);
   assert.equal(
-    Object.values(BUFFS).filter((b) => b.manual !== false).length,
+    Object.values(BUFFS).filter((b) => b.manual !== false && !b.debuff).length,
     6,
   );
+});
+
+test("debuffs combine additively with buffs, change damage, and preserve CR", () => {
+  let b = fixture();
+  const id = "left-2",
+    original = b.units.find((u) => u.id === id);
+  const before = readiness(original, b, b.units);
+  b = changeBuff(b, id, "stic_dodge_dn", 2);
+  assert.ok(
+    Math.abs(
+      readiness(
+        b.units.find((u) => u.id === id),
+        b,
+        b.units,
+      ) - before,
+    ) < 1e-8,
+  );
+  b = changeBuff(b, id, "stic_def_up", 2);
+  b = changeBuff(b, id, "stic_def_dn", 2);
+  const unit = b.units.find((u) => u.id === id);
+  assert.ok(
+    Math.abs(effectiveStats(unit).def - original.stats.def * 0.9) < 1e-8,
+  );
+  const d = { rate: 1, pow: 1 };
+  const actor = b.units.find((u) => u.side === "right");
+  assert.ok(
+    damage(actor, unit, d, "normal") > damage(actor, original, d, "normal"),
+  );
+  const reduced = changeBuff(b, actor.id, "stic_att_dn", 2);
+  assert.ok(
+    damage(
+      reduced.units.find((u) => u.id === actor.id),
+      unit,
+      d,
+      "normal",
+    ) < damage(actor, unit, d, "normal"),
+  );
+});
+test("Stun blocks skills and expires on passing, without mutating previous snapshots", () => {
+  const original = fixture(),
+    id = original.active;
+  const stunned = changeBuff(original, id, "stic_stun", 1);
+  assert.equal(canUse(heroes, stunned, activeUnit(stunned), "S1"), false);
+  assert.equal(
+    executeAttack(heroes, stunned, "S1", "right-0", "normal"),
+    stunned,
+  );
+  assert.equal(canUse(heroes, stunned, activeUnit(stunned), "wait"), true);
+  const passed = executeAttack(heroes, stunned, "wait");
+  assert.equal(passed.units.find((u) => u.id === id).buffs.length, 0);
+  assert.equal(stunned.units.find((u) => u.id === id).buffs[0].turns, 1);
+  assert.equal(original.units.find((u) => u.id === id).buffs.length, 0);
+});
+test("Silence allows S1 but blocks cooldown skills; Unbuffable prevents new buffs only", () => {
+  let b = fixture(),
+    id = b.active;
+  b = changeBuff(b, id, "stic_silence", 2);
+  assert.equal(canUse(heroes, b, activeUnit(b), "S1"), true);
+  assert.equal(canUse(heroes, b, activeUnit(b), "S3"), false);
+  b = changeBuff(b, id, "stic_att_up", 2);
+  b = changeBuff(b, id, "stic_buf_impossible", 2);
+  assert.equal(changeBuff(b, id, "stic_def_up", 2), b);
+  assert.ok(activeUnit(b).buffs.some((x) => x.id === "stic_att_up"));
+  const blind = changeBuff(b, id, "stic_blind", 2);
+  assert.equal(effectiveStats(activeUnit(blind)).hitChancePenalty, 50);
+  const removed = changeBuff(blind, id, "stic_silence", 2, true);
+  assert.equal(canUse(heroes, removed, activeUnit(removed), "S3"), true);
 });

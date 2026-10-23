@@ -14,13 +14,28 @@ export default function useBattleSession(heroes) {
           ? { battle: s.history.at(-1), history: s.history.slice(0, -1) }
           : s,
       ),
-    attack: (skill, target, hit) =>
+    attack: (skill, target, hit = "auto") => {
+      // Replaying a React updater must produce the same rolls.
+      const seed = Math.floor(Math.random() * 0x100000000);
       setSession((s) => {
-        const battle = executeAttack(heroes, s.battle, skill, target, hit);
+        let state = seed;
+        const random = () => {
+          state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+          return state / 0x100000000;
+        };
+        const battle = executeAttack(
+          heroes,
+          s.battle,
+          skill,
+          target,
+          hit,
+          random,
+        );
         return battle === s.battle
           ? s
           : { battle, history: [...s.history, s.battle] };
-      }),
+      });
+    },
     editBuff: (target, id, turns, remove) =>
       setSession((s) => {
         const battle = changeBuff(s.battle, target, id, turns, remove);

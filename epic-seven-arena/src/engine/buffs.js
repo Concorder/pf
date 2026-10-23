@@ -3,11 +3,52 @@ export const hasBuff = (unit, id) =>
   (unit.buffs || []).some(
     (b) => b.id === id && (b.turns === null || b.turns > 0),
   );
+export const DEBUFFS = {
+  stic_att_dn: {
+    name: "Attack Down",
+    description: "Attack −50%",
+    stat: "atk",
+    amount: -0.5,
+  },
+  stic_def_dn: {
+    name: "Defense Down",
+    description: "Defense −70%",
+    stat: "def",
+    amount: -0.7,
+  },
+  stic_dodge_dn: {
+    name: "Speed Down",
+    description: "Speed −30%; preserves current CR",
+    stat: "spd",
+    amount: -0.3,
+  },
+  stic_blind: {
+    name: "Decreased Hit Chance",
+    description: "Hit chance −50%; increases automatic miss chance",
+    stat: "hitChancePenalty",
+    amount: 50,
+  },
+  stic_stun: {
+    name: "Stun",
+    description: "Cannot use skills. Pass to consume the stunned turn.",
+  },
+  stic_silence: {
+    name: "Silence",
+    description: "Cannot use skills with a cooldown.",
+  },
+  stic_buf_impossible: {
+    name: "Unbuffable",
+    description: "Cannot receive buffs; existing buffs remain.",
+  },
+};
+for (const [id, def] of Object.entries(DEBUFFS))
+  Object.assign(def, { debuff: true, icon: id });
 export const BUFFS = {
+  ...DEBUFFS,
   stic_demonpower_keep: {
     name: "Archdemon’s Might",
     description:
-      "Undispellable: Evasion +70%; damage against Light +60%. Hit outcomes remain manual.",
+      "Undispellable: Evasion +70%; damage against Light +60%. Included in automatic hit rolls.",
     stat: "evasion",
     amount: 70,
     icon: "stic_demonpower_keep",
@@ -48,7 +89,7 @@ export const BUFFS = {
   stic_cri_up: {
     name: "Critical Chance Up",
     description:
-      "Critical chance +50 percentage points; outcomes remain manual",
+      "Critical chance +50 percentage points",
     stat: "chc",
     amount: 50,
     icon: "stic_cri_up",
@@ -62,7 +103,12 @@ export const BUFFS = {
   },
 };
 export function effectiveStats(unit) {
-  const s = { ...unit.stats, evasion: unit.stats.evasion || 0 };
+  const s = {
+    ...unit.stats,
+    evasion: unit.stats.evasion || 0,
+    hitChancePenalty: 0,
+  };
+  const modifiers = {};
   for (const [id, def] of Object.entries(BUFFS)) {
     if (!hasBuff(unit, id)) continue;
     if (
@@ -75,10 +121,13 @@ export function effectiveStats(unit) {
       )
     )
       continue;
-    s[def.stat] = ["chc", "chd", "evasion"].includes(def.stat)
-      ? s[def.stat] + def.amount
-      : s[def.stat] * (1 + def.amount);
+    if (!def.stat) continue;
+    if (["chc", "chd", "evasion", "hitChancePenalty"].includes(def.stat))
+      s[def.stat] += def.amount;
+    else modifiers[def.stat] = (modifiers[def.stat] || 0) + def.amount;
   }
+  for (const [stat, amount] of Object.entries(modifiers))
+    s[stat] *= Math.max(0.01, 1 + amount);
   s.evasion = Math.min(100, s.evasion);
   s.chc = Math.min(100, s.chc);
   s.chd = Math.min(350, s.chd);
@@ -94,6 +143,8 @@ function preserveReadiness(battle, unit, oldSpeed) {
 export function grantBuff(battle, unit, id, turns, source = "manual") {
   const def = BUFFS[id];
   if (!def || unit.currentHp <= 0) return false;
+  if (!def.debuff && !def.undispellable && hasBuff(unit, "stic_buf_impossible"))
+    return false;
   const oldSpeed = effectiveStats(unit).spd;
   unit.buffs ||= [];
   if (def.family) {
@@ -153,7 +204,7 @@ export function changeBuff(previous, targetId, id, turns = 2, remove = false) {
   } else if (!grantBuff(battle, unit, id, turns)) return previous;
   battle.log.unshift({
     message: `${unit.name}: ${BUFFS[id].name} ${remove ? "removed" : `applied / refreshed (${unit.buffs.find((b) => b.id === id).turns} turns)`}.`,
-    details: "Manual buff change · no turn advanced",
+    details: "Manual effect change · no turn advanced",
     turn: battle.turn,
   });
   return battle;

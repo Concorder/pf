@@ -3,7 +3,7 @@ import { equippedEE } from "../engine/progression.js";
 import SelfSkillDialog from "./SelfSkillDialog.jsx";
 import { isCermiaSelfSkill } from "../engine/mechanics.js";
 import BuffDialog from "./BuffDialog.jsx";
-import { BUFFS, effectiveStats } from "../engine/buffs.js";
+import { BUFFS, effectiveStats, hasBuff } from "../engine/buffs.js";
 import React, { useEffect, useRef, useState } from "react";
 import { useLab, asset } from "../context.js";
 import { teamName, SKILLS } from "../engine/heroes.js";
@@ -84,7 +84,7 @@ function HeroUnit({ side, slot }) {
               {(unit.buffs || []).map((b) => (
                 <span
                   key={b.id}
-                  className="buff-badge"
+                  className={`buff-badge ${BUFFS[b.id]?.debuff ? "debuff-badge" : ""}`}
                   title={`${BUFFS[b.id]?.name} · ${b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}`}
                 >
                   <img
@@ -95,7 +95,10 @@ function HeroUnit({ side, slot }) {
                 </span>
               ))}
             </div>
-            <ElementIcon element={l.heroes[h.name].attribute} className="unit-element" />
+            <ElementIcon
+              element={l.heroes[h.name].attribute}
+              className="unit-element"
+            />
             <div className="unit-bars">
               <div className="health">
                 <span
@@ -201,7 +204,10 @@ function ActiveHero() {
           className="active-portrait"
           name={u.name}
         />
-        <ElementIcon element={l.heroes[u.name].attribute} className="portrait-element" />
+        <ElementIcon
+          element={l.heroes[u.name].attribute}
+          className="portrait-element"
+        />
       </div>
       <div className="active-info">
         <span id="activeSide" className="eyebrow">
@@ -230,7 +236,7 @@ function ActiveHero() {
           disabled={!l.active}
           onClick={() => l.setBuffTarget(l.active.id)}
         >
-          ✦ Manage buffs
+          ✦ Buffs & debuffs
         </button>
         <button
           id="undo"
@@ -290,6 +296,16 @@ function Skills() {
     settings = u.skills[l.selectedSkill];
   return (
     <div className="skill-station">
+      {hasBuff(u, "stic_stun") && (
+        <p className="fine" role="status">
+          Stunned — pass to consume this turn.
+        </p>
+      )}
+      {hasBuff(u, "stic_silence") && (
+        <p className="fine" role="status">
+          Silenced — skills with cooldowns are blocked.
+        </p>
+      )}
       <div className="skill-station-heading">
         <span className="eyebrow">
           SKILLS · MAX{equippedEE(l.heroes[u.name], u) ? " · EE EQUIPPED" : ""}

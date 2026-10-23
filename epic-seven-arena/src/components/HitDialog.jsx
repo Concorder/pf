@@ -1,3 +1,4 @@
+import { hitChances } from "../engine/hits.js";
 import { effectiveStats } from "../engine/buffs.js";
 import React from "react";
 import { useLab } from "../context.js";
@@ -22,7 +23,7 @@ export default function HitDialog() {
           <span className="eyebrow" id="hitActor">
             {u.name} · {p.skill}
           </span>
-          <h2 id="hitTitle">Choose the hit outcome</h2>
+          <h2 id="hitTitle">Resolve the attack</h2>
         </div>
         <button
           type="button"
@@ -47,46 +48,67 @@ export default function HitDialog() {
       </div>
       <p id="hitAffected" className="fine">
         {targets.length > 1
-          ? `This skill hits ${targets.length} enemies: ${targets.map((t) => t.name).join(", ")}. The chosen outcome applies to all targets.`
+          ? `This skill hits ${targets.length} enemies: ${targets.map((t) => t.name).join(", ")}. Automatic mode rolls separately for each target. Manual overrides apply to all targets.`
           : "Single-target attack"}
       </p>
-      {effectiveStats(target).evasion > 0 && (
-        <p className="fine">
-          Target has {effectiveStats(target).evasion}% Evasion. Hit outcomes are
-          chosen manually; no automatic evasion roll is made.
-        </p>
-      )}
-      <div id="hitOptions" className="hit-options">
-        {[
-          ["crit", "Critical", "✦", `${effectiveStats(u).chd}% crit damage`],
-          ["normal", "Normal", "◇", "Standard damage"],
-          ["miss", "Miss", "↝", "75% damage"],
-          ["crushing", "Crushing", "◆", "130% damage"],
-        ].map(([hit, label, icon, note]) => {
-          const allowed = d.hitTypes?.includes(hit) ?? hit === "normal",
-            total = targets.reduce((sum, t) => sum + damage(u, t, d, hit), 0);
-          return (
-            <button
-              key={hit}
-              type="button"
-              className={`hit-option ${hit}`}
-              disabled={!allowed}
-              aria-label={`${label} hit`}
-              onClick={() => l.resolveHit(hit)}
-            >
-              <span className="hit-symbol">{icon}</span>
-              <b>{label}</b>
-              <span>
-                {allowed ? total.toLocaleString() + " damage" : "Not available"}
-              </span>
-              <small>
-                {targets.length > 1 ? "Total across targets · " : ""}
-                {note}
-              </small>
-            </button>
-          );
-        })}
-      </div>
+      <button
+        type="button"
+        className="primary"
+        id="automaticHit"
+        onClick={() => l.resolveHit("auto")}
+      >
+        Use skill · automatic hits
+      </button>
+      <p className="fine">
+        Miss is checked first, then critical, then crushing. Element advantage
+        adds 15 percentage points to critical chance. Decreased Hit Chance and
+        Evasion add to miss chance.
+      </p>
+      {targets.map((t) => {
+        const c = hitChances(u, t);
+        return (
+          <p className="fine" key={t.id}>
+            {t.name}: {c.relation} · {c.miss}% miss · {c.critical}% crit after a
+            hit · {c.crushing}% crushing if not critical
+          </p>
+        );
+      })}
+      <details>
+        <summary>Manual hit override</summary>
+        <div id="hitOptions" className="hit-options">
+          {[
+            ["crit", "Critical", "✦", `${effectiveStats(u).chd}% crit damage`],
+            ["normal", "Normal", "◇", "Standard damage"],
+            ["miss", "Miss", "↝", "75% damage"],
+            ["crushing", "Crushing", "◆", "130% damage"],
+          ].map(([hit, label, icon, note]) => {
+            const allowed = d.hitTypes?.includes(hit) ?? hit === "normal",
+              total = targets.reduce((sum, t) => sum + damage(u, t, d, hit), 0);
+            return (
+              <button
+                key={hit}
+                type="button"
+                className={`hit-option ${hit}`}
+                disabled={!allowed}
+                aria-label={`${label} hit`}
+                onClick={() => l.resolveHit(hit)}
+              >
+                <span className="hit-symbol">{icon}</span>
+                <b>{label}</b>
+                <span>
+                  {allowed
+                    ? total.toLocaleString() + " damage"
+                    : "Not available"}
+                </span>
+                <small>
+                  {targets.length > 1 ? "Total across targets · " : ""}
+                  {note}
+                </small>
+              </button>
+            );
+          })}
+        </div>
+      </details>
       <p className="fine">
         Choose an outcome to apply the attack. Cancel or press Esc to return
         without using the skill.

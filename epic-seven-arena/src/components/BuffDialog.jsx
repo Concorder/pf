@@ -18,7 +18,7 @@ export default function BuffDialog() {
       <div className="dialog-heading">
         <div>
           <span className="eyebrow">BATTLE EFFECTS</span>
-          <h2 id="buffTitle">Manage buffs</h2>
+          <h2 id="buffTitle">Manage buffs & debuffs</h2>
         </div>
         <button
           className="subtle"
@@ -65,26 +65,31 @@ export default function BuffDialog() {
           }
         />
       </label>
-      <div className="buff-options">
-        {Object.entries(BUFFS)
-          .filter(([, b]) => b.manual !== false)
-          .map(([id, b]) => (
-            <button
-              key={id}
-              className="buff-option"
-              aria-label={`Apply ${b.name}`}
-              disabled={!Number.isInteger(turns) || turns < 1 || turns > 10}
-              onClick={() => l.editBuff(unit.id, id, turns, false)}
-            >
-              <img src={asset(`data/buff-icons/${id}.png`)} alt="" />
-              <span>
-                <b>{b.name}</b>
-                <small>{b.description}</small>
-              </span>
-            </button>
-          ))}
-      </div>
-      <h3>Active buffs</h3>
+      {[false, true].map((debuffs) => (
+        <section key={String(debuffs)}>
+          <h3>{debuffs ? "Debuffs" : "Buffs"}</h3>
+          <div className="buff-options">
+            {Object.entries(BUFFS)
+              .filter(([, b]) => b.manual !== false && !!b.debuff === debuffs)
+              .map(([id, b]) => (
+                <button
+                  key={id}
+                  className={`buff-option ${b.debuff ? "debuff-option" : ""}`}
+                  aria-label={`Apply ${b.name}`}
+                  disabled={!Number.isInteger(turns) || turns < 1 || turns > 10}
+                  onClick={() => l.editBuff(unit.id, id, turns, false)}
+                >
+                  <img src={asset(`data/buff-icons/${id}.png`)} alt="" />
+                  <span>
+                    <b>{b.name}</b>
+                    <small>{b.description}</small>
+                  </span>
+                </button>
+              ))}
+          </div>
+        </section>
+      ))}
+      <h3>Active effects</h3>
       <div className="active-buffs">
         {unit.buffs?.length ? (
           unit.buffs.map((b) => (
@@ -103,13 +108,16 @@ export default function BuffDialog() {
             </div>
           ))
         ) : (
-          <p className="fine">No buffs on this hero.</p>
+          <p className="fine">No effects on this hero.</p>
         )}
       </div>
       <p className="fine">
-        Buffs tick down at the end of the bearer’s turn, including Pass turn. A
-        skill’s new buffs are applied after that tick. Speed changes preserve
-        current CR. Critical outcomes remain manually chosen. All changes can be
+        Effects tick down at the end of the bearer’s turn, including Pass turn.
+        A skill’s new buffs are applied after that tick. Speed changes preserve
+        current CR. Apply debuffs after deciding whether they landed; chance,
+        Effectiveness, resistance, and immunity are not rolled automatically.
+        Stun blocks skills; use Pass turn. Silence blocks skills with cooldowns.
+        Hit Chance Down increases automatic miss chance. All changes can be
         undone after closing this panel.
       </p>
     </Modal>
