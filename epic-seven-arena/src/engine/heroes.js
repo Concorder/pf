@@ -75,6 +75,7 @@ export function makeHero(heroes, name, preset = "damage") {
     eeEnabled,
     eeOption,
     sourceDefaults: clone(settings),
+    counterChance: 0,
     artifact: "",
     artifactSouls: 0,
     skills: clone(settings),
@@ -117,6 +118,9 @@ export function validTeams(teams, heroes) {
                   h.stats[k] >= FIELDS[k][1] &&
                   h.stats[k] <= FIELDS[k][2],
               ) &&
+              Number.isFinite(h.counterChance ?? 0) &&
+              (h.counterChance ?? 0) >= 0 &&
+              (h.counterChance ?? 0) <= 100 &&
               Number.isFinite(h.artifactSouls) &&
               h.artifactSouls >= 0 &&
               h.artifactSouls <= 99 &&

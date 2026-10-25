@@ -41,9 +41,9 @@ export function normalizeEquipment(hero) {
         let support = "unsupported",
           reason = "EE mechanic not implemented";
         if (opening) {
-          support = "partial";
+          support = "supported";
           reason =
-            "Opening buff implemented for 2 turns; revival trigger pending";
+            "Opening and Dark Contract revival buffs implemented for 2 turns";
         } else if (damage) {
           support = /^[\s.]*$/.test(damage[2]) ? "supported" : "partial";
           reason =

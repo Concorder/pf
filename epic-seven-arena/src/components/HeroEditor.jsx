@@ -212,6 +212,25 @@ export default function HeroEditor() {
           ))}
         </div>
         <label>
+          Counterattack chance % (gear/manual)
+          <input
+            id="counterChance"
+            type="number"
+            min="0"
+            max="100"
+            required
+            value={draft.counterChance ?? 0}
+            onChange={(e) =>
+              setDraft((d) => ({ ...d, counterChance: Number(e.target.value) }))
+            }
+          />
+        </label>
+        <p className="fine">
+          Chance to counter with S1 after being attacked. Enter gear or manual
+          counter chance. Passive-specific counter rules require their own
+          implementation; Seal does not suppress this configured chance.
+        </p>
+        <label>
           Artifact / notes
           <input
             id="artifact"

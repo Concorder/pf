@@ -2550,3 +2550,10 @@ h3 small {
 .debuff-option {
   border-color: #a45e66;
 }
+
+.hp-capacity-note {
+  display: block;
+  color: #eda8a8;
+  font-size: 9px;
+  margin-top: 3px;
+}

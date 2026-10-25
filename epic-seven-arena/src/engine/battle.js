@@ -1,9 +1,24 @@
+import { rollEffect } from "./effects.js";
+import { currentCR, setCR } from "./combatReadiness.js";
+import { activationBlockReason, dispatchTrigger } from "./triggers.js";
+import { reviveUnit } from "./revival.js";
+import { maxHp } from "./health.js";
 import { rollHit } from "./hits.js";
 import { equippedSkill, equippedEE } from "./progression.js";
 import { isCermiaSelfSkill } from "./mechanics.js";
 import {
+  globalTurnEffects,
+  clearSourceDeathEffects,
+  applyCRChange,
+  startTurnEffects,
+  endTurnEffects,
+  afterAttackEffects,
+  receivedDamageMultiplier,
+  sufferDamage,
+  applySkillDebuffs,
   effectiveStats,
   expireBuffs,
+  buffTickKey,
   applySkillBuffs,
   grantBuff,
   hasBuff,
@@ -12,11 +27,30 @@ import { SIDES, SKILLS, clone, roster, teamName } from "./heroes.js";
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
 export const skillData = (heroes, u, s) => equippedSkill(heroes[u.name], u, s);
+export function forcedTarget(battle, unit) {
+  if (!battle || !unit) return null;
+  const enemies = battle.units.filter(
+    (t) => t.side !== unit.side && t.currentHp > 0,
+  );
+  if (hasBuff(unit, "stic_provoke_hp"))
+    return (
+      enemies.sort(
+        (a, b) => maxHp(b) - maxHp(a) || a.id.localeCompare(b.id),
+      )[0] || null
+    );
+  const effect = (unit.buffs || []).find(
+    (b) => b.id === "stic_provoke" && b.turns > 0,
+  );
+  return effect ? enemies.find((t) => t.id === effect.casterId) || null : null;
+}
 export function canUse(heroes, battle, u, s) {
   if (!u || !battle || battle.winner) return false;
-  if (s === "wait") return true;
+  if (s === "wait")
+    return !forcedTarget(battle, u) || !canUse(heroes, battle, u, "S1");
   const d = skillData(heroes, u, s);
-  if (hasBuff(u, "stic_stun")) return false;
+  if (["stic_stun", "stic_sleep", "stic_fear"].some((id) => hasBuff(u, id)))
+    return false;
+  if (forcedTarget(battle, u) && s !== "S1") return false;
   if (
     hasBuff(u, "stic_silence") &&
     (d?.defaults?.cd > 0 || u.skills[s]?.cd > 0)
@@ -39,23 +73,18 @@ export function readiness(unit, battle, units) {
   if (unit.currentHp <= 0) return 0;
   if (!battle)
     return (unit.stats.spd / Math.max(...units.map((u) => u.stats.spd))) * 100;
-  return Math.min(
-    100,
-    Math.max(
-      0,
-      100 - ((unit.readyAt - battle.time) * effectiveStats(unit).spd) / 100,
-    ),
-  );
+  return currentCR(unit, battle, effectiveStats(unit).spd);
 }
 function log(battle, message, details = "") {
   battle.log.unshift({ message, details, turn: battle.turn });
 }
-function nextTurn(battle, forcedId = null) {
+function nextTurn(battle, forcedId = null, random = Math.random, heroes = {}) {
   const live = battle.units.filter((u) => u.currentHp > 0),
     lost = SIDES.find((s) => !live.some((u) => u.side === s));
   if (lost) {
     battle.winner = lost === "left" ? "right" : "left";
     battle.active = null;
+    battle.stalled = false;
     log(
       battle,
       `${teamName(battle.winner)} wins.`,
@@ -63,25 +92,64 @@ function nextTurn(battle, forcedId = null) {
     );
     return;
   }
-  const next =
-    live.find((u) => u.id === forcedId) ||
-    [...live].sort(
+  const eligible = () =>
+    battle.units.filter((u) => u.currentHp > 0 && Number.isFinite(u.readyAt));
+  const ordered = () =>
+    eligible().sort(
       (a, b) =>
         a.readyAt - b.readyAt ||
         effectiveStats(b).spd - effectiveStats(a).spd ||
         a.id.localeCompare(b.id),
-    )[0];
-  battle.active = next.id;
-  battle.time = next.readyAt;
+    );
+  const first = eligible().find((u) => u.id === forcedId) || ordered()[0];
+  if (!first) {
+    battle.active = null;
+    battle.stalled = true;
+    log(
+      battle,
+      "Readiness stalled: all living heroes are immobilized below 100% CR.",
+      "Apply a CR push or cleanse Immobilize through Buffs & debuffs.",
+    );
+    return;
+  }
+  battle.stalled = false;
+  battle.time = Math.max(battle.time, first.readyAt);
   battle.turn++;
+  globalTurnEffects(battle);
+  resolveDeaths(heroes, battle);
+  const lostAfterGlobals = SIDES.find(
+    (side) => !battle.units.some((u) => u.side === side && u.currentHp > 0),
+  );
+  if (lostAfterGlobals) {
+    battle.winner = lostAfterGlobals === "left" ? "right" : "left";
+    battle.active = null;
+    log(battle, `${teamName(battle.winner)} wins.`);
+    return;
+  }
+  const next = eligible().find((u) => u.id === forcedId) || ordered()[0];
+  if (!next) {
+    battle.active = null;
+    battle.stalled = true;
+    return;
+  }
+  battle.active = next.id;
+  battle.time = Math.max(battle.time, next.readyAt);
   for (const s of SKILLS)
     next.cooldowns[s] = Math.max(0, next.cooldowns[s] - 1);
+  startTurnEffects(battle, next, random);
+  resolveDeaths(heroes, battle, { turnAlreadyStarted: true });
+  if (next.currentHp <= 0) nextTurn(battle, null, random, heroes);
 }
 export const clampSouls = (value) =>
   Math.min(99, Math.max(0, Math.floor(Number(value) || 0)));
 export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
+    u.baseMaxHp = u.stats.hp;
+    u.injury = 0;
+    u.deaths = 0;
+    u.isHero ??= true;
+    delete u.frozenCR;
     u.readyAt = 10000 / u.stats.spd;
     u.cooldowns = { S1: 0, S2: 0, S3: 0 };
     u.buffs = [];
@@ -90,6 +158,7 @@ export function createBattle(teams, souls, heroes = {}) {
   }
   const battle = {
     units,
+    deathEvents: [],
     turn: 0,
     time: 0,
     active: null,
@@ -127,7 +196,7 @@ export function createBattle(teams, souls, heroes = {}) {
         "Exclusive Equipment · 2 turns / undispellable",
       );
     }
-  nextTurn(battle);
+  nextTurn(battle, null, Math.random, heroes);
   return battle;
 }
 export function setSouls(previous, side, value) {
@@ -169,6 +238,7 @@ export function damage(attacker, defender, d, hit) {
         d.pow *
         hitMultiplier *
         lightBonus *
+        receivedDamageMultiplier(defender) *
         (1 + (d.enhancementDamage || 0) + (d.eeDamage || 0))) /
         (1 + (t.def * (1 - penetration)) / 300),
     ),
@@ -184,6 +254,100 @@ export function affectedTargets(battle, u, target, d) {
   );
 }
 
+function performSkillAttack(
+  heroes,
+  battle,
+  u,
+  skill,
+  targetId,
+  hit,
+  random,
+  options = {},
+) {
+  const d = skillData(heroes, u, skill),
+    target = battle.units.find((t) => t.id === targetId),
+    targets = affectedTargets(battle, u, target, d),
+    results = [],
+    hits = [],
+    cursedIds = battle.units
+      .filter((t) => hasBuff(t, "stic_curse2"))
+      .map((t) => t.id);
+  for (const t of targets) {
+    if (options.automaticDebuffs !== false)
+      applySkillDebuffs(
+        battle,
+        u,
+        t,
+        skill,
+        d,
+        "normal",
+        random,
+        "beforeAttack",
+      );
+    const outcome = hit === "auto" ? rollHit(u, t, d, random) : hit;
+    const amount = damage(u, t, d, outcome);
+    sufferDamage(battle, t, amount);
+    hits.push({
+      id: t.id,
+      amount,
+      outcome,
+      vampiric: hasBuff(t, "stic_vampire"),
+      defeated: t.currentHp <= 0,
+    });
+    results.push(
+      `${t.name}: ${amount.toLocaleString()} damage (${outcome})${t.currentHp === 0 ? " · defeated" : ""}`,
+    );
+  }
+  afterAttackEffects(battle, u, hits, cursedIds);
+  for (const hitResult of hits) {
+    const t = battle.units.find((t) => t.id === hitResult.id);
+    if (t.currentHp > 0 && options.automaticDebuffs !== false)
+      applySkillDebuffs(battle, u, t, skill, d, hitResult.outcome, random);
+  }
+  applySkillBuffs(battle, u, heroes[u.name].code, skill, d);
+  if (options.automaticReadiness !== false)
+    for (const effect of d.automaticReadiness || []) {
+      if (effect.target === "caster")
+        applyCRChange(
+          battle,
+          u,
+          effect.amount * (effect.perTarget ? hits.length : 1),
+          `${u.name} ${skill}`,
+        );
+      else
+        for (const hitResult of hits) {
+          const recipient = battle.units.find(
+            (t) => t.id === hitResult.id && t.currentHp > 0,
+          );
+          if (!recipient) continue;
+          const result = rollEffect(
+            {
+              hit: hitResult.outcome,
+              effectiveness: effectiveStats(u).eff || 0,
+              resistance: effectiveStats(recipient).efr || 0,
+              immunity: hasBuff(recipient, "stic_debuf_impossible"),
+            },
+            random,
+          );
+          if (result.landed)
+            applyCRChange(
+              battle,
+              recipient,
+              effect.amount,
+              `${u.name} ${skill}`,
+            );
+          else
+            log(
+              battle,
+              `${recipient.name}: CR setback ${result.reason}.`,
+              `${u.name} ${skill}`,
+            );
+        }
+    }
+
+  return { data: d, hits, results };
+}
+
 export function executeAttack(
   heroes,
   previous,
@@ -191,10 +355,13 @@ export function executeAttack(
   targetId = null,
   hit = "auto",
   random = Math.random,
+  options = {},
 ) {
   const actor = activeUnit(previous);
   if (!canUse(heroes, previous, actor, skill)) return previous;
   const selfSkill = isCermiaSelfSkill(heroes, actor, skill);
+  const forced = forcedTarget(previous, actor);
+  if (forced && skill !== "wait" && targetId !== forced.id) return previous;
   const originalTarget = previous.units.find(
     (t) => t.id === targetId && t.currentHp > 0 && t.side !== actor.side,
   );
@@ -210,7 +377,10 @@ export function executeAttack(
   )
     return previous;
   const battle = clone(previous),
-    u = activeUnit(battle);
+    u = activeUnit(battle),
+    actorDeathSerial = u.deaths || 0,
+    tickableBuffs = new Set((u.buffs || []).map(buffTickKey));
+  setCR(battle, u, 0, effectiveStats(u).spd);
   if (skill === "wait")
     log(
       battle,
@@ -228,18 +398,20 @@ export function executeAttack(
       `${teamName(u.side)} · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls`,
     );
   } else {
-    const d = skillData(heroes, u, skill),
-      target = battle.units.find((t) => t.id === targetId),
-      targets = affectedTargets(battle, u, target, d),
-      results = [];
-    for (const t of targets) {
-      const outcome = hit === "auto" ? rollHit(u, t, d, random) : hit;
-      const amount = damage(u, t, d, outcome);
-      t.currentHp = Math.max(0, t.currentHp - amount);
-      results.push(
-        `${t.name}: ${amount.toLocaleString()} damage (${outcome})${t.currentHp === 0 ? " · defeated" : ""}`,
-      );
-    }
+    const {
+      data: d,
+      hits,
+      results,
+    } = performSkillAttack(
+      heroes,
+      battle,
+      u,
+      skill,
+      targetId,
+      hit,
+      random,
+      options,
+    );
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
     );
@@ -247,27 +419,241 @@ export function executeAttack(
     log(
       battle,
       `${u.name} uses ${skill}. ${results.join(" / ")}`,
-      `${teamName(u.side)} · ${hit} hit · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls · simplified damage${d.note ? " · source note: " + d.note : ""}`,
+      `${teamName(u.side)} · ${hit} hit · ${options.automaticDebuffs === false ? "manual debuffs" : "automatic skill debuffs"} · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls · simplified damage${d.note ? " · source note: " + d.note : ""}`,
     );
+    resolveDeaths(heroes, battle);
+    if (options.automaticReactions !== false) {
+      const queue = [];
+      if (d.triggersDualAttack) {
+        const ally = battle.units
+          .filter((t) => t.side === u.side && t.id !== u.id && t.currentHp > 0)
+          .sort(
+            (a, b) =>
+              effectiveStats(b).atk - effectiveStats(a).atk ||
+              a.id.localeCompare(b.id),
+          )[0];
+        if (ally)
+          queue.push({
+            kind: "dual",
+            actorId: ally.id,
+            targetId,
+            skill: "S1",
+            source: "skill",
+            label: `${u.name} ${skill}`,
+          });
+      }
+      if (d.canTriggerCounter !== false)
+        for (const hitResult of hits.filter((h) => !h.defeated)) {
+          const defender = battle.units.find((t) => t.id === hitResult.id);
+          if ((defender.counterChance || 0) > 0)
+            queue.push({
+              kind: "counter",
+              actorId: defender.id,
+              targetId: u.id,
+              skill: "S1",
+              source: "counterStat",
+              chance: defender.counterChance,
+              label: "configured counter chance",
+            });
+        }
+      resolveReactionQueue(heroes, battle, queue, random, options);
+    }
   }
-  for (const name of expireBuffs(battle, u))
-    log(battle, `${u.name}: ${name} expired.`, "End of bearer turn");
-  if (skill !== "wait")
-    applySkillBuffs(
-      battle,
-      u,
-      heroes[u.name].code,
-      skill,
-      skillData(heroes, u, skill),
-    );
-  if (selfSkill) {
+  if ((u.deaths || 0) === actorDeathSerial) {
+    endTurnEffects(battle, u);
+    for (const name of expireBuffs(battle, u, tickableBuffs))
+      log(battle, `${u.name}: ${name} expired.`, "End of bearer turn");
+  }
+  resolveDeaths(heroes, battle);
+  if (selfSkill && u.currentHp > 0) {
     grantBuff(battle, u, "stic_att_up2", 2, "Hot Streak!");
     u.cooldowns.S3 = 0;
-    u.readyAt = battle.time;
-    nextTurn(battle, u.id);
+    setCR(battle, u, 100, effectiveStats(u).spd);
+    nextTurn(battle, u.id, random, heroes);
   } else {
-    u.readyAt = battle.time + 10000 / effectiveStats(u).spd;
-    nextTurn(battle);
+    nextTurn(battle, null, random, heroes);
   }
   return battle;
+}
+
+export function resolveDeaths(
+  heroes,
+  battle,
+  { turnAlreadyStarted = false } = {},
+) {
+  while (battle.deathEvents?.length) {
+    const event = battle.deathEvents.shift(),
+      unit = battle.units.find((u) => u.id === event.unitId);
+    if (!unit || unit.deaths !== event.serial) continue;
+    clearSourceDeathEffects(battle, unit.id);
+    if (unit.currentHp > 0) continue;
+    const data = heroes[unit.name]?.skills?.S2;
+    if (!data?.passiveRevival || !data.passive || unit.cooldowns.S2 > 0)
+      continue;
+    const result = dispatchTrigger(
+      battle,
+      unit,
+      {
+        kind: "passive",
+        run: () => {
+          if (
+            !reviveUnit(battle, unit, {
+              fraction: data.passiveRevival,
+              combatReadiness: 100,
+              source: "Dark Contract passive",
+            })
+          )
+            return false;
+          unit.cooldowns.S2 =
+            unit.skills.S2.cd +
+            (turnAlreadyStarted && battle.active === unit.id ? 0 : 1);
+          if (equippedEE(heroes[unit.name], unit)?.option.opening)
+            dispatchTrigger(battle, unit, {
+              kind: "equipment",
+              run: () =>
+                grantBuff(
+                  battle,
+                  unit,
+                  "stic_demonpower_keep",
+                  2,
+                  "Archdemon’s Eye EE · Dark Contract revival",
+                ),
+            });
+          return true;
+        },
+      },
+      { allowDead: true, sealedAtDeath: event.sealed },
+    );
+    if (!result.activated && result.reason)
+      log(
+        battle,
+        `${unit.name}: revival passive blocked by ${result.reason}.`,
+        "Dark Contract",
+      );
+  }
+}
+function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
+  // Secondary attacks never recursively enqueue attacks; keep a hard cap for future dispatchers.
+  for (const request of queue.slice(0, 32)) {
+    const actor = battle.units.find((u) => u.id === request.actorId),
+      target = battle.units.find(
+        (u) => u.id === request.targetId && u.currentHp > 0,
+      );
+    const reason = activationBlockReason(battle, actor, request.kind, {
+      source: request.source,
+    });
+    if (reason || !target || target.side === actor?.side) {
+      if (actor && reason)
+        log(
+          battle,
+          `${actor.name}: ${request.kind} blocked by ${reason}.`,
+          request.label || "Reaction gate",
+        );
+      continue;
+    }
+    const data = skillData(heroes, actor, request.skill || "S1");
+    if (!data || data.passive || data.damageSupport !== "supported") continue;
+    if (
+      request.chance !== undefined &&
+      random() * 100 >= Math.max(0, Math.min(100, request.chance))
+    )
+      continue;
+    const { results } = performSkillAttack(
+      heroes,
+      battle,
+      actor,
+      request.skill || "S1",
+      target.id,
+      request.hit || "auto",
+      random,
+      options,
+    );
+    log(
+      battle,
+      `${actor.name} ${request.kind}: ${results.join(" / ")}`,
+      request.label || request.source || "Reaction",
+    );
+    resolveDeaths(heroes, battle);
+  }
+}
+export function executeReaction(
+  heroes,
+  previous,
+  request,
+  random = Math.random,
+) {
+  if (
+    !previous ||
+    previous.winner ||
+    !["additional", "counter", "dual"].includes(request.kind)
+  )
+    return previous;
+  const actor = previous.units.find((u) => u.id === request.actorId),
+    target = previous.units.find(
+      (u) => u.id === request.targetId && u.currentHp > 0,
+    );
+  if (
+    activationBlockReason(previous, actor, request.kind, {
+      source: request.source,
+    }) ||
+    !target ||
+    target.side === actor?.side
+  )
+    return previous;
+  const data = skillData(heroes, actor, request.skill || "S1");
+  if (!data || data.passive || data.damageSupport !== "supported")
+    return previous;
+  if (
+    request.hit &&
+    request.hit !== "auto" &&
+    !data.hitTypes?.includes(request.hit)
+  )
+    return previous;
+  const battle = clone(previous);
+  resolveReactionQueue(heroes, battle, [request], random);
+  const live = battle.units.filter((u) => u.currentHp > 0),
+    lost = SIDES.find((side) => !live.some((u) => u.side === side));
+  if (lost) {
+    battle.winner = lost === "left" ? "right" : "left";
+    battle.active = null;
+  } else if (activeUnit(battle)?.currentHp <= 0)
+    nextTurn(battle, null, random, heroes);
+  return battle;
+}
+
+export function resumeStalledBattle(heroes, battle, random = Math.random) {
+  if (
+    battle.stalled &&
+    !battle.winner &&
+    battle.units.some((u) => u.currentHp > 0 && Number.isFinite(u.readyAt))
+  )
+    nextTurn(battle, null, random, heroes);
+  return battle;
+}
+export function changeCombatReadiness(
+  heroes,
+  previous,
+  targetId,
+  amount,
+  random = Math.random,
+) {
+  if (
+    !previous ||
+    previous.winner ||
+    !Number.isFinite(amount) ||
+    amount < -100 ||
+    amount > 100
+  )
+    return previous;
+  const target = previous.units.find(
+    (u) => u.id === targetId && u.currentHp > 0,
+  );
+  if (!target) return previous;
+  const battle = clone(previous);
+  applyCRChange(
+    battle,
+    battle.units.find((u) => u.id === targetId),
+    amount,
+  );
+  return resumeStalledBattle(heroes, battle, random);
 }

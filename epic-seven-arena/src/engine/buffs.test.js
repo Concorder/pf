@@ -124,7 +124,7 @@ test("critical buff stats are capped and invalid edits do nothing", () => {
   assert.equal(changeBuff(b, "left-2", "stic_att_up", 0), b);
   assert.equal(
     Object.values(BUFFS).filter((b) => b.manual !== false && !b.debuff).length,
-    6,
+    7,
   );
 });
 

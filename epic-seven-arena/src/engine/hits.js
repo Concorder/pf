@@ -27,7 +27,10 @@ export function hitChances(attacker, defender) {
     ),
     critical: Math.min(
       100,
-      Math.max(0, a.chc + (relation === "advantage" ? 15 : 0)),
+      Math.max(
+        0,
+        a.chc - d.critResistance + (relation === "advantage" ? 15 : 0),
+      ),
     ),
     crushing: relation === "advantage" ? 50 : 30,
   };

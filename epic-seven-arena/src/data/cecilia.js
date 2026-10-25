@@ -1,3 +1,5 @@
+import { resolveReadinessRules } from "./skillReadiness.js";
+import { resolveDebuffRules } from "./skillDebuffs.js";
 import {
   maxEnhancements,
   normalizeEquipment,
@@ -122,7 +124,8 @@ export function normalizeSkill(hero, raw, index) {
     parsed = parseMultipliers(s.multipliers),
     description = String(s.description || "").replace(/\*|\+|_/g, ""),
     common = (s.common || []).map((c) => c._id),
-    passive = !!raw.passive || !!s.passive;
+    passive = !!raw.passive || !!s.passive,
+    debuffs = resolveDebuffRules(hero, s, index);
   const targets = common.includes("cmn_aoe")
     ? 3
     : common.includes("cmn_single_target")
@@ -139,7 +142,36 @@ export function normalizeSkill(hero, raw, index) {
     name: s.name || `S${index + 1}`,
     description,
     buffRefs: (s.buff || []).map((b) => b._id),
+    debuffRefs: (s.debuff || []).map((b) => b._id),
+    automaticDebuffs: debuffs.effects,
+    automaticReadiness: resolveReadinessRules(hero, s, index),
+    debuffsPending: debuffs.pending,
     passive,
+    passiveRevival:
+      hero.id === "c2007" &&
+      passive &&
+      description ===
+        "At the start of the turn, when Focus is full, resets skill cooldown of Dark Blade. Upon dying, revives to {{variable}} Health, before increasing Combat Readiness by 100% and gaining maximum Focus." &&
+      Array.isArray(s.values?.[0]) &&
+      s.values[0].every((v) => v === null || Number.isFinite(v))
+        ? Math.min(
+            1,
+            Math.round(
+              (s.values?.[0] || [])
+                .slice(0, enhancement.level + 1)
+                .reduce((sum, v) => sum + (v || 0), 0) *
+                10 *
+                1e6,
+            ) / 1e6,
+          )
+        : null,
+    triggersDualAttack:
+      hero.id === "c1001" &&
+      description ===
+        "Attacks the enemy repeatedly, before triggering a Dual Attack from the ally with the highest Attack.",
+    canTriggerCounter: !/cannot trigger (?:a )?counterattack/i.test(
+      description,
+    ),
     source: "CeciliaBot",
     sourceText: s.multipliers || "",
     sourceUpdatedAt: hero.updated_dt || null,
@@ -155,11 +187,13 @@ export function normalizeSkill(hero, raw, index) {
     },
     targets: targets || 1,
     hitTypes: ["crit", "crushing", "normal", "miss"],
-    note: "Normal cast, awakened skill, MAX enhancements; only explicitly implemented buffs are automated; other secondary effects are not.",
+    note: "Normal cast, awakened skill, MAX enhancements; only reviewed secondary effects are automated.",
   };
   if (passive) {
     result.damageSupport = "passive";
-    result.supportReason = "Passive: triggered effects are not automated";
+    result.supportReason = result.passiveRevival
+      ? "Passive: death revival implemented; Focus effects pending"
+      : "Passive: triggered effects are not automated";
   } else if (common.includes("cmn_non_attack_skill")) {
     result.damageSupport = "unsupported";
     result.supportReason = "Non-damaging skill: effect support pending";

@@ -75,7 +75,7 @@ Use **Manage buffs** in the current hero panel during battle. Select any living 
 
 Buff icons and remaining durations appear above each unit. Identical buffs refresh to the longer duration, not additive stacks. Greater Attack replaces normal Attack; normal Attack cannot overwrite Greater Attack. Speed changes preserve current CR and reschedule pending turns. Buffs expire after their bearer’s actions, including passing; a skill’s newly granted buffs are applied after the duration tick. Manual changes and automatic grants are part of the battle snapshot and undo together with attacks. Reset clears combat buffs and preserves saved builds.
 
-Reviewed automatic grants currently cover **Ras S3: Defense Up on living allies for 2 turns** and **Mercedes S3: Attack Up on living allies for 2 turns**. These rules require matching source buff references, ally targeting and duration text; changed source descriptions do not silently retain an assumed grant. Cermia S2 and Arbiter Vildred’s opening buff are implemented as described below. Other heroes’ grants, other passive effects, debuffs, healing and other unique buffs are not automated. Use manual controls for supported stat buffs. Buff constants and grant rules are engine mechanics; source descriptions are not executable code.
+Reviewed automatic grants currently cover **Ras S3: Defense Up on living allies for 2 turns** and **Mercedes S3: Attack Up on living allies for 2 turns**. These rules require matching source buff references, ally targeting and duration text; changed source descriptions do not silently retain an assumed grant. Cermia S2 and Arbiter Vildred’s opening buff are implemented as described below. Other heroes’ buff grants, unmapped passive effects and other unique buffs are not automated; reviewed debuff grants and reactions are described below. Use manual controls for supported stat buffs. Buff constants and grant rules are engine mechanics; source descriptions are not executable code.
 
 ## Cermia and Arbiter Vildred
 
@@ -83,7 +83,7 @@ Cermia’s awakened **S2 Hot Streak!** is an implemented self-cast action. Click
 
 Moonlight heroes equip their source-provided Exclusive Equipment by default. Choose one effect in the hero editor when multiple options exist. Simple damage bonuses and cooldown reductions are applied; additional mechanics are explicitly marked pending. Enter final stats including EE stats to avoid double counting.
 
-Arbiter Vildred’s Archdemon’s Eye EE grants undispellable **Archdemon’s Might for 2 bearer turns** at battle start. It grants +70% Evasion and +60% damage against Light targets. Hit outcomes are automatic by default with manual overrides. Revival, Focus and the EE revival trigger remain pending.
+Arbiter Vildred’s Archdemon’s Eye EE grants undispellable **Archdemon’s Might for 2 bearer turns** at battle start. It grants +70% Evasion and +60% damage against Light targets. Hit outcomes are automatic by default with manual overrides. Dark Contract revival and its EE grant are implemented; Focus mechanics remain pending.
 
 The snowy courtyard is shown when battle starts. Its CSS image URL is resolved absolutely against the page URL, preventing built stylesheets from requesting the incorrect `build-assets/assets/…` path. Setup uses a neutral background; resetting returns to setup.
 
@@ -97,7 +97,7 @@ scaling = maxHP × selfHpScaling + DEF × selfDefScaling + targetMaxHP × target
 damage = floor((attack + scaling) × 1.871 × pow × hitMultiplier / (1 + targetDEF × (1 - penetration) / 300))
 ```
 
-Hit multiplier: normal 1, crit configured Crit Damage / 100, miss 0.75, crushing 1.3. Critical chance is used by automatic hit rolls; Effectiveness / resistance rolls for debuffs remain manual. Only the listed coefficients are applied. Conditional skill options, elemental damage bonuses, healing, shields, passives, triggers, revival, counters, dual attacks, combat-readiness skill effects, damage sharing / reduction and artifact combat effects are **not** implemented. Buff support is limited to the section above. A source entry is not a verified active ability: unimplemented passive skills are disabled even when their source includes damage coefficients. No claim of complete hero support is made. Cooldowns and soul gains default to API values and can be overridden. Soul costs are manual settings; soulburn is not automated. Non-damaging skills other than the implemented Cermia S2 are disabled; use Pass turn and manual soul changes as needed.
+Hit multiplier: normal 1, crit configured Crit Damage / 100, miss 0.75, crushing 1.3. Critical chance is used by automatic hit rolls; Effectiveness / resistance rolls are supported in the effects panel and reviewed skill mappings. Only the listed coefficients are applied. Conditional skill options, elemental damage bonuses, general hero healing skills, shields, unmapped passives and triggers, general combat-readiness skill effects, damage sharing / reduction and artifact combat effects are **not** implemented. Buff support is limited to the section above. A source entry is not a verified active ability: unimplemented passive skills are disabled even when their source includes damage coefficients. No claim of complete hero support is made. Cooldowns and soul gains default to API values and can be overridden. Soul costs are manual settings; soulburn is not automated. Non-damaging skills other than the implemented Cermia S2 are disabled; use Pass turn and manual soul changes as needed.
 
 ## Data and attribution
 
@@ -111,10 +111,73 @@ Element badges use CeciliaBot’s `assets/img/cm_icon_prom{attribute}.png` image
 
 Open **Buffs & debuffs** during battle to apply, refresh or remove a successful debuff. Attack Down (−50%), Defense Down (−70%) and Speed Down (−30%) affect combat stats; opposing buffs/debuffs add their modifiers to base stats. Speed changes preserve current readiness. Stun disables skills until a passed bearer turn consumes its duration. Silence blocks skills with cooldowns. Unbuffable blocks new ordinary buffs while keeping existing buffs. Decreased Hit Chance (−50%) is displayed in the hit dialog; hit outcomes are automatic by default.
 
-Debuffs use CeciliaBot's game icons, show remaining bearer turns above units, expire after bearer actions, and support Undo. Application is manual: skill debuff chances, Effectiveness, resistance and immunity checks are not automated. Other debuffs (including damage over time, Sleep and Provoke) are not implemented yet.
+Debuffs use CeciliaBot's game icons, show remaining bearer turns above units, expire after bearer actions, and support Undo. Use the effects panel to select a source, proc chance, and resistance-roll mode. Automatic skill grants use the reviewed mappings described below. Supported Sleep, Provoke and other effects are described below; unimplemented effects are listed in the effects panel.
 
 ## Automatic hits
 
 After choosing a skill and target, **Use skill · automatic hits** resolves each target separately. Water (ice) beats Fire, Fire beats Earth (wind), and Earth beats Water. The weaker element has 50% base miss chance. Light and Dark have advantage against each other, and neutral matchups with Fire/Water/Earth. Same-element matchups are neutral.
 
 Evasion and Decreased Hit Chance add to miss chance, capped at 100%. Rolls check miss, then critical (configured chance plus 15 percentage points on advantage), then crushing (30%, or 50% on advantage, if not critical). Unsupported hit types are never rolled. This adds hit selection, not a separate elemental damage bonus. Manual hit overrides remain available in the popup. Logs record the outcome for each target; Undo restores the full prior snapshot.
+
+## Effect chance, DoTs and Bomb
+
+Formula references were reviewed against [e7calc public beta source](https://github.com/tyopoyt/e7calc-beta/tree/dcc3312a9bfe7b6dcd53898740ce07790e607948): `effectiveness-checker.component.ts`, `damage.service.ts`, `skill.ts` (`DoTSkill`) and `constants.ts`. The cloud proxy blocked the live e7calc.xyz site; this verifies the referenced public source, not the current deployed version.
+
+On a successful attack: proc roll, then resistance pass = `clamp(1 + EFF/100 − ER/100, 0, 0.85)`. The combined chance is hit chance × proc chance × resistance pass. Ignore Resistance removes the resistance check and its 15% floor, but not proc chance or Immunity. Missed attacks cannot apply the reviewed on-hit debuff. Ordinary buffs are not resistance-checked.
+
+The effects panel defaults to rolling proc / resistance after a successful hit; enter the fully enhanced skill proc chance and choose the source hero. Uncheck rolling for a decided result. Reviewed mappings now cover 51 skills. They use CeciliaBot’s actual fully enhanced chance-value formatting and explicitly reviewed target, duration, stack count and condition rules.
+
+Burn, Bleed and Bomb each snapshot effective source ATK at application. Each application is an independent stack with its own duration. Base damage per stack, rounded down:
+
+- Bleed: `sourceATK × 0.30 × 1.871 / (1 + currentDEF × 0.30 / 300)`.
+- Burn: `sourceATK × 0.60 × 1.871 / (1 + currentDEF × 0.30 / 300)`.
+- Bomb: `sourceATK × 1.50 × 1.871 / (1 + currentDEF × 0.30 / 300)`.
+- Poison: `bearerMaxHP × 0.05`, ignoring DEF.
+
+Bleed/Burn/Poison tick at bearer turn start. Bomb detonates when its independent timer expires at bearer turn end, then applies Stun for one turn without a second resistance roll (Immunity still blocks the new Stun). Start-of-turn lethal damage skips the defeated bearer and checks victory. Removing stacks cleanses them without damage; the panel removes all stacks of a selected type. Existing Bomb timers are never refreshed by a new stack. Undo restores HP, timers, application rolls and logs. Manual detonation skills, Venom injuries, Beehoo modifiers, artifact bonuses, damage sharing and unique DoT passives remain unimplemented.
+
+CeciliaBot's embedded Bleed description says 40% ATK, whereas the referenced calculator uses 30% ATK × 1.871. This engine explicitly follows the calculator formula above; descriptions are not executed as rules.
+
+## Automatic skill debuffs
+
+The hit popup defaults to **Apply skill debuffs automatically**. Each supported grant rolls its proc chance, then resistance, separately for every surviving hit target and stack. Misses and Immunity prevent applications. Critical-only grants and Coli’s Fire-target resistance bypass are explicit conditions. Uncheck this option for a single attack to skip all automatic grants, then apply decided outcomes in **Buffs & debuffs** (uncheck the panel’s rolling option to force an already-decided result). Manual hit overrides and debuff application mode are independent. Undo restores the entire attack and its grants.
+
+The original mappings cover direct grants across Cermia, Sigret, Seaside Bellona, Researcher Carrot S3, Luna, Arbiter Vildred, Aramintha, Silver Blade Aramintha S3, Baal & Sezan, Furious, Haste, Khawazu, Tenebria, Solitaria S3, Roaming Warrior Leo S3, Veronica S3, Pirate Captain Flan S3, Coli S3 and Summertime Iseria S3. Some skills remain unavailable if their damage formula is unsupported. This does not implement their passive triggers, dispels, detonations, extra attacks or other secondary mechanics. Researcher Carrot S1 is deliberately pending because its current source debuff reference conflicts with its description. Unknown / changed source descriptions are flagged pending rather than guessed.
+
+CeciliaBot sums each `values` row through the max enhancement level and formats fractional values as percentages using ×1000 (`skillDescriptionValues` and formatter module 5317 in its public site). Proc normalization uses that same convention, without adding enhancement chance a second time. Reviewed prose and debuff references guard each mapping; future chance-value updates are imported, while changed mechanics need review. The popup and skill support disclosure show the fully enhanced proc percentages and pending support. Target increases direct damage received by 15% and decreases Evasion by 50 percentage points; Unhealable is tracked, while healing skills remain unimplemented.
+
+## Additional reviewed debuffs
+
+All 48 CeciliaBot database entries were reviewed (including random-effect containers). The effects panel lists unsupported individual debuffs with their source descriptions and the specific missing system or coefficient. It does not offer nonfunctional status buttons.
+
+New implemented mechanics:
+
+- **Sleep:** disables skills, reduces Evasion and Critical Hit Resistance by 100 percentage points, and wakes on positive direct or secondary damage.
+- **Fear:** disables skills until passed/expired; 40% removal check at the bearer’s turn start, before start-of-turn damage.
+- **Provoke / Redirected Provoke:** enforce S1 and the living source / enemy with highest max HP. Players still confirm the forced basic attack in this manually controlled battle. Passing is blocked while that S1 is available; a dead provoking source releases targeting.
+- **Curse:** each attacked ally other than the bearer causes 60% secondary attack damage to the bearer. Secondary damage does not recursively trigger Curse. AoE primary damage resolves before these reactions and new debuffs.
+- **Beguile:** at bearer turn end, damages each other living ally by 10% of that ally’s max HP, then removes itself. Can defeat units and wake sleeping allies.
+- **Vampiric Touch:** an attacked bearer heals the attacker by 10% of the attacker’s max HP. Healing respects Unhealable, Stigma and the HP cap. This does not enable other hero healing skills.
+- **Energy Depletion:** Attack / Speed −50%, preserving CR. **Volatility:** Attack +15%, attack damage received +10%.
+- **Fracture:** stacks Attack +20% / Defense −5%, capped at ten stacks, with a configurable duration. Stacks and remaining duration persist through the shared revival pipeline.
+- **Trauma:** Defense −70%; Attack / Speed +100%, doubled to +200% when Defense before Trauma is at least 2000. **Stigma:** healing received −50%; its CR-gain component is implemented.
+
+Reviewed automatic direct-grant mappings now cover **40 skills**, adding Sleep, Provoke, Redirected Provoke, Fear, Beguile, Curse, Stigma and Vampiric Touch where appropriate. Melissa’s Curse explicitly applies on misses. Mort and Setsuka ignore resistance against lower-max-HP targets. Other effects of those skills (such as dispels, healing, CR movement, buffs and additional attacks) still require their own implementations.
+
+Pilfer still needs persistent stat loss and Spoils grants; Bind/Cannot Counterattack/Seal now use shared trigger gates; other hero-specific trigger mappings remain pending; Frostbite needs damage reduction/sharing; Block needs effect ownership; Immobilize and Death Sentence need verified global timers; Magic Nail and Rupture need missing coefficients; Omen has no actionable source description. These remain explicitly pending. Random-debuff and Class Debuff rows describe containers rather than independently applicable statuses.
+
+## Shared injury and HP capacity
+
+Venom, Laceration and Collapse are implemented with a shared effective-max-HP model. Permanent injury is capped at 50% original hero HP; cleansing does not erase injury. HP bars, healing caps, damage scaling and HP comparisons use the reduced maximum. New battle resets injury; the revival pipeline preserves it, including the reviewed Dark Contract death handler. See [health-mechanics.md](docs/health-mechanics.md) for source definitions, event coverage, tests and **unverified combined edge-case choices**. Automatic direct-grant mappings now cover 46 skills; unsupported damage formulas remain blocked.
+
+## Reactions and passive revival
+
+Bind, Cannot Counterattack and Seal now use shared activation gates. Ras S2 requests a highest-ATK ally Dual Attack; counter chance can be configured in the hero editor (defaults to zero). Arbiter Vildred's source-guarded death passive revives before victory checks, unless blocked by Seal or cooldown, and separately triggers the equipped EE's revival grant. Fracture and injury persist; ordinary effects are removed. All results are undoable.
+
+See [triggers-and-revival.md](docs/triggers-and-revival.md) for source categories, turn/resource boundaries, conservative chain limits and remaining hero-specific support. This is not complete automation of every source passive or extra attack.
+
+## Combat Readiness and global countdowns
+
+Restrict blocks CR pushes; Stigma halves pushes; Immobilize freezes Speed-driven progress while allowing direct CR changes. The effects panel supports manual CR adjustment and recovery if every living unit is frozen. Reviewed caster boosts and enemy setbacks are automatic, with a popup override.
+
+Death Sentence counts twelve subsequent global turn starts, deals 50,000 fixed damage and is removed when its source dies. Immobilize expires after four subsequent global starts. Both have global countdown labels. Timer-origin, refresh and source-duration ambiguities remain documented verification items; see [readiness-and-global-timers.md](docs/readiness-and-global-timers.md). This update has 34 status types and 58 reviewed direct-debuff skill mappings, plus five skill CR mappings.

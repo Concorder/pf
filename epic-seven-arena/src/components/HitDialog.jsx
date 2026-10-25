@@ -1,6 +1,9 @@
+import { activationBlockReason } from "../engine/triggers.js";
+import { maxHp } from "../engine/health.js";
+import { BUFFS } from "../engine/buffs.js";
 import { hitChances } from "../engine/hits.js";
 import { effectiveStats } from "../engine/buffs.js";
-import React from "react";
+import React, { useState } from "react";
 import { useLab } from "../context.js";
 import { skillData, affectedTargets, damage } from "../engine/battle.js";
 import Modal from "./Modal.jsx";
@@ -11,7 +14,9 @@ export default function HitDialog() {
     u = l.active,
     target = l.units.find((t) => t.id === p.targetId),
     d = skillData(l.heroes, u, p.skill),
-    targets = affectedTargets(l.battle, u, target, d);
+    targets = affectedTargets(l.battle, u, target, d),
+    [automaticDebuffs, setAutomaticDebuffs] = useState(true),
+    [automaticReadiness, setAutomaticReadiness] = useState(true);
   return (
     <Modal
       id="hitDialog"
@@ -42,7 +47,7 @@ export default function HitDialog() {
           <b id="hitTargetName">{target.name}</b>
           <p id="hitTargetHp">
             {target.currentHp.toLocaleString()} /{" "}
-            {target.stats.hp.toLocaleString()} HP
+            {maxHp(target).toLocaleString()} HP
           </p>
         </div>
       </div>
@@ -51,11 +56,23 @@ export default function HitDialog() {
           ? `This skill hits ${targets.length} enemies: ${targets.map((t) => t.name).join(", ")}. Automatic mode rolls separately for each target. Manual overrides apply to all targets.`
           : "Single-target attack"}
       </p>
+      {(target.counterChance || 0) > 0 && (
+        <p className="fine">
+          Target counterattack chance: {target.counterChance}%.{" "}
+          {d.canTriggerCounter === false
+            ? "This skill cannot trigger counters."
+            : activationBlockReason(l.battle, target, "counter")
+              ? `Counter blocked by ${activationBlockReason(l.battle, target, "counter")}.`
+              : "Counters use a separate hit roll."}
+        </p>
+      )}
       <button
         type="button"
         className="primary"
         id="automaticHit"
-        onClick={() => l.resolveHit("auto")}
+        onClick={() =>
+          l.resolveHit("auto", { automaticDebuffs, automaticReadiness })
+        }
       >
         Use skill · automatic hits
       </button>
@@ -73,6 +90,74 @@ export default function HitDialog() {
           </p>
         );
       })}
+      {(d.automaticDebuffs?.length > 0 || d.debuffsPending) && (
+        <fieldset>
+          <legend>Skill debuffs</legend>
+          {d.automaticDebuffs?.length > 0 && (
+            <>
+              <label>
+                <input
+                  id="automaticDebuffs"
+                  type="checkbox"
+                  checked={automaticDebuffs}
+                  onChange={(e) => setAutomaticDebuffs(e.target.checked)}
+                />{" "}
+                Apply skill debuffs automatically
+              </label>
+              {d.automaticDebuffs.map((effect, index) => (
+                <p className="fine" key={index}>
+                  {BUFFS[effect.id]?.name || effect.id} · {effect.chance}% MAX
+                  proc
+                  {effect.count > 1
+                    ? ` × ${effect.count} independent rolls`
+                    : ""}{" "}
+                  · {BUFFS[effect.id]?.globalTurns || effect.turns}{" "}
+                  {BUFFS[effect.id]?.globalTurns ? "global turns" : "turns"}
+                  {effect.requiresCrit ? " · critical hits only" : ""}
+                  {effect.timing === "beforeAttack" ? " · before damage" : ""}
+                  {effect.ignoreMiss ? " · can apply on miss" : ""}
+                  {effect.ignoreResistanceIfLowerHP
+                    ? " · ignores ER against lower-max-HP targets"
+                    : ""}
+                </p>
+              ))}
+              <p className="fine">
+                {automaticDebuffs
+                  ? "Rolls separately per target and stack, with Effectiveness, Resistance and Immunity checks. Explicit source exceptions can apply on misses."
+                  : "Automatic debuff rolls are disabled for this attack. Apply your chosen outcomes through Buffs & debuffs after the attack."}
+              </p>
+            </>
+          )}
+          {d.debuffsPending && (
+            <p className="fine">
+              Other source mechanics are not fully automated. The listed debuffs
+              roll automatically; triggers, dispels and detonations still
+              require separate support.
+            </p>
+          )}
+        </fieldset>
+      )}
+      {d.automaticReadiness?.length > 0 && (
+        <fieldset>
+          <legend>Skill Combat Readiness</legend>
+          <label>
+            <input
+              id="automaticReadiness"
+              type="checkbox"
+              checked={automaticReadiness}
+              onChange={(e) => setAutomaticReadiness(e.target.checked)}
+            />{" "}
+            Apply skill CR effects automatically
+          </label>
+          {d.automaticReadiness.map((e, i) => (
+            <p className="fine" key={i}>
+              {e.target}: {e.amount > 0 ? "+" : ""}
+              {e.amount}%{e.perTarget ? " per target" : ""}. Enemy setbacks
+              require a hit and a resistance check.
+            </p>
+          ))}
+        </fieldset>
+      )}
       <details>
         <summary>Manual hit override</summary>
         <div id="hitOptions" className="hit-options">
@@ -91,7 +176,9 @@ export default function HitDialog() {
                 className={`hit-option ${hit}`}
                 disabled={!allowed}
                 aria-label={`${label} hit`}
-                onClick={() => l.resolveHit(hit)}
+                onClick={() =>
+                  l.resolveHit(hit, { automaticDebuffs, automaticReadiness })
+                }
               >
                 <span className="hit-symbol">{icon}</span>
                 <b>{label}</b>

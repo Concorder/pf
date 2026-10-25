@@ -1,13 +1,24 @@
+import { maxHp, originalMaxHp, injuryAmount } from "../engine/health.js";
 import ElementIcon from "./ElementIcon.jsx";
 import { equippedEE } from "../engine/progression.js";
 import SelfSkillDialog from "./SelfSkillDialog.jsx";
 import { isCermiaSelfSkill } from "../engine/mechanics.js";
 import BuffDialog from "./BuffDialog.jsx";
-import { BUFFS, effectiveStats, hasBuff } from "../engine/buffs.js";
+import {
+  BUFFS,
+  effectiveStats,
+  hasBuff,
+  effectRemaining,
+} from "../engine/buffs.js";
 import React, { useEffect, useRef, useState } from "react";
 import { useLab, asset } from "../context.js";
 import { teamName, SKILLS } from "../engine/heroes.js";
-import { readiness, canUse, skillData } from "../engine/battle.js";
+import {
+  readiness,
+  canUse,
+  skillData,
+  forcedTarget,
+} from "../engine/battle.js";
 import Portrait from "./Portrait.jsx";
 import HitDialog from "./HitDialog.jsx";
 const POSITIONS = ["Back", "Upper", "Front", "Lower"];
@@ -22,7 +33,9 @@ function HeroUnit({ side, slot }) {
     unit.side !== l.active.side &&
     unit.currentHp > 0 &&
     l.selectedSkill &&
-    canUse(l.heroes, l.battle, l.active, l.selectedSkill);
+    canUse(l.heroes, l.battle, l.active, l.selectedSkill) &&
+    (!forcedTarget(l.battle, l.active) ||
+      forcedTarget(l.battle, l.active).id === unit.id);
   return (
     <button
       type="button"
@@ -40,7 +53,7 @@ function HeroUnit({ side, slot }) {
         .join(" ")}
       aria-label={
         h
-          ? `${h.name}, ${unit.currentHp} of ${h.stats.hp} health, ${teamName(side)}, ${pos.toLowerCase()} position`
+          ? `${h.name}, ${unit.currentHp} of ${maxHp(unit)} health, ${teamName(side)}, ${pos.toLowerCase()} position`
           : `${teamName(side)} empty ${pos.toLowerCase()} position`
       }
       draggable={!!h && !l.battle}
@@ -81,17 +94,17 @@ function HeroUnit({ side, slot }) {
         <>
           <div className="unit-status">
             <div className="unit-buffs">
-              {(unit.buffs || []).map((b) => (
+              {(unit.buffs || []).map((b, index) => (
                 <span
-                  key={b.id}
+                  key={b.instance || `${b.id}-${index}`}
                   className={`buff-badge ${BUFFS[b.id]?.debuff ? "debuff-badge" : ""}`}
-                  title={`${BUFFS[b.id]?.name} · ${b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}`}
+                  title={`${BUFFS[b.id]?.name} · ${b.expiresAtGlobal !== undefined ? `${effectRemaining(l.battle, b)} global turns` : b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}`}
                 >
                   <img
                     src={asset(`data/buff-icons/${b.id}.png`)}
                     alt={BUFFS[b.id]?.name}
                   />
-                  <b>{b.turns ?? "∞"}</b>
+                  <b>{effectRemaining(l.battle, b) ?? "∞"}</b>
                 </span>
               ))}
             </div>
@@ -102,7 +115,7 @@ function HeroUnit({ side, slot }) {
             <div className="unit-bars">
               <div className="health">
                 <span
-                  style={{ width: `${(unit.currentHp / h.stats.hp) * 100}%` }}
+                  style={{ width: `${(unit.currentHp / maxHp(unit)) * 100}%` }}
                 />
               </div>
               <div className="unit-cr">
@@ -111,8 +124,11 @@ function HeroUnit({ side, slot }) {
                 />
               </div>
             </div>
-            <span className="hp-text">
-              {unit.currentHp.toLocaleString()} / {h.stats.hp.toLocaleString()}
+            <span
+              className="hp-text"
+              title={`Original max HP: ${originalMaxHp(unit).toLocaleString()} · Injury: ${injuryAmount(unit).toLocaleString()}${hasBuff(unit, "stic_collapse") ? " · Collapse active" : ""}`}
+            >
+              {unit.currentHp.toLocaleString()} / {maxHp(unit).toLocaleString()}
             </span>
           </div>
           <div className="unit-portrait-wrap">
@@ -221,20 +237,26 @@ function ActiveHero() {
         <div className="active-health">
           <span
             id="activeHealthFill"
-            style={{ width: `${(u.currentHp / u.stats.hp) * 100}%` }}
+            style={{ width: `${(u.currentHp / maxHp(u)) * 100}%` }}
           />
         </div>
         <div className="active-hp-line">
           <span id="activeHp">
-            {u.currentHp.toLocaleString()} / {u.stats.hp.toLocaleString()}
+            {u.currentHp.toLocaleString()} / {maxHp(u).toLocaleString()}
           </span>
           <span id="activeSpeed">{Math.round(effectiveStats(u).spd)} SPD</span>
         </div>
+        {maxHp(u) < originalMaxHp(u) && (
+          <span className="hp-capacity-note" id="activeHpCapacity">
+            Max HP reduced · injury {injuryAmount(u).toLocaleString()}
+            {hasBuff(u, "stic_collapse") ? " · Collapse" : ""}
+          </span>
+        )}
         <button
           id="manageBuffs"
           className="hud-text-button"
-          disabled={!l.active}
-          onClick={() => l.setBuffTarget(l.active.id)}
+          disabled={!l.battle || !!l.battle.winner || !u}
+          onClick={() => l.setBuffTarget(l.active?.id || u.id)}
         >
           ✦ Buffs & debuffs
         </button>
@@ -306,6 +328,24 @@ function Skills() {
           Silenced — skills with cooldowns are blocked.
         </p>
       )}
+      {["stic_sleep", "stic_fear"]
+        .filter((id) => hasBuff(u, id))
+        .map((id) => (
+          <p className="fine" role="status" key={id}>
+            {BUFFS[id].name} — pass to consume this turn.
+          </p>
+        ))}
+      {forcedTarget(l.battle, u) && (
+        <p className="fine" role="status">
+          Provoked — use S1 on {forcedTarget(l.battle, u).name}.
+        </p>
+      )}
+      {l.battle?.stalled && (
+        <p className="fine" role="status">
+          Readiness stalled — use Buffs & debuffs to push CR or remove
+          Immobilize.
+        </p>
+      )}
       <div className="skill-station-heading">
         <span className="eyebrow">
           SKILLS · MAX{equippedEE(l.heroes[u.name], u) ? " · EE EQUIPPED" : ""}
@@ -313,7 +353,7 @@ function Skills() {
         <button
           id="pass"
           className="hud-text-button"
-          disabled={!l.active}
+          disabled={!canUse(l.heroes, l.battle, l.active, "wait")}
           onClick={() => l.attack("wait")}
         >
           Pass turn ⇥
@@ -367,8 +407,8 @@ function Skills() {
                 {isCermiaSelfSkill(l.heroes, u, s)
                   ? "Self buff + cooldown reset + extra turn implemented"
                   : data?.passive
-                    ? l.heroes[u.name].code === "c2007" && s === "S2"
-                      ? "EE opening buff: 2 turns when equipped; revive and Focus pending"
+                    ? data?.passiveRevival
+                      ? "Dark Contract revival + EE grant implemented; Focus/reset pending"
                       : "Passive — triggers not automated"
                     : data?.damageSupport === "supported"
                       ? "Base damage supported"
@@ -381,6 +421,32 @@ function Skills() {
                   ? ` · EE damage +${Math.round(data.eeDamage * 100)}%`
                   : ""}
               </p>
+              {data?.automaticDebuffs?.length > 0 && (
+                <p>
+                  Automatic debuffs:{" "}
+                  {data.automaticDebuffs
+                    .map(
+                      (e) =>
+                        `${BUFFS[e.id]?.name || e.id} ${e.chance}%${e.count > 1 ? ` ×${e.count}` : ""}`,
+                    )
+                    .join(" · ")}
+                </p>
+              )}
+              {data?.debuffsPending && (
+                <p>
+                  Additional debuff effects pending; use manual controls where
+                  supported.
+                </p>
+              )}
+              {data?.passive && hasBuff(u, "stic_dizzy") && (
+                <p>Seal blocks implemented passive activation.</p>
+              )}
+              {data?.triggersDualAttack && (
+                <p>
+                  Dual Attack from the highest-ATK living ally; Bind can block
+                  the selected ally.
+                </p>
+              )}
               {data?.equipmentEffect && (
                 <p>
                   EE: {data.equipmentEffect.description}

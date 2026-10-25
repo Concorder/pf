@@ -2,7 +2,12 @@ import { isCermiaSelfSkill } from "./engine/mechanics.js";
 import React, { useEffect, useRef, useState } from "react";
 import { LabContext, asset } from "./context.js";
 import { clone, defaultTeams, validTeams, roster } from "./engine/heroes.js";
-import { activeUnit, canUse, clampSouls } from "./engine/battle.js";
+import {
+  activeUnit,
+  canUse,
+  clampSouls,
+  forcedTarget,
+} from "./engine/battle.js";
 import useBattleSession from "./useBattleSession.js";
 import Arena from "./components/Arena.jsx";
 import HeroEditor from "./components/HeroEditor.jsx";
@@ -220,6 +225,9 @@ export default function App() {
     const target = units.find(
       (u) => u.id === targetId && u.currentHp > 0 && u.side !== active.side,
     );
+    const forced = forcedTarget(battle, active);
+    if (forced && targetId !== forced.id)
+      return toast(`Provoke: use S1 on ${forced.name}.`);
     if (target)
       setPending({
         actorId: active.id,
@@ -228,18 +236,18 @@ export default function App() {
         turn: battle.turn,
       });
   }
-  function attack(skill, targetId, hit) {
-    session.attack(skill, targetId, hit);
+  function attack(skill, targetId, hit, options) {
+    session.attack(skill, targetId, hit, options);
     setPending(null);
     setSelectedSkill(null);
   }
-  function resolveHit(hit) {
+  function resolveHit(hit, options) {
     if (
       pending &&
       active?.id === pending.actorId &&
       battle.turn === pending.turn
     )
-      attack(pending.skill, pending.targetId, hit);
+      attack(pending.skill, pending.targetId, hit, options);
     else setPending(null);
   }
   function reset() {
@@ -284,6 +292,7 @@ export default function App() {
     buffTarget,
     setBuffTarget,
     editBuff: session.editBuff,
+    editReadiness: session.editReadiness,
     ensureHero,
     teams,
     units,
