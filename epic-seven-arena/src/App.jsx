@@ -292,7 +292,9 @@ export default function App() {
     buffTarget,
     setBuffTarget,
     editBuff: session.editBuff,
+    setSanctuary: session.setSanctuary,
     editReadiness: session.editReadiness,
+    detonate: session.detonate,
     ensureHero,
     teams,
     units,
@@ -424,11 +426,11 @@ export default function App() {
           </div>
           <Timeline />
           <p className="fine scope-description">
-            Implemented: common stat buffs, Ras S3 and Mercedes S3 team buffs,
-            Cermia S2 self-buff/reset/extra turn, and Arbiter Vildred’s opening
-            Archdemon’s Might. Evasion and critical outcomes remain manual.
-            Revival, Focus, other passives, debuffs, counters and artifact
-            effects remain unsupported.
+            Automatic hits and reviewed buffs, debuffs, Combat Readiness effects,
+            dispels and selected reactions are implemented. Manual overrides and
+            Undo are available. Hero support is partial: check Skill data &amp;
+            support for pending mechanics. Focus and many passive/artifact effects
+            remain pending.
           </p>
           <footer>
             <span>BUILT FOR THE NEXT “WHAT IF?”</span>

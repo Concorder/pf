@@ -1,3 +1,4 @@
+import { hecateRestrictionsActive } from "./globalRestrictions.js";
 import { reviveHealth } from "./health.js";
 import { BUFFS, effectiveStats } from "./buffs.js";
 // Mutating primitive used inside a battle snapshot. Trigger/cooldown checks belong to the dispatcher.
@@ -11,6 +12,7 @@ export function reviveUnit(
     !unit ||
     unit.currentHp > 0 ||
     unit.extinct ||
+    hecateRestrictionsActive(battle, unit) ||
     !Number.isFinite(fraction) ||
     fraction <= 0 ||
     !Number.isFinite(combatReadiness)

@@ -11,20 +11,31 @@ Verified source rules:
 
 ## Shared state and rules
 
-`health.js` owns the capacity calculation. `stats.hp` remains build HP; `baseMaxHp` freezes that baseline when battle begins. `injury` is a persistent amount capped at floor(original max HP × 50%). It is not a buff, cannot be cleansed, survives death and is retained by the HP-only revival primitive. New battle/reset clears it. The reviewed Dark Contract death handler now uses the shared revival pipeline; other revival skills remain pending.
+`health.js` owns the capacity calculation. `stats.hp` remains build HP; `baseMaxHp` freezes that baseline when battle begins. `injuryFraction` is a persistent fraction capped at 0.5. Injury is not a buff, cannot be cleansed, survives death/revival and clears on a new battle. Legacy amount snapshots are read as a percentage of their original HP baseline.
 
-Effective max HP = floor((original max HP − injury) × Collapse multiplier), minimum 1. The multiplier is .5 on heroes, .75 on nonheroes, otherwise 1. Apply/cleanse/expiry clamps current HP to capacity without healing or reviving. Removing Collapse restores capacity, not lost HP. All HP-scaled damage, Poison/Venom, Beguile, Vampiric Touch, healing caps, HP comparisons and displays use this same maximum.
+`uninjuredMaxHp` applies non-injury HP modifiers first (Collapse and the shared max-HP multiplier). Effective max HP is floor(uninjured max HP × (1 − injury fraction)), minimum 1. Applying or removing a max-HP modifier preserves the injury percentage, changes its displayed HP amount and clamps HP without healing or reviving. The shared multiplier is infrastructure for later max-HP effects; it does not automatically implement Superhuman or its source triggers.
 
-Venom stacks resolve independently. Each tick reads the current effective max HP, deals floor(10%) damage, then injures by actual HP lost, not overkill damage. Laceration adds 15 percentage points to attack damage received and creates injury from actual HP lost through the shared damage entry point, including direct attacks, DoTs, Bomb, Curse and Beguile. Existing injury is not prevented by Immunity; the debuffs that cause it remain subject to ordinary application checks.
+For an injury effect limited to 15%, injury gained is min(actual HP lost, floor(uninjured max HP × .15)), then converted to percentage points of that same HP basis. Existing injury does not compound the percentage denominator. A collapsed 10,000-HP hero has a 5,000-HP basis: a 500-damage hit adds 10% injury; a 2,000-damage hit with a 15% ceiling adds only 750 HP / 15%. Removing Collapse preserves that fraction. The 50% total ceiling still applies. Source-specific skill injury mappings remain separate from this shared primitive.
 
-## Explicit sandbox choices requiring in-game confirmation
+HP bars, healing caps, HP-scaled damage, Poison, Beguile, Vampiric Touch and HP comparisons use the effective post-injury maximum. UI injury labels show both the persistent percentage and its current HP equivalent.
+
+Venom stacks resolve independently. Each tick reads the same modified pre-injury max-HP basis as injury limits (after Collapse and other max-HP modifiers), deals floor(10%) damage, then injures by actual HP lost, not overkill damage. Laceration adds 15 percentage points to attack damage received and creates injury from actual HP lost through the shared damage entry point, including direct attacks, DoTs, Bomb, Curse and Beguile. Existing injury is not prevented by Immunity; the debuffs that cause it remain subject to ordinary application checks.
+
+User-confirmed interaction: injury and Collapse are multiplicative. For example, 10,000 original HP with 20% injury leaves 8,000 permanent capacity; Collapse halves that to 4,000. Cleansing Collapse restores the capacity to 8,000 without healing or removing injury.
+
+## Remaining sandbox choices requiring in-game confirmation
 
 The source descriptions do **not** establish the following combined edge cases. These choices are deterministic and tested, but are not claimed as verified game behavior:
 
-- Collapse multiplies remaining capacity after permanent injury, rather than adding another reduction of original max HP.
-- Separate Venom and Laceration injury sources add their injury amounts for the same damage event, up to the shared cap.
-- Capacity clamping from Collapse or injury is not another damage event and cannot recursively create more injury.
-- Each Venom stack reads the capacity after the preceding stack’s injury, rather than snapshotting capacity once for the whole turn.
+- Deferred Laceration event coverage: the user believes DoTs do not trigger Laceration, and does not know whether additional damage triggers it. Keep both questions open for later verification. The engine currently routes DoTs, Bomb/detonation and secondary damage through the broad injury hook, including double injury for Venom + Laceration; that is an unverified implementation assumption, not confirmed game behavior. No engine change was requested in this clarification.
+
+
+
+User-confirmed: reducing the HP cap and clamping current HP (including Collapse or injury itself) is not actual damage and does not trigger Laceration injury. It cannot recursively create injury. This matches the existing implementation.
+
+Venom’s HP basis is now settled by the user clarification and is no longer an open question.
+
+A user clarification confirms injury percentage persistence across max-HP modifiers and that an “up to” limit is a ceiling, not a guaranteed injury amount.
 
 Keep these limitations visible in documentation and verify them against reliable game evidence before claiming complete damage accuracy.
 
@@ -33,3 +44,7 @@ Keep these limitations visible in documentation and verify them against reliable
 Reviewed mappings add Sharun S1/S3 Venom, Ruiza S3 and Faithless Lidica S2 Laceration, and pre-attack Collapse for Salome S3 / Genesis Ras S2. Source prose, references and enhanced chances remain guarded. Unsupported damage formulas still block those actions; adding a status mapping does not imply full hero support. Manual controls can apply all three effects.
 
 Pre-attack effects resolve before hit/damage calculation and are not duplicated afterward. Manual mode disables these rolls as well; apply pre-attack effects in the effects panel **before** attacking if you want to resolve them manually.
+
+## Damage limits after injury
+
+User-confirmed: percentage damage limits use effective max HP after injury and other HP modifiers, not original build HP or currently remaining HP. A 10,000-HP Spirit Eye Celine at 50% injury has 5,000 effective max HP; her configured 50% hit limit is 2,500. A 20% share then splits that into 2,000 target damage and 500 transfer. Frostbite disables sharing but preserves the 2,500 limit.

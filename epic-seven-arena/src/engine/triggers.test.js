@@ -9,6 +9,7 @@ import {
   executeAttack,
   executeReaction,
   resolveDeaths,
+  selectHighestAttackDualAlly,
   canUse,
 } from "./battle.js";
 import {
@@ -122,7 +123,7 @@ test("Cannot Counterattack and out-of-turn Bind prevent configured counters; Sea
     ),
   );
 });
-test("Ras S2 dispatches a highest-ATK ally Dual Attack; Bind blocks it without replacing the selected ally", () => {
+test("Ras S2 selects the highest-ATK eligible ally and skips a bound ally", () => {
   let b = fixture(true);
   get(b, "left-1").stats.atk = 4000;
   let next = executeAttack(heroes, b, "S2", "right-0", "normal", rng);
@@ -130,11 +131,7 @@ test("Ras S2 dispatches a highest-ATK ally Dual Attack; Bind blocks it without r
   assert.equal(get(next, "left-1").readyAt, get(b, "left-1").readyAt);
   b = changeBuff(b, "left-1", "stic_restrict", 2);
   next = executeAttack(heroes, b, "S2", "right-0", "normal", rng);
-  assert.equal(
-    next.log.some((e) => e.message.includes(" dual:")),
-    false,
-  );
-  assert.ok(next.log.some((e) => e.message.includes("dual blocked by Bind")));
+  assert.ok(next.log.some((e) => e.message.startsWith("Mercedes dual:")));
   b = changeBuff(b, "left-1", "stic_restrict", 2, true);
   b = changeBuff(b, "left-1", "stic_dizzy", 2);
   assert.ok(
@@ -179,9 +176,9 @@ test("revival cleanses ordinary effects and preserves exact Fracture stacks, inj
   resolveDeaths(heroes, b);
   const u = get(b, id);
   assert.equal(heroes[u.name].skills.S2.passiveRevival, 1);
-  assert.equal(u.currentHp, 80000);
-  assert.equal(maxHp(u), 80000);
-  assert.equal(u.injury, 20000);
+  assert.equal(u.currentHp, 60000);
+  assert.equal(maxHp(u), 60000);
+  assert.equal(u.injuryFraction, 0.4);
   assert.deepEqual(
     u.buffs.find((e) => e.id === stack.id),
     stack,
@@ -195,7 +192,7 @@ test("revival cleanses ordinary effects and preserves exact Fracture stacks, inj
   resolveDeaths(heroes, b);
   assert.equal(u.currentHp, 0, "cooldown prevents a second native revival");
   assert.equal(reviveUnit(b, u, { fraction: 0.5 }), true);
-  assert.equal(u.currentHp, 40000);
+  assert.equal(u.currentHp, 30000);
   assert.deepEqual(
     u.buffs.find((e) => e.id === stack.id),
     stack,
@@ -285,4 +282,74 @@ test("counter death on the actor turn preserves revival readiness and fresh EE/F
   assert.equal(u.buffs.find((e) => e.id === "stic_crack_1_aura").turns, 3);
   assert.equal(next.time, b.time);
   assert.equal(u.cooldowns.S2, 5);
+});
+
+test("highest-ATK selector skips every disabled candidate and does not attack when all allies are disabled", () => {
+  for (const status of [
+    "stic_restrict",
+    "stic_stun",
+    "stic_sleep",
+    "stic_fear",
+  ]) {
+    let b = fixture(true);
+    get(b, "left-1").stats.atk = 5000;
+    b = changeBuff(b, "left-1", status, 2);
+    assert.equal(
+      selectHighestAttackDualAlly(heroes, b, activeUnit(b)).id,
+      "left-2",
+      status,
+    );
+    b = changeBuff(b, "left-2", "stic_stun", 2);
+    assert.equal(selectHighestAttackDualAlly(heroes, b, activeUnit(b)), null);
+    const next = executeAttack(heroes, b, "S2", "right-0", "normal", rng);
+    assert.equal(
+      next.log.some((e) => e.message.includes(" dual:")),
+      false,
+    );
+    assert.ok(next.log.some((e) => e.message.includes("no eligible ally")));
+  }
+});
+test("highest-ATK selector uses effective ATK, ignores dead allies, and permits Seal or Cannot Counterattack on an active S1", () => {
+  let b = fixture(true);
+  get(b, "left-1").stats.atk = 5000;
+  get(b, "left-2").stats.atk = 3500;
+  b = changeBuff(b, "left-1", "stic_att_dn", 2);
+  b = changeBuff(b, "left-2", "stic_dizzy", 2);
+  b = changeBuff(b, "left-2", "stic_nocounterattack", 2);
+  assert.equal(
+    selectHighestAttackDualAlly(heroes, b, activeUnit(b)).id,
+    "left-2",
+  );
+  get(b, "left-2").currentHp = 0;
+  assert.equal(
+    selectHighestAttackDualAlly(heroes, b, activeUnit(b)).id,
+    "left-1",
+  );
+  get(b, "left-1").currentHp = 0;
+  assert.equal(selectHighestAttackDualAlly(heroes, b, activeUnit(b)), null);
+});
+test("highest-ATK equipment Dual Attacks use the same eligible-ally fallback and require equipped EE", () => {
+  const teams = defaultTeams(heroes);
+  teams.left = [
+    makeHero(heroes, "Archdemon's Shadow"),
+    makeHero(heroes, "Vildred"),
+    makeHero(heroes, "Mercedes"),
+    null,
+  ];
+  teams.left[0].stats.spd = 350;
+  teams.left[1].stats.atk = 5000;
+  for (const side of Object.values(teams))
+    for (const h of side.filter(Boolean)) h.stats.hp = 100000;
+  let b = createBattle(teams, { left: 0, right: 0 }, heroes);
+  b = changeBuff(b, "left-1", "stic_stun", 2);
+  const next = executeAttack(heroes, b, "S1", "right-0", "normal", rng);
+  assert.ok(next.log.some((e) => e.message.startsWith("Mercedes dual:")));
+  teams.left[0].eeEnabled = false;
+  const unequipped = createBattle(teams, { left: 0, right: 0 }, heroes);
+  assert.equal(
+    executeAttack(heroes, unequipped, "S1", "right-0", "normal", rng).log.some(
+      (e) => e.message.includes(" dual:"),
+    ),
+    false,
+  );
 });

@@ -333,7 +333,6 @@ export const PENDING_DEBUFF_REASONS = {
     "Requires a verified global-turn timer and source-death cleanup.",
   stic_dizzy:
     "Requires a general passive-trigger system; EE opening grants are equipment effects.",
-  stic_freezing: "Requires damage-sharing and damage-reduction systems.",
   stic_isolation:
     "Requires effect ownership rules for buffs, beneficial effects and cleansing.",
   stic_nail:

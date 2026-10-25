@@ -1,4 +1,5 @@
-import { maxHp, originalMaxHp, injuryAmount } from "../engine/health.js";
+import {debuffGroupName} from "../engine/debuffContainers.js";
+import { maxHp, originalMaxHp, injuryAmount, injuryFraction } from "../engine/health.js";
 import ElementIcon from "./ElementIcon.jsx";
 import { equippedEE } from "../engine/progression.js";
 import SelfSkillDialog from "./SelfSkillDialog.jsx";
@@ -9,10 +10,12 @@ import {
   effectiveStats,
   hasBuff,
   effectRemaining,
+  orderedEffects,
+  isEffectSuppressed,
 } from "../engine/buffs.js";
 import React, { useEffect, useRef, useState } from "react";
 import { useLab, asset } from "../context.js";
-import { teamName, SKILLS } from "../engine/heroes.js";
+import { teamName, SKILLS, POSITIONS } from "../engine/heroes.js";
 import {
   readiness,
   canUse,
@@ -21,7 +24,6 @@ import {
 } from "../engine/battle.js";
 import Portrait from "./Portrait.jsx";
 import HitDialog from "./HitDialog.jsx";
-const POSITIONS = ["Back", "Upper", "Front", "Lower"];
 function HeroUnit({ side, slot }) {
   const l = useLab(),
     h = l.teams[side][slot],
@@ -94,11 +96,11 @@ function HeroUnit({ side, slot }) {
         <>
           <div className="unit-status">
             <div className="unit-buffs">
-              {(unit.buffs || []).map((b, index) => (
+              {orderedEffects(l.battle, unit.buffs).map((b, index) => (
                 <span
                   key={b.instance || `${b.id}-${index}`}
-                  className={`buff-badge ${BUFFS[b.id]?.debuff ? "debuff-badge" : ""}`}
-                  title={`${BUFFS[b.id]?.name} · ${b.expiresAtGlobal !== undefined ? `${effectRemaining(l.battle, b)} global turns` : b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}`}
+                  className={`buff-badge ${BUFFS[b.id]?.unique ? "unique-effect-badge" : BUFFS[b.id]?.debuff ? "debuff-badge" : BUFFS[b.id]?.undispellable ? "undispellable-buff-badge" : ""} ${isEffectSuppressed(unit, b) ? "buff-suppressed" : ""}`}
+                  title={`${BUFFS[b.id]?.name} · ${b.expiresAtGlobal !== undefined ? `${effectRemaining(l.battle, b)} global turns` : b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}${isEffectSuppressed(unit, b) ? " · suppressed by Block" : ""}`}
                 >
                   <img
                     src={asset(`data/buff-icons/${b.id}.png`)}
@@ -126,7 +128,7 @@ function HeroUnit({ side, slot }) {
             </div>
             <span
               className="hp-text"
-              title={`Original max HP: ${originalMaxHp(unit).toLocaleString()} · Injury: ${injuryAmount(unit).toLocaleString()}${hasBuff(unit, "stic_collapse") ? " · Collapse active" : ""}`}
+              title={`Original max HP: ${originalMaxHp(unit).toLocaleString()} · Injury: ${(injuryFraction(unit) * 100).toFixed(1)}% (${injuryAmount(unit).toLocaleString()} HP)${hasBuff(unit, "stic_collapse") ? " · Collapse active" : ""}`}
             >
               {unit.currentHp.toLocaleString()} / {maxHp(unit).toLocaleString()}
             </span>
@@ -139,6 +141,9 @@ function HeroUnit({ side, slot }) {
             )}
           </div>
           <span className="hero-name">{h.name}</span>
+          {unit.extinct && (
+            <span className="extinction-label">Extinction · cannot revive</span>
+          )}
           <span className="hero-role">
             {l.heroes[h.name].attribute} · {l.heroes[h.name].role}
           </span>
@@ -248,7 +253,7 @@ function ActiveHero() {
         </div>
         {maxHp(u) < originalMaxHp(u) && (
           <span className="hp-capacity-note" id="activeHpCapacity">
-            Max HP reduced · injury {injuryAmount(u).toLocaleString()}
+            Max HP reduced · injury {(injuryFraction(u) * 100).toFixed(1)}% ({injuryAmount(u).toLocaleString()} HP)
             {hasBuff(u, "stic_collapse") ? " · Collapse" : ""}
           </span>
         )}
@@ -427,7 +432,7 @@ function Skills() {
                   {data.automaticDebuffs
                     .map(
                       (e) =>
-                        `${BUFFS[e.id]?.name || e.id} ${e.chance}%${e.count > 1 ? ` ×${e.count}` : ""}`,
+                        `${BUFFS[e.id]?.name || debuffGroupName(e.id) || "Unknown effect"} ${e.chance}%${e.count > 1 ? ` ×${e.count}` : ""}`,
                     )
                     .join(" · ")}
                 </p>
@@ -443,8 +448,8 @@ function Skills() {
               )}
               {data?.triggersDualAttack && (
                 <p>
-                  Dual Attack from the highest-ATK living ally; Bind can block
-                  the selected ally.
+                  Dual Attack from the highest-ATK eligible ally. Disabled
+                  allies are skipped; no attack occurs if none can participate.
                 </p>
               )}
               {data?.equipmentEffect && (

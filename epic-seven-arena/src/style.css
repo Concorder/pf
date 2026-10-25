@@ -436,37 +436,31 @@ p {
   --unit-ring: #e8b5a8;
 }
 .hero-card[data-slot="0"] {
-  left: 13%;
+  --position-x: 13%;
+  left: var(--position-x);
   top: 53%;
   z-index: 3;
 }
 .hero-card[data-slot="1"] {
-  left: 48%;
+  --position-x: 48%;
+  left: var(--position-x);
   top: 25%;
   z-index: 2;
 }
 .hero-card[data-slot="2"] {
-  left: 84%;
+  --position-x: 84%;
+  left: var(--position-x);
   top: 53%;
   z-index: 3;
 }
 .hero-card[data-slot="3"] {
-  left: 48%;
+  --position-x: 48%;
+  left: var(--position-x);
   top: 82%;
   z-index: 4;
 }
-.enemy .hero-card[data-slot="0"] {
-  left: 87%;
-}
-.enemy .hero-card[data-slot="1"] {
-  left: 52%;
-}
-.enemy .hero-card[data-slot="2"] {
-  left: 16%;
-}
-.enemy .hero-card[data-slot="3"] {
-  left: 52%;
-}
+/* The opposing team is a horizontal reflection, including empty positions. */
+.enemy .hero-card { left: calc(100% - var(--position-x)); }
 .unit-status {
   width: 95%;
   padding: 0 2px 6px;
@@ -1667,32 +1661,20 @@ h3 small {
     opacity: 0.6;
   }
   .hero-card[data-slot="0"] {
-    left: 12%;
+    --position-x: 12%;
     top: 52%;
   }
   .hero-card[data-slot="1"] {
-    left: 47%;
+    --position-x: 47%;
     top: 16%;
   }
   .hero-card[data-slot="2"] {
-    left: 83%;
+    --position-x: 83%;
     top: 52%;
   }
   .hero-card[data-slot="3"] {
-    left: 47%;
+    --position-x: 47%;
     top: 88%;
-  }
-  .enemy .hero-card[data-slot="0"] {
-    left: 88%;
-  }
-  .enemy .hero-card[data-slot="1"] {
-    left: 53%;
-  }
-  .enemy .hero-card[data-slot="2"] {
-    left: 17%;
-  }
-  .enemy .hero-card[data-slot="3"] {
-    left: 53%;
   }
   .empty-slot::before {
     width: 43px;
@@ -2557,3 +2539,20 @@ h3 small {
   font-size: 9px;
   margin-top: 3px;
 }
+
+.buff-suppressed { opacity: .45; filter: grayscale(1); }
+.extinction-label { color: #f1a4bd; font-size: 8px; }
+
+/* Effect controls expand inside the scrolling dialog. */
+#buffDialog .skill-source-details[open] {
+  position: static;
+  width: auto;
+  max-height: none;
+  overflow: visible;
+}
+#buffDialog fieldset { min-inline-size: 0; }
+#buffDialog select { min-width: 0; max-width: 100%; }
+
+/* Removal protection is distinct from unique effects, which are not buffs. */
+.undispellable-buff-badge { background: #8ed8ef; border-color: #d3f5ff; box-shadow: 0 0 5px #9ee8fa99; }
+.unique-effect-badge { background: #40334c; border-color: #c7a8df; }

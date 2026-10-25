@@ -4,6 +4,7 @@ import React, { useState, useRef } from "react";
 import { useLab } from "../context.js";
 import {
   FIELDS,
+  POSITIONS,
   SKILLS,
   clone,
   makeHero,
@@ -211,6 +212,58 @@ export default function HeroEditor() {
             </label>
           ))}
         </div>
+        <fieldset>
+          <legend>Attack protection (manual configuration)</legend>
+          {[
+            ["damageReduction", "Personal damage reduction %"],
+            ["damageLimit", "Damage limit % of max HP (0 = disabled)"],
+            ["damageShare", "Damage transferred % to the teammate selected below"],
+            ["teamDamageShare", "Damage sharing provided to other allies % (artifact/manual)"],
+            ["teamDamageReduction", "Team damage reduction provided % (includes self; artifact/manual)"],
+          ].map(([key, label]) => (
+            <label key={key}>
+              {label}
+              <input id={key} type="number" min="0" max="100" required
+                value={draft[key] ?? 0}
+                onChange={(e) => setDraft((d) => ({ ...d, [key]: Number(e.target.value) }))} />
+            </label>
+          ))}
+          <label>
+            Teammate receiving transferred damage
+            <select id="damageShareSlot" value={draft.damageShareSlot ?? ""}
+              onChange={(e) => setDraft((d) => ({ ...d, damageShareSlot: e.target.value }))}>
+              <option value="">None</option>
+              {l.teams[side].map((hero, i) => hero && i !== slot && (
+                <option key={i} value={i}>{hero.name} · {POSITIONS[i]}</option>
+              ))}
+            </select>
+          </label>
+          <p className="fine">
+            Direct attacks: reduction → limit → sharing. Transfers bypass further
+            protection. A defeated or missing recipient receives no transfer.
+            The strongest applicable sharing and reduction sources apply separately.
+            Set team sharing on the receiving tank (e.g. 20 for Aurius); it protects
+            other allies, including an Offering bearer when directly attacked.
+            A provider cannot receive its own damage, and transfers never re-share.
+            Frostbite on this hero bypasses reduction and sharing from all sources.
+            AoE/single-target conditions and artifact/passive values are not imported automatically. For the 10,000 HP example, set
+            a 50% limit and 20% transfer.
+          </p>
+        </fieldset>
+        <fieldset>
+          <legend>Outgoing attack exceptions (artifact/manual)</legend>
+          {[["ignoreDamageSharing", "Ignore damage sharing"],
+            ["ignoreDamageReduction", "Ignore damage reduction"]].map(([key, label]) => (
+            <label key={key}>
+              <input id={key} type="checkbox" checked={!!draft[key]}
+                onChange={(e) => setDraft((d) => ({ ...d, [key]: e.target.checked }))} />
+              {label}
+            </label>
+          ))}
+          <p className="fine">Applies to this hero’s direct attacks. Damage limits remain active.
+            Use only for an applicable artifact or manual effect; conditional artifact triggers need manual adjustment.
+            Reviewed skill exceptions apply automatically to their specified targets.</p>
+        </fieldset>
         <label>
           Counterattack chance % (gear/manual)
           <input

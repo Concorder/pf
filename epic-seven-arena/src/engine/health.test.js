@@ -5,6 +5,9 @@ import {
   maxHp,
   originalMaxHp,
   injuryAmount,
+  injuryFraction,
+  uninjuredMaxHp,
+  setMaxHpMultiplier,
   inflictInjury,
   reviveHealth,
 } from "./health.js";
@@ -101,17 +104,17 @@ test("explicit combined model: Collapse scales remaining capacity after permanen
   assert.equal(get(b).currentHp, 4000);
   assert.equal(injuryAmount(get(b)), 2000);
 });
-test("Venom stacks tick against current effective max HP and create capped persistent injury from actual damage", () => {
+test("Venom stacks tick against the injury-limit max-HP basis and create capped persistent injury from actual damage", () => {
   let b = fixture();
   b = changeBuff(b, "right-0", "stic_venom", 2, false, { casterId: b.active });
   b = changeBuff(b, "right-0", "stic_venom", 2, false, { casterId: b.active });
   startTurnEffects(b, get(b), seq());
-  assert.equal(get(b).currentHp, 8100);
-  assert.equal(injuryAmount(get(b)), 1900);
-  assert.equal(maxHp(get(b)), 8100);
+  assert.equal(get(b).currentHp, 8000);
+  assert.equal(injuryAmount(get(b)), 2000);
+  assert.equal(maxHp(get(b)), 8000);
   const cleansed = changeBuff(b, "right-0", "stic_venom", 2, true);
-  assert.equal(injuryAmount(get(cleansed)), 1900);
-  assert.equal(maxHp(get(cleansed)), 8100);
+  assert.equal(injuryAmount(get(cleansed)), 2000);
+  assert.equal(maxHp(get(cleansed)), 8000);
   for (let i = 0; i < 20; i++) startTurnEffects(b, get(b), seq());
   assert.equal(injuryAmount(get(b)), 5000);
   assert.equal(maxHp(get(b)), 5000);
@@ -139,7 +142,8 @@ test("Laceration covers DoT, Bomb and secondary health-damage hooks; capacity cl
   startTurnEffects(b, get(b), seq());
   assert.equal(injuryAmount(get(b)), 500);
   b = changeBuff(b, "right-0", "stic_collapse", 2);
-  assert.equal(injuryAmount(get(b)), 500);
+  assert.equal(injuryAmount(get(b)), 250);
+  assert.equal(injuryFraction(get(b)), 0.05);
   const saved = injuryAmount(get(b));
   b = changeBuff(b, "right-0", "stic_bomb", 1, false, { casterId: b.active });
   expireBuffs(b, get(b));
@@ -249,4 +253,105 @@ test('pre-attack Collapse changes HP-scaled damage before damage is calculated a
  const manual=executeAttack(changed,b,'S1','right-0','normal',seq(),{automaticDebuffs:false});
  assert.equal(maxHp(get(manual)),10000);assert.equal(get(manual).currentHp,10000-damage(activeUnit(b),get(b),d,'normal'));
  assert.equal(get(b).currentHp,10000);
+});
+
+
+test("Venom uses modified pre-injury max HP, including Collapse", () => {
+  let b = fixture();
+  inflictInjury(get(b), 2000);
+  b = changeBuff(b, "right-0", "stic_collapse", 2);
+  b = changeBuff(b, "right-0", "stic_venom", 2, false, { casterId: b.active });
+  get(b).currentHp = 3000;
+  startTurnEffects(b, get(b), seq());
+  assert.equal(get(b).currentHp, 2500);
+  assert.equal(injuryAmount(get(b)), 1500);
+  assert.equal(maxHp(get(b)), 3500);
+});
+
+
+test("injury inflicted during Collapse persists as a percentage after cleanse", () => {
+  let b = fixture();
+  b = changeBuff(b, "right-0", "stic_collapse", 2);
+  assert.equal(uninjuredMaxHp(get(b)), 5000);
+  assert.equal(inflictInjury(get(b), 1000), 1000);
+  assert.equal(injuryFraction(get(b)), 0.2);
+  assert.equal(maxHp(get(b)), 4000);
+  const restored = changeBuff(b, "right-0", "stic_collapse", 2, true);
+  assert.equal(injuryFraction(get(restored)), 0.2);
+  assert.equal(injuryAmount(get(restored)), 2000);
+  assert.equal(maxHp(get(restored)), 8000);
+  assert.equal(get(restored).currentHp, 4000);
+  assert.equal(maxHp(get(b)), 4000);
+});
+test("up-to-15% injury caps use modified max HP and accumulate percentage points", () => {
+  let b = fixture();
+  inflictInjury(get(b), 2000);
+  b = changeBuff(b, "right-0", "stic_collapse", 2);
+  const u = get(b);
+  assert.equal(inflictInjury(u, 99999, {maxFractionPerHit: 0.15}), 750);
+  assert.equal(injuryFraction(u), 0.35);
+  assert.equal(maxHp(u), 3250);
+  inflictInjury(u, 99999, {maxFractionPerHit: 0.15});
+  assert.equal(injuryFraction(u), 0.5);
+  assert.equal(maxHp(u), 2500);
+  const clean = changeBuff(b, u.id, "stic_collapse", 2, true);
+  assert.equal(injuryFraction(get(clean)), 0.5);
+  assert.equal(maxHp(get(clean)), 5000);
+});
+test("a later max-HP increase preserves injury percentage and never heals", () => {
+  const b = fixture(), u = get(b);
+  inflictInjury(u, 2000);
+  const hp = u.currentHp;
+  assert.equal(setMaxHpMultiplier(u, 2), true);
+  assert.equal(injuryFraction(u), 0.2);
+  assert.equal(injuryAmount(u), 4000);
+  assert.equal(maxHp(u), 16000);
+  assert.equal(u.currentHp, hp);
+  inflictInjury(u, 3000, {maxFractionPerHit: 0.15});
+  assert.equal(injuryFraction(u), 0.35);
+  setMaxHpMultiplier(u, 1);
+  assert.equal(maxHp(u), 6500);
+  assert.equal(u.currentHp, 6500);
+});
+test("legacy amount snapshots migrate without changing their injury percentage", () => {
+  const u = {stats: {hp: 10000}, injury: 2000, currentHp: 4000,
+    buffs: [{id: "stic_collapse", turns: 2}]};
+  assert.equal(injuryFraction(u), 0.2);
+  assert.equal(maxHp(u), 4000);
+  inflictInjury(u, 500);
+  assert.ok(Math.abs(injuryFraction(u) - 0.3) < 1e-12);
+  assert.equal(u.injury, undefined);
+  assert.equal(maxHp(u), 3500);
+});
+
+
+test("an injury limit is a ceiling: smaller hits injure only by actual HP lost", () => {
+  let b = fixture();
+  b = changeBuff(b, "right-0", "stic_collapse", 2);
+  const u = get(b);
+  const lost = sufferDamage(b, u, 500);
+  assert.equal(inflictInjury(u, lost, {maxFractionPerHit: 0.15}), 500);
+  assert.equal(injuryFraction(u), 0.1);
+  assert.equal(maxHp(u), 4500);
+  const clean = changeBuff(b, u.id, "stic_collapse", 2, true);
+  assert.equal(injuryFraction(get(clean)), 0.1);
+  assert.equal(maxHp(get(clean)), 9000);
+  const overkill = get(clean);
+  overkill.currentHp = 100;
+  const actual = sufferDamage(clean, overkill, 99999);
+  assert.equal(actual, 100);
+  assert.equal(inflictInjury(overkill, actual, {maxFractionPerHit: 0.15}), 100);
+  assert.equal(injuryAmount(overkill), 1100);
+});
+
+
+test("Venom follows max-HP increases using the same basis as injury limits", () => {
+  let b = fixture();
+  setMaxHpMultiplier(get(b), 2);
+  b = changeBuff(b, "right-0", "stic_venom", 2, false, {casterId:b.active});
+  startTurnEffects(b, get(b), seq());
+  assert.equal(get(b).currentHp, 8000);
+  assert.equal(injuryFraction(get(b)), 0.1);
+  assert.equal(injuryAmount(get(b)), 2000);
+  assert.equal(maxHp(get(b)), 18000);
 });

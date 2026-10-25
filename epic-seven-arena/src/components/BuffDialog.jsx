@@ -1,4 +1,5 @@
-import { maxHp, originalMaxHp, injuryAmount } from "../engine/health.js";
+import { isDebuffContainer } from "../engine/debuffContainers.js";
+import { maxHp, originalMaxHp, injuryAmount, injuryFraction } from "../engine/health.js";
 import {
   DEBUFF_CATALOG,
   PENDING_DEBUFF_REASONS,
@@ -6,14 +7,24 @@ import {
 import { resistancePassChance } from "../engine/effects.js";
 import React, { useState } from "react";
 import { useLab, asset } from "../context.js";
-import { BUFFS, effectiveStats, effectRemaining } from "../engine/buffs.js";
+import {
+  BUFFS,
+  canReceiveEffect,
+  effectiveStats,
+  effectRemaining,
+  orderedEffects,
+  isEffectSuppressed,
+  hasBuff,
+} from "../engine/buffs.js";
 import { teamName } from "../engine/heroes.js";
 import Portrait from "./Portrait.jsx";
 import Modal from "./Modal.jsx";
 export default function BuffDialog() {
   const l = useLab(),
     [turns, setTurns] = useState(2),
+    [removalCount, setRemovalCount] = useState("all"),
     [crAmount, setCRAmount] = useState(25),
+    [containerId, setContainerId] = useState("stic_class_debuff_1"),
     [casterId, setCasterId] = useState(
       () =>
         l.units.find(
@@ -48,6 +59,14 @@ export default function BuffDialog() {
           ✕
         </button>
       </div>
+      <label>
+        <input id="sanctuaryOfBattle" type="checkbox" checked={!!l.battle.sanctuaryOfBattle}
+          onChange={(e) => l.setSanctuary(e.target.checked)} />
+        Sanctuary of Battle buff/debuff immunity (manual)
+      </label>
+      <p className="fine">Blocks new buffs and debuffs on heroes, including undispellable buffs.
+        Unique effects remain available. This toggles the immunity rule only; Notos’s S3,
+        transformation, healing and domain lifecycle are not automated.</p>
       <div className="buff-roster">
         {l.units
           .filter((u) => u.currentHp > 0)
@@ -74,7 +93,7 @@ export default function BuffDialog() {
       <p className="fine" id="effectHealthSummary">
         HP {unit.currentHp.toLocaleString()} / {maxHp(unit).toLocaleString()} ·
         original max {originalMaxHp(unit).toLocaleString()} · persistent injury{" "}
-        {injuryAmount(unit).toLocaleString()}. Removing a debuff does not remove
+        {(injuryFraction(unit) * 100).toFixed(1)}% ({injuryAmount(unit).toLocaleString()} HP). Removing a debuff does not remove
         injury or heal lost HP.
       </p>
       <fieldset>
@@ -121,7 +140,7 @@ export default function BuffDialog() {
         />
       </label>
       <fieldset>
-        <legend>Debuff application</legend>
+        <legend>Effect application and source</legend>
         <label>
           Source hero
           <select
@@ -203,12 +222,92 @@ export default function BuffDialog() {
           independent stack.
         </p>
       </fieldset>
-      {[false, true].map((debuffs) => (
-        <section key={String(debuffs)}>
-          <h3>{debuffs ? "Debuffs" : "Buffs"}</h3>
+      <details className="skill-source-details">
+        <summary>Random / class debuff</summary>
+        <label>
+          Effect group
+          <select
+            id="debuffContainer"
+            value={containerId}
+            onChange={(e) => setContainerId(e.target.value)}
+          >
+            {DEBUFF_CATALOG.filter((d) => isDebuffContainer(d._id)).map((d) => (
+              <option key={d._id} value={d._id}>
+                {d.name}: {d.description}
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          id="applyDebuffContainer"
+          disabled={!Number.isInteger(turns) || turns < 1 || turns > 10}
+          onClick={() =>
+            l.editBuff(unit.id, containerId, turns, false, {
+              casterId,
+              procChance,
+              roll,
+              ignoreResistance,
+            })
+          }
+        >
+          Apply selected debuff group
+        </button>
+        <p className="fine">
+          One actual effect is selected from the listed pool, or from the
+          target’s class. No container status is stored on the hero.
+        </p>
+      </details>
+      <details className="skill-source-details">
+        <summary>Manual cleanse / dispel / base detonation</summary>
+        <label>Number of removable effects
+          <select id="effectRemovalCount" value={removalCount} onChange={(e) => setRemovalCount(e.target.value)}>
+            <option value="all">All</option><option value="1">1</option><option value="2">2</option>
+          </select>
+        </label>
+        <button
+          disabled={hasBuff(unit, "stic_isolation") && casterId !== unit.id}
+          onClick={() =>
+            l.editBuff(unit.id, "__cleanse_all__", 2, true, { casterId, removalCount: removalCount === "all" ? Infinity : Number(removalCount) })
+          }
+        >
+          Cleanse removable debuffs
+        </button>
+        <button
+          onClick={() =>
+            l.editBuff(unit.id, "__dispel_all__", 2, true, { casterId, removalCount: removalCount === "all" ? Infinity : Number(removalCount) })
+          }
+        >
+          Dispel removable buffs
+        </button>
+        <p className="fine">
+          Already-resolved outcomes. Cleanse respects Block ownership.
+          Longest remaining duration is removed first; ties use application order.
+          Undispellable and unique effects remain and do not consume the removal count.
+        </p>
+        {["stic_blaze", "stic_blood", "stic_dot", "stic_bomb", "stic_venom"].map((id) => (
+          <button
+            key={id}
+            disabled={!unit.buffs?.some((b) => b.id === id)}
+            onClick={() => {
+              l.detonate(unit.id, id);
+              l.setBuffTarget(null);
+            }}
+          >
+            Detonate {BUFFS[id].name}
+          </button>
+        ))}
+        <p className="fine">
+          Base effect damage only, using remaining turns for Burn/Bleed/Poison/Venom.
+          Venom uses the injury-limit HP basis: after max-HP modifiers, before injury.
+          Hero-specific detonation multipliers await verification.
+        </p>
+      </details>
+      {["buff", "debuff", "unique"].map((type) => (
+        <section key={type}>
+          <h3>{type === "unique" ? "Unique effects" : type === "debuff" ? "Debuffs" : "Buffs"}</h3>
           <div className="buff-options">
             {Object.entries(BUFFS)
-              .filter(([, b]) => b.manual !== false && !!b.debuff === debuffs)
+              .filter(([, b]) => b.manual !== false && b.effectType === type)
               .map(([id, b]) => (
                 <button
                   key={id}
@@ -219,6 +318,7 @@ export default function BuffDialog() {
                     turns < 1 ||
                     turns > 10 ||
                     (b.needsCaster && (!caster || caster.side === unit.side)) ||
+                    (!b.debuff && !canReceiveEffect(l.battle, unit, id, {casterId})) ||
                     (b.debuff &&
                       roll &&
                       (!caster ||
@@ -263,10 +363,11 @@ export default function BuffDialog() {
       <h3>Active effects</h3>
       <div className="active-buffs">
         {unit.buffs?.length ? (
-          unit.buffs.map((b, index) => (
+          orderedEffects(l.battle, unit.buffs).map((b, index) => (
             <div key={b.instance || `${b.id}-${index}`}>
               <span>
                 {BUFFS[b.id]?.name}
+                {isEffectSuppressed(unit, b) ? " (suppressed by Block)" : ""}
                 {b.stacks > 1 ? ` ×${b.stacks}` : ""} ·{" "}
                 {b.expiresAtGlobal !== undefined
                   ? `${effectRemaining(l.battle, b)} global turns`
@@ -276,11 +377,17 @@ export default function BuffDialog() {
                 {BUFFS[b.id]?.stackable
                   ? ` · ${b.source} · ATK ${Math.round(b.sourceAttack || 0)}`
                   : ""}
+                {b.id === "stic_sacrifice_aura" ? ` · Immortality ${b.immortalityUsed ? "spent" : "ready"}` : ""}
               </span>
               <button
-                disabled={BUFFS[b.id]?.undispellable}
+                disabled={
+                  BUFFS[b.id]?.undispellable ||
+                  (BUFFS[b.id]?.debuff &&
+                    hasBuff(unit, "stic_isolation") &&
+                    casterId !== unit.id)
+                }
                 aria-label={`Remove ${BUFFS[b.id]?.name}`}
-                onClick={() => l.editBuff(unit.id, b.id, 2, true)}
+                onClick={() => l.editBuff(unit.id, b.id, 2, true, { casterId })}
               >
                 {BUFFS[b.id]?.undispellable
                   ? "Undispellable"

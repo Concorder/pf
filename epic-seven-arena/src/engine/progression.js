@@ -14,7 +14,6 @@ export function maxEnhancements(skill) {
   };
 }
 export function normalizeEquipment(hero) {
-  if (!["light", "dark"].includes(hero.attribute)) return null;
   const raw = (hero.ex_equip || []).find(
     (e) =>
       Array.isArray(e.skills) && e.skills.some((s) => s.description?.trim()),
@@ -38,9 +37,26 @@ export function normalizeEquipment(hero) {
           /start of battle/i.test(description) &&
           /Archdemon.s Might/i.test(description) &&
           /for 2 turns/i.test(description);
+        const highestAttackDual =
+          {
+            c1047:
+              "Triggers a Dual Attack from the ally with the highest attack when using Celestial Kick.",
+            c5004:
+              "Triggers a Dual Attack from the ally with the highest Attack when using Touch of Chaos.",
+          }[hero.id] === description;
+        const randomDual =
+          hero.id === "c2046" &&
+          description ===
+            "When using Thorn, triggers a Dual Attack from a random ally.";
         let support = "unsupported",
           reason = "EE mechanic not implemented";
-        if (opening) {
+        if (randomDual) {
+          support = "supported";
+          reason = "Dual Attack from a random eligible ally implemented";
+        } else if (highestAttackDual) {
+          support = "supported";
+          reason = "Dual Attack from the highest-ATK eligible ally implemented";
+        } else if (opening) {
           support = "supported";
           reason =
             "Opening and Dark Contract revival buffs implemented for 2 turns";
@@ -61,6 +77,8 @@ export function normalizeEquipment(hero) {
           damageBonus: damage ? Number(damage[1]) / 100 : 0,
           cooldownReduction: cooldown ? Number(cooldown[1]) : 0,
           opening,
+          highestAttackDual,
+          randomDual,
           support,
           reason,
         };
@@ -70,7 +88,11 @@ export function normalizeEquipment(hero) {
 }
 export function equippedEE(hero, unit) {
   const ee = hero?.exclusiveEquipment;
-  if (!ee || unit?.eeEnabled === false) return null;
+  if (
+    !ee ||
+    (unit?.eeEnabled ?? ["light", "dark"].includes(hero.attribute)) === false
+  )
+    return null;
   const option = ee.options.find(
     (o) => o.index === (unit?.eeOption ?? ee.options[0]?.index),
   );
@@ -84,6 +106,19 @@ export function equippedSkill(hero, unit, skill) {
   return {
     ...base,
     eeDamage: ee.option.damageBonus,
+    triggersDualAttack:
+      !!base.triggersDualAttack ||
+      !!ee.option.highestAttackDual ||
+      !!ee.option.randomDual,
+    dualAttackSelection: ee.option.randomDual
+      ? "random"
+      : ee.option.highestAttackDual
+        ? "highestAttack"
+        : base.dualAttackSelection,
+    dualAttackSource:
+      ee.option.highestAttackDual || ee.option.randomDual
+        ? "equipment"
+        : "skill",
     defaults: {
       ...base.defaults,
       cd: Math.max(0, base.defaults.cd - ee.option.cooldownReduction),

@@ -1,12 +1,40 @@
+import { alliesOf } from "./targeting.js";
+import { hecateRestrictionsActive } from "./globalRestrictions.js";
+import {
+  isDebuffContainer,
+  resolveDebuffContainer,
+} from "./debuffContainers.js";
 import { currentCR, freezeCR, unfreezeCR, shiftCR } from "./combatReadiness.js";
-import { maxHp, clampHealth, inflictInjury } from "./health.js";
+import { maxHp, uninjuredMaxHp, clampHealth, inflictInjury } from "./health.js";
 import { rollEffect, periodicDamage } from "./effects.js";
 import { clone } from "./heroes.js";
-export const hasBuff = (unit, id) =>
+const rawHas = (unit, id) =>
   (unit.buffs || []).some(
     (b) => b.id === id && (b.turns === null || b.turns > 0),
   );
+export const hasBuff = (unit, id) =>
+  (unit.buffs || []).some(
+    (b) =>
+      b.id === id &&
+      (b.turns === null || b.turns > 0) &&
+      (!rawHas(unit, "stic_isolation") ||
+        BUFFS[id]?.debuff ||
+        BUFFS[id]?.unique ||
+        b.casterId === unit.id),
+  );
 export const DEBUFFS = {
+  stic_freezing: {
+    name: "Frostbite",
+    description: "Cannot benefit from damage reduction or damage sharing. Damage limits remain active. Heroes only.",
+    heroOnly: true,
+  },
+  stic_isolation: {
+    name: "Block",
+    description:
+      "Suppresses external buffs and blocks external buff grants/debuff cleansing. Self-granted buffs and self-cleanse remain available. Other beneficial-effect coverage awaits clarification.",
+    heroOnly: true,
+    partial: true,
+  },
   stic_ab_up_block: {
     name: "Restrict",
     description:
@@ -47,7 +75,7 @@ export const DEBUFFS = {
   stic_venom: {
     name: "Venom",
     description:
-      "At turn start: 10% current max HP damage and equal injury, up to 50% original max HP. Heroes only.",
+      "At turn start: 10% max HP after non-injury modifiers damage and equal injury, up to 50% persistent injury. Injury percentage scales with max-HP modifiers. Heroes only.",
     periodic: true,
     stackable: true,
     heroOnly: true,
@@ -196,10 +224,27 @@ export const DEBUFFS = {
     description: "Cannot receive buffs; existing buffs remain.",
   },
 };
-for (const [id, def] of Object.entries(DEBUFFS))
-  Object.assign(def, { debuff: true, icon: id });
+const UNIQUE_EFFECTS = new Set([
+  "stic_discharge_aura", "stic_mercedes_unstable_aura", "stic_crack_1_aura", "stic_trauma_aura",
+]);
+for (const [id, def] of Object.entries(DEBUFFS)) {
+  const unique = UNIQUE_EFFECTS.has(id);
+  Object.assign(def, { debuff: !unique, unique, undispellable: unique || !!def.undispellable,
+    effectType: unique ? "unique" : "debuff", icon: id });
+}
 export const BUFFS = {
   ...DEBUFFS,
+  stic_sacrifice_aura: {
+    name: "Offering",
+    description: "Unique effect: bearer receives 70% of allies’ attack damage. Once, survives lethal damage at up to 1% max HP if Immortality can be granted, then gains it for 1 turn.",
+    unique: true, undispellable: true, permanent: true, manual: false,
+    icon: "stic_sacrifice_aura",
+  },
+  stic_immortality: {
+    name: "Immortality",
+    description: "Cannot be reduced below 1 HP by damage while active. Granting is blocked by Cannot Buff, Sanctuary and Hecate.",
+    icon: "stic_immortality",
+  },
   stic_debuf_impossible: {
     name: "Immunity",
     description: "Prevents new debuffs; does not remove existing debuffs.",
@@ -260,6 +305,26 @@ export const BUFFS = {
     icon: "stic_cridmg_up",
   },
 };
+for (const def of Object.values(BUFFS)) def.effectType ||= def.unique ? "unique" : "buff";
+export function canReceiveEffect(battle, unit, id, metadata = {}) {
+  const def = BUFFS[id];
+  if (!def || unit.currentHp <= 0 || (def.heroOnly && unit.isHero === false)) return false;
+  if (def.unique) return true;
+  if (battle.sanctuaryOfBattle && unit.isHero !== false) return false;
+  if (id === "stic_immortality" && hecateRestrictionsActive(battle, unit)) return false;
+  if (def.debuff) return metadata.ignoreImmunity || !hasBuff(unit, "stic_debuf_impossible");
+  if (hasBuff(unit, "stic_buf_impossible")) return false;
+  return !rawHas(unit, "stic_isolation") || metadata.casterId === unit.id;
+}
+export function setSanctuaryOfBattle(previous, enabled) {
+  if (!previous || previous.winner || !!previous.sanctuaryOfBattle === !!enabled) return previous;
+  const battle = clone(previous);
+  battle.sanctuaryOfBattle = !!enabled;
+  battle.log.unshift({message: `Sanctuary of Battle immunity ${enabled ? "enabled" : "disabled"}.`,
+    details: "Manual battlefield rule · blocks new buffs/debuffs on heroes; unique effects unaffected · no turn advanced",
+    turn: battle.turn});
+  return battle;
+}
 export function effectiveStats(unit) {
   const s = {
     ...unit.stats,
@@ -276,6 +341,7 @@ export function effectiveStats(unit) {
       (unit.buffs || []).some(
         (b) =>
           b.turns > 0 &&
+          hasBuff(unit, b.id) &&
           BUFFS[b.id]?.family === def.family &&
           BUFFS[b.id].amount > def.amount,
       )
@@ -336,22 +402,24 @@ export function grantBuff(
   metadata = {},
 ) {
   const def = BUFFS[id];
-  if (!def || unit.currentHp <= 0 || (def.heroOnly && unit.isHero === false))
-    return false;
-  if (!def.debuff && !def.undispellable && hasBuff(unit, "stic_buf_impossible"))
-    return false;
+  if (!canReceiveEffect(battle, unit, id, metadata)) return false;
   const oldSpeed = effectiveStats(unit).spd;
   unit.buffs ||= [];
   if (def.family) {
     if (
       unit.buffs.some(
         (b) =>
-          BUFFS[b.id]?.family === def.family && BUFFS[b.id].amount > def.amount,
+          hasBuff(unit, b.id) &&
+          BUFFS[b.id]?.family === def.family &&
+          BUFFS[b.id].amount > def.amount,
       )
     )
       return false;
     unit.buffs = unit.buffs.filter(
-      (b) => b.id === id || BUFFS[b.id]?.family !== def.family,
+      (b) =>
+        b.id === id ||
+        BUFFS[b.id]?.family !== def.family ||
+        !hasBuff(unit, b.id),
     );
   }
   if (
@@ -362,6 +430,10 @@ export function grantBuff(
     return false;
   const existing = !def.stackable && unit.buffs.find((b) => b.id === id);
   if (existing && def.globalTurns) return false;
+  // Refresh is a new application for ordering, while identity/revision still drive duration ticks.
+  battle.effectSerial = (battle.units || [unit]).flatMap(u => u.buffs || []).reduce(
+    (latest, effect) => Math.max(latest, effect.applicationOrder ?? effect.instance ?? 0),
+    battle.effectSerial || 0) + 1;
   if (existing) {
     if (def.maxStacks)
       existing.stacks = Math.min(def.maxStacks, (existing.stacks || 1) + 1);
@@ -369,8 +441,8 @@ export function grantBuff(
     existing.source = source;
     existing.revision = (existing.revision || 0) + 1;
     Object.assign(existing, metadata);
+    existing.applicationOrder = battle.effectSerial;
   } else {
-    battle.effectSerial = (battle.effectSerial || 0) + 1;
     unit.buffs.push({
       id,
       turns: def.permanent || def.globalTurns ? null : turns,
@@ -380,6 +452,7 @@ export function grantBuff(
       source,
       ...metadata,
       instance: battle.effectSerial,
+      applicationOrder: battle.effectSerial,
       ...(def.maxStacks ? { stacks: 1 } : {}),
     });
   }
@@ -423,6 +496,37 @@ export function changeBuff(
   options = {},
   random = Math.random,
 ) {
+  if (["__dispel_all__", "__cleanse_all__"].includes(id)) {
+    if (!previous || previous.winner) return previous;
+    const battle = clone(previous),
+      target = battle.units.find((u) => u.id === targetId && u.currentHp > 0);
+    if (!target) return previous;
+    const count = options.removalCount ?? Infinity;
+    if (count !== Infinity && (!Number.isInteger(count) || count < 1)) return previous;
+    const changed =
+      id === "__dispel_all__"
+        ? dispelBuffs(battle, target, count, "Manual resolved dispel")
+        : cleanseDebuffs(battle, target, options.casterId, count);
+    return changed ? battle : previous;
+  }
+  if (isDebuffContainer(id)) {
+    if (!previous || previous.winner || remove) return previous;
+    const target = previous.units.find(
+      (u) => u.id === targetId && u.currentHp > 0,
+    );
+    if (!target) return previous;
+    const actual = resolveDebuffContainer(id, target, random);
+    if (!actual) return previous;
+    return changeBuff(
+      previous,
+      targetId,
+      actual,
+      turns,
+      false,
+      options,
+      random,
+    );
+  }
   if (
     !previous ||
     previous.winner ||
@@ -438,6 +542,12 @@ export function changeBuff(
   if (!unit || (BUFFS[id].heroOnly && unit.isHero === false)) return previous;
   const speed = effectiveStats(unit).spd;
   if (remove) {
+    if (
+      BUFFS[id].debuff &&
+      rawHas(unit, "stic_isolation") &&
+      options.casterId !== unit.id
+    )
+      return previous;
     if (BUFFS[id].undispellable || !(unit.buffs || []).some((b) => b.id === id))
       return previous;
     unit.buffs = unit.buffs.filter((b) => b.id !== id);
@@ -446,6 +556,7 @@ export function changeBuff(
     clampHealth(unit);
     preserveReadiness(battle, unit, speed);
   } else {
+    if (battle.sanctuaryOfBattle && unit.isHero !== false && !BUFFS[id].unique) return previous;
     const caster = battle.units.find(
       (u) => u.id === options.casterId && u.currentHp > 0,
     );
@@ -518,7 +629,7 @@ function dealPeriodic(battle, unit, effect) {
   const amount = periodicDamage(
     effect.id,
     effect.sourceAttack || 0,
-    maxHp(unit),
+    effect.id === "stic_venom" ? uninjuredMaxHp(unit) : maxHp(unit),
     effectiveStats(unit).def,
   );
   sufferDamage(battle, unit, amount, { venom: effect.id === "stic_venom" });
@@ -551,7 +662,8 @@ export function applySkillDebuffs(
       continue;
     if (effect.requiresCrit && hit !== "crit") continue;
     for (let stack = 0; stack < (effect.count || 1); stack++) {
-      const ignoreResistance =
+      const unique = !!BUFFS[effect.id]?.unique;
+      const ignoreResistance = unique ||
         (!!effect.ignoreResistanceAgainst &&
           target.attribute === effect.ignoreResistanceAgainst) ||
         (effect.ignoreResistanceIfLowerHP && maxHp(target) < maxHp(actor));
@@ -563,21 +675,27 @@ export function applySkillDebuffs(
           hit,
           allowMiss: !!effect.ignoreMiss || stage === "beforeAttack",
           ignoreResistance,
-          immunity: hasBuff(target, "stic_debuf_impossible"),
+          immunity: !unique && (hasBuff(target, "stic_debuf_impossible") ||
+            (battle.sanctuaryOfBattle && target.isHero !== false)),
         },
         random,
       );
-      if (result.landed)
-        grantBuff(
+      const actualId = result.landed
+        ? resolveDebuffContainer(effect.id, target, random)
+        : effect.id;
+      if (result.landed && actualId) {
+        const granted = grantBuff(
           battle,
           target,
-          effect.id,
+          actualId,
           effect.turns,
           `${actor.name} ${skill}`,
           { casterId: actor.id, sourceAttack: effectiveStats(actor).atk },
         );
+        if (!granted) { result.landed = false; result.reason = "blocked"; }
+      }
       battle.log.unshift({
-        message: `${target.name}: ${BUFFS[effect.id]?.name || effect.id} ${result.reason}.`,
+        message: `${target.name}: ${BUFFS[actualId]?.name || actualId || "Class debuff"} ${actualId ? result.reason : "unsupported class"}.`,
         details: `${actor.name} ${skill} · ${effect.chance}% MAX proc · ${ignoreResistance ? "ignores resistance" : "EFF / ER check"}${effect.count > 1 ? ` · stack ${stack + 1}/${effect.count}` : ""}`,
         turn: battle.turn,
       });
@@ -597,9 +715,7 @@ export function applySkillBuffs(battle, actor, code, skill, data) {
       /all allies/i.test(data.description) &&
       new RegExp(`for ${e.turns} turns?`, "i").test(data.description),
   ))
-    for (const unit of battle.units.filter(
-      (u) => u.side === actor.side && u.currentHp > 0,
-    )) {
+    for (const unit of alliesOf(battle, actor)) {
       if (
         grantBuff(
           battle,
@@ -607,6 +723,7 @@ export function applySkillBuffs(battle, actor, code, skill, data) {
           effect.id,
           effect.turns,
           `${actor.name} ${skill}`,
+          { casterId: actor.id },
         )
       )
         battle.log.unshift({
@@ -619,7 +736,23 @@ export function applySkillBuffs(battle, actor, code, skill, data) {
 
 export function sufferDamage(battle, unit, amount, options = {}) {
   const before = unit.currentHp;
-  unit.currentHp = Math.max(0, before - Math.max(0, Math.floor(amount)));
+  const incoming = Math.max(0, Math.floor(amount));
+  let floor = 0, offeringSurvival = false;
+  if (before > 0 && incoming >= before) {
+    const offering = (unit.buffs || []).find(b => b.id === "stic_sacrifice_aura" &&
+      (b.turns === null || b.turns > 0));
+    if (hasBuff(unit, "stic_immortality")) floor = 1;
+    else if (offering && !offering.immortalityUsed &&
+      grantBuff(battle, unit, "stic_immortality", 1, "Offering survival", {casterId: unit.id})) {
+      offering.immortalityUsed = true;
+      offeringSurvival = true;
+      floor = Math.min(before, Math.max(1, Math.floor(maxHp(unit) * 0.01)));
+      battle.log.unshift({message: `${unit.name}: Offering prevents lethal damage and grants Immortality.`,
+        details: "Once per Offering · survives at up to 1% effective max HP · not a death or revival",
+        turn: battle.turn});
+    }
+  }
+  unit.currentHp = Math.max(floor, before - incoming);
   if (before > unit.currentHp && hasBuff(unit, "stic_sleep")) {
     unit.buffs = unit.buffs.filter((b) => b.id !== "stic_sleep");
     battle.log.unshift({
@@ -650,6 +783,7 @@ export function sufferDamage(battle, unit, amount, options = {}) {
         turn: battle.turn,
       });
   }
+  if (offeringSurvival) unit.currentHp = Math.min(unit.currentHp, Math.max(1, Math.floor(maxHp(unit) * 0.01)));
   return lost;
 }
 export function healUnit(battle, unit, amount, source) {
@@ -729,6 +863,15 @@ export function effectRemaining(battle, effect) {
     ? Math.max(0, effect.expiresAtGlobal - battle.turn)
     : effect.turns;
 }
+// Longest remaining duration first, then latest grant age (oldest first). Never mutate snapshots.
+export function orderedEffects(battle, effects = []) {
+  return effects.map((effect, index) => ({effect, index,
+    remaining: effectRemaining(battle, effect) ?? Infinity}))
+    .sort((a,b) => a.remaining !== b.remaining ? (a.remaining > b.remaining ? -1 : 1)
+      : (a.effect.applicationOrder ?? a.effect.instance ?? a.index) -
+        (b.effect.applicationOrder ?? b.effect.instance ?? b.index) || a.index - b.index)
+    .map(entry => entry.effect);
+}
 export function applyCRChange(
   battle,
   unit,
@@ -780,7 +923,7 @@ export function globalTurnEffects(battle) {
   // Capture all due statuses before damage, so simultaneous deadlines share one start-of-turn snapshot.
   for (const { unit, effect } of due) {
     if (effect.id === "stic_death_0_keep" && unit.currentHp > 0) {
-      sufferDamage(battle, unit, 50000, {fixed:true,ignoreSharing:true});
+      sufferDamage(battle, unit, 50000, { fixed: true, ignoreSharing: true });
       battle.log.unshift({
         message: `${unit.name}: Death Sentence deals 50,000 fixed damage.`,
         details: "12 global turn starts · ignores sharing",
@@ -793,4 +936,74 @@ export function globalTurnEffects(battle) {
         turn: battle.turn,
       });
   }
+}
+
+export function dispelBuffs(battle, target, count = 1, source = "Dispel") {
+  if (count !== Infinity && (!Number.isInteger(count) || count < 1)) return 0;
+  const speed = effectiveStats(target).spd;
+  const selected = new Set(orderedEffects(battle, target.buffs).filter(b =>
+    BUFFS[b.id]?.effectType === "buff" && !BUFFS[b.id]?.undispellable).slice(0, count));
+  const removed = selected.size;
+  target.buffs = (target.buffs || []).filter(b => !selected.has(b));
+  preserveReadiness(battle, target, speed);
+  clampHealth(target);
+  if (removed)
+    battle.log.unshift({
+      message: `${target.name}: ${removed} buff${removed > 1 ? "s" : ""} dispelled.`,
+      details: source,
+      turn: battle.turn,
+    });
+  return removed;
+}
+export const isEffectSuppressed = (unit, effect) =>
+  rawHas(unit, "stic_isolation") &&
+  !BUFFS[effect.id]?.debuff &&
+  !BUFFS[effect.id]?.unique &&
+  effect.casterId !== unit.id;
+export function cleanseDebuffs(battle, target, casterId, count = Infinity) {
+  if (count !== Infinity && (!Number.isInteger(count) || count < 1)) return 0;
+  if (rawHas(target, "stic_isolation") && casterId !== target.id) return 0;
+  const speed = effectiveStats(target).spd,
+    wasFrozen = target.frozenCR !== undefined;
+  const selected = new Set(orderedEffects(battle, target.buffs).filter(b =>
+    BUFFS[b.id]?.debuff && !BUFFS[b.id]?.undispellable).slice(0, count));
+  const removed = selected.size;
+  target.buffs = (target.buffs || []).filter(b => !selected.has(b));
+  if (wasFrozen && !rawHas(target, "stic_danger_4"))
+    unfreezeCR(battle, target, effectiveStats(target).spd);
+  else preserveReadiness(battle, target, speed);
+  clampHealth(target);
+  return removed;
+}
+export function detonateUnitEffects(battle, target, id) {
+  if (
+    !["stic_blaze", "stic_blood", "stic_dot", "stic_bomb", "stic_venom"].includes(id) ||
+    target.currentHp <= 0
+  )
+    return false;
+  const effects = (target.buffs || []).filter((b) => b.id === id);
+  if (!effects.length) return false;
+  target.buffs = target.buffs.filter((b) => b.id !== id);
+  for (const effect of effects) {
+    if (target.currentHp <= 0) break;
+    const amount =
+      periodicDamage(
+        id,
+        effect.sourceAttack || 0,
+        id === "stic_venom" ? uninjuredMaxHp(target) : maxHp(target),
+        effectiveStats(target).def,
+      ) * (id === "stic_bomb" ? 1 : effect.turns);
+    // Venom uses the same modified pre-injury HP basis as percentage injury limits.
+    sufferDamage(battle, target, amount, { venom: id === "stic_venom" });
+    if (id === "stic_bomb" && target.currentHp > 0)
+      grantBuff(battle, target, "stic_stun", 1, "Bomb detonation", {
+        casterId: effect.casterId,
+      });
+    battle.log.unshift({
+      message: `${target.name}: ${BUFFS[id].name} detonates for ${amount.toLocaleString()} damage.`,
+      details: "Base detonation · selected stacks consumed",
+      turn: battle.turn,
+    });
+  }
+  return true;
 }

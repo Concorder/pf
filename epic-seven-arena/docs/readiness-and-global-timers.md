@@ -18,10 +18,12 @@ At a global start, expired Immobilize restores scheduling. Due Death Sentences a
 
 ## Source caveats and pending verification
 
-- The source descriptions do not define whether the application turn itself counts or how refresh/overlapping-source attempts work. The future-start/non-refresh policy above is explicit and tested; confirm it against in-game evidence before claiming exact timer fidelity.
+- Death Sentence timer origin is user-confirmed: the application turn does not count; counting begins with the next hero’s turn and includes subsequent turns from either team. This matches the implemented N+12 deadline.
+- User-confirmed: Death Sentence is uncleansable but can be resisted on application; only one can be active at a time. The user has deferred further work on its currently unusable hero. No new expiry/reapplication behavior is inferred. The existing manual sandbox has not been tightened to enforce a battlefield-wide single-active constraint.
+- Remaining Death Sentence refresh/expiry edge cases are deferred rather than active clarification requests. Immobilize application-turn counting and its source-duration discrepancy remain separate pending items.
 - Aube's skill prose says Immobilize for two turns, while the database specifies a four-global-start removal. The database's dedicated mechanic is used. This discrepancy remains a verification TODO.
 - CR currently clamps to 0–100%. Above-100% ordering/overflow is not modeled. Ordinary ties retain the existing effective-Speed / formation-id ordering. Verify game priority before extending it.
-- Fixed-damage batch ordering is explicit; more elaborate simultaneous-death interactions need reviewed rules.
+- Fixed-damage batch ordering is an existing implementation policy. Further Death Sentence simultaneous-expiry research is deferred at the user’s request.
 
 ## Reviewed automatic skill CR mappings
 

@@ -1,4 +1,5 @@
 import { defaultSkillSettings } from "./progression.js";
+export { POSITIONS } from "./formation.js";
 export const SIDES = ["left", "right"];
 export const SKILLS = ["S1", "S2", "S3"];
 export const FIELDS = {
@@ -63,19 +64,29 @@ export function presetStats(heroes, name, preset) {
 }
 export function makeHero(heroes, name, preset = "damage") {
   const hero = heroes[name],
-    eeEnabled = !!hero.exclusiveEquipment,
+    eeEnabled =
+      !!hero.exclusiveEquipment && ["light", "dark"].includes(hero.attribute),
     eeOption = hero.exclusiveEquipment?.options[0]?.index ?? 0,
     settings = defaultSkillSettings(hero, { eeEnabled, eeOption });
   return {
     name,
     code: hero.code,
     attribute: hero.attribute,
+    role: hero.role,
     stats: presetStats(heroes, name, preset),
     skillsMaxed: true,
     eeEnabled,
     eeOption,
     sourceDefaults: clone(settings),
     counterChance: 0,
+    damageReduction: 0,
+    damageLimit: 0,
+    damageShare: 0,
+    damageShareSlot: "",
+    teamDamageShare: 0,
+    teamDamageReduction: 0,
+    ignoreDamageSharing: false,
+    ignoreDamageReduction: false,
     artifact: "",
     artifactSouls: 0,
     skills: clone(settings),

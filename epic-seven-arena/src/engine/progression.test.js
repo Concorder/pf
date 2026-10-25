@@ -51,5 +51,24 @@ test("Moonlight EE defaults to one option and changing it applies only selected 
     undefined,
   );
   assert.equal(equippedEE(h, { ...unit, eeEnabled: false }), null);
-  assert.equal(heroes.Cermia.exclusiveEquipment, null);
+  assert.ok(heroes.Cermia.exclusiveEquipment);
+  assert.equal(equippedEE(heroes.Cermia, makeHero(heroes, "Cermia")), null);
+});
+
+test("Ken highest-ATK EE option is selectable but regular-element EE stays disabled by default", () => {
+  const unit = makeHero(heroes, "Ken");
+  assert.equal(unit.eeEnabled, false);
+  const enabled = { ...unit, eeEnabled: true, eeOption: 1 };
+  assert.equal(
+    equippedSkill(heroes.Ken, enabled, "S2").triggersDualAttack,
+    true,
+  );
+  assert.equal(
+    equippedSkill(heroes.Ken, enabled, "S2").dualAttackSource,
+    "equipment",
+  );
+  assert.equal(
+    !!equippedSkill(heroes.Ken, unit, "S2").triggersDualAttack,
+    false,
+  );
 });

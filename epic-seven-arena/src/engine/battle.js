@@ -1,3 +1,5 @@
+import { alliesOf, allyInPosition } from "./targeting.js";
+import { planProtectedDamage } from "./damageProtection.js";
 import { rollEffect } from "./effects.js";
 import { currentCR, setCR } from "./combatReadiness.js";
 import { activationBlockReason, dispatchTrigger } from "./triggers.js";
@@ -21,12 +23,46 @@ import {
   buffTickKey,
   applySkillBuffs,
   grantBuff,
+  dispelBuffs,
+  detonateUnitEffects,
   hasBuff,
+  healUnit,
+  BUFFS,
 } from "./buffs.js";
 import { SIDES, SKILLS, clone, roster, teamName } from "./heroes.js";
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
 export const skillData = (heroes, u, s) => equippedSkill(heroes[u.name], u, s);
+function eligibleDualAllies(heroes, battle, caller) {
+  if (!caller || caller.currentHp <= 0) return [];
+  // A Dual Attack partner is a separate unit; this is an action rule, not the definition of “ally”.
+  return alliesOf(battle, caller, { excludeCaster: true }).filter(
+    (ally) =>
+      !activationBlockReason(battle, ally, "dual") &&
+      skillData(heroes, ally, "S1")?.damageSupport === "supported" &&
+      !skillData(heroes, ally, "S1")?.passive,
+  );
+}
+export function selectHighestAttackDualAlly(heroes, battle, caller) {
+  return (
+    eligibleDualAllies(heroes, battle, caller).sort(
+      (a, b) =>
+        effectiveStats(b).atk - effectiveStats(a).atk ||
+        a.id.localeCompare(b.id),
+    )[0] || null
+  );
+}
+export function selectRandomDualAlly(
+  heroes,
+  battle,
+  caller,
+  random = Math.random,
+) {
+  const allies = eligibleDualAllies(heroes, battle, caller);
+  return allies.length
+    ? allies[Math.min(allies.length - 1, Math.floor(random() * allies.length))]
+    : null;
+}
 export function forcedTarget(battle, unit) {
   if (!battle || !unit) return null;
   const enemies = battle.units.filter(
@@ -146,8 +182,11 @@ export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
     u.baseMaxHp = u.stats.hp;
-    u.injury = 0;
+    delete u.injury;
+    u.injuryFraction = 0;
+    u.maxHpMultiplier = 1;
     u.deaths = 0;
+    u.extinct = false;
     u.isHero ??= true;
     delete u.frozenCR;
     u.readyAt = 10000 / u.stats.spd;
@@ -155,6 +194,8 @@ export function createBattle(teams, souls, heroes = {}) {
     u.buffs = [];
     u.code = heroes[u.name]?.code || u.code;
     u.attribute = heroes[u.name]?.attribute || u.attribute;
+    u.role = heroes[u.name]?.role || u.role;
+    u.hecateRestrictions = !!heroes[u.name]?.skills?.S2?.hecateRestrictions;
   }
   const battle = {
     units,
@@ -189,6 +230,7 @@ export function createBattle(teams, souls, heroes = {}) {
         "stic_demonpower_keep",
         2,
         "Archdemon’s Eye EE · battle start",
+        { casterId: u.id },
       );
       log(
         battle,
@@ -196,6 +238,17 @@ export function createBattle(teams, souls, heroes = {}) {
         "Exclusive Equipment · 2 turns / undispellable",
       );
     }
+  for (const u of units) {
+    if (!heroes[u.name]?.skills?.S2?.openingOffering) continue;
+    const foremost = allyInPosition(battle, u, "foremost");
+    if (foremost) dispatchTrigger(battle, u, {kind: "passive", run: () => {
+      const granted = grantBuff(battle, foremost, "stic_sacrifice_aura", 1,
+        `${u.name} · Scales of Equity`, {casterId: u.id});
+      if (granted) log(battle, `${foremost.name} gains Offering from ${u.name}.`,
+        "Foremost ally · 70% damage share received · unique effect");
+      return granted;
+    }});
+  }
   nextTurn(battle, null, Math.random, heroes);
   return battle;
 }
@@ -217,7 +270,16 @@ export function damage(attacker, defender, d, hit) {
     a.hp * (d.selfHpScaling || 0) +
     a.def * (d.selfDefScaling || 0) +
     t.hp * (d.targetHpScaling || 0);
-  const penetration = Math.max(0, Math.min(1, d.penetration || 0));
+  const debuffCount = (defender.buffs || []).filter(
+    (b) => BUFFS[b.id]?.debuff && (b.turns === null || b.turns > 0),
+  ).length;
+  const penetration = Math.max(
+    0,
+    Math.min(
+      1,
+      (d.penetration || 0) + (d.penetrationPerDebuff || 0) * debuffCount,
+    ),
+  );
   const lightBonus =
     hasBuff(attacker, "stic_demonpower_keep") && defender.attribute === "light"
       ? 1.6
@@ -254,6 +316,21 @@ export function affectedTargets(battle, u, target, d) {
   );
 }
 
+function applySkillDispel(battle, actor, target, data, hit, random, stage) {
+  if (data.automaticDispel?.timing !== stage) return;
+  const result = rollEffect(
+    {
+      hit,
+      allowMiss: stage === "beforeAttack",
+      effectiveness: effectiveStats(actor).eff || 0,
+      resistance: effectiveStats(target).efr || 0,
+    },
+    random,
+  );
+  if (result.landed)
+    dispelBuffs(battle, target, data.automaticDispel.count ?? Infinity, `${actor.name} dispel`);
+  else log(battle, `${target.name}: buff dispel ${result.reason}.`, actor.name);
+}
 function performSkillAttack(
   heroes,
   battle,
@@ -273,6 +350,8 @@ function performSkillAttack(
       .filter((t) => hasBuff(t, "stic_curse2"))
       .map((t) => t.id);
   for (const t of targets) {
+    if (options.automaticDispels !== false)
+      applySkillDispel(battle, u, t, d, "normal", random, "beforeAttack");
     if (options.automaticDebuffs !== false)
       applySkillDebuffs(
         battle,
@@ -285,8 +364,24 @@ function performSkillAttack(
         "beforeAttack",
       );
     const outcome = hit === "auto" ? rollHit(u, t, d, random) : hit;
-    const amount = damage(u, t, d, outcome);
+    const protection = planProtectedDamage(battle, t, damage(u, t, d, outcome), { attacker: u, skill: d });
+    const amount = protection.targetDamage;
     sufferDamage(battle, t, amount);
+    if (protection.transferred > 0) {
+      sufferDamage(battle, protection.recipient, protection.transferred);
+      log(battle,
+        `${t.name} shares ${protection.transferred.toLocaleString()} damage with ${protection.recipient.name}.`,
+        `Reduction → limit → share · ${protection.limited.toLocaleString()} before sharing · transfer bypasses further protection`,
+      );
+    }
+    if (t.currentHp === 0 && d.inflictsExtinction) {
+      t.extinct = true;
+      log(
+        battle,
+        `${t.name}: Extinction prevents revival.`,
+        `${u.name} ${skill}`,
+      );
+    }
     hits.push({
       id: t.id,
       amount,
@@ -301,6 +396,16 @@ function performSkillAttack(
   afterAttackEffects(battle, u, hits, cursedIds);
   for (const hitResult of hits) {
     const t = battle.units.find((t) => t.id === hitResult.id);
+    if (t.currentHp > 0 && options.automaticDispels !== false)
+      applySkillDispel(
+        battle,
+        u,
+        t,
+        d,
+        hitResult.outcome,
+        random,
+        "afterAttack",
+      );
     if (t.currentHp > 0 && options.automaticDebuffs !== false)
       applySkillDebuffs(battle, u, t, skill, d, hitResult.outcome, random);
   }
@@ -425,22 +530,15 @@ export function executeAttack(
     if (options.automaticReactions !== false) {
       const queue = [];
       if (d.triggersDualAttack) {
-        const ally = battle.units
-          .filter((t) => t.side === u.side && t.id !== u.id && t.currentHp > 0)
-          .sort(
-            (a, b) =>
-              effectiveStats(b).atk - effectiveStats(a).atk ||
-              a.id.localeCompare(b.id),
-          )[0];
-        if (ally)
-          queue.push({
-            kind: "dual",
-            actorId: ally.id,
-            targetId,
-            skill: "S1",
-            source: "skill",
-            label: `${u.name} ${skill}`,
-          });
+        queue.push({
+          kind: "dual",
+          selection: d.dualAttackSelection || "highestAttack",
+          callerId: u.id,
+          targetId,
+          skill: "S1",
+          source: d.dualAttackSource || "skill",
+          label: `${u.name} ${skill}`,
+        });
       }
       if (d.canTriggerCounter !== false)
         for (const hitResult of hits.filter((h) => !h.defeated)) {
@@ -466,7 +564,7 @@ export function executeAttack(
   }
   resolveDeaths(heroes, battle);
   if (selfSkill && u.currentHp > 0) {
-    grantBuff(battle, u, "stic_att_up2", 2, "Hot Streak!");
+    grantBuff(battle, u, "stic_att_up2", 2, "Hot Streak!", { casterId: u.id });
     u.cooldowns.S3 = 0;
     setCR(battle, u, 100, effectiveStats(u).spd);
     nextTurn(battle, u.id, random, heroes);
@@ -485,6 +583,14 @@ export function resolveDeaths(
     const event = battle.deathEvents.shift(),
       unit = battle.units.find((u) => u.id === event.unitId);
     if (!unit || unit.deaths !== event.serial) continue;
+    const offering = (unit.buffs || []).find(b => b.id === "stic_sacrifice_aura");
+    const offeringCaster = offering && battle.units.find(u => u.id === offering.casterId);
+    if (offeringCaster && heroes[offeringCaster.name]?.skills?.S2?.openingOffering)
+      dispatchTrigger(battle, offeringCaster, {kind: "passive", run: () => {
+        for (const ally of alliesOf(battle, offeringCaster))
+          healUnit(battle, ally, maxHp(ally) * 0.5, "Scales of Equity · Offering bearer died");
+        return true;
+      }});
     clearSourceDeathEffects(battle, unit.id);
     if (unit.currentHp > 0) continue;
     const data = heroes[unit.name]?.skills?.S2;
@@ -517,6 +623,7 @@ export function resolveDeaths(
                   "stic_demonpower_keep",
                   2,
                   "Archdemon’s Eye EE · Dark Contract revival",
+                  { casterId: unit.id },
                 ),
             });
           return true;
@@ -535,10 +642,27 @@ export function resolveDeaths(
 function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
   // Secondary attacks never recursively enqueue attacks; keep a hard cap for future dispatchers.
   for (const request of queue.slice(0, 32)) {
-    const actor = battle.units.find((u) => u.id === request.actorId),
+    const actor = ["highestAttack", "random"].includes(request.selection)
+        ? (request.selection === "random"
+            ? selectRandomDualAlly
+            : selectHighestAttackDualAlly)(
+            heroes,
+            battle,
+            battle.units.find((u) => u.id === request.callerId),
+            random,
+          )
+        : battle.units.find((u) => u.id === request.actorId),
       target = battle.units.find(
         (u) => u.id === request.targetId && u.currentHp > 0,
       );
+    if (!actor && ["highestAttack", "random"].includes(request.selection)) {
+      log(
+        battle,
+        "Dual Attack does not occur: no eligible ally.",
+        request.label,
+      );
+      continue;
+    }
     const reason = activationBlockReason(battle, actor, request.kind, {
       source: request.source,
     });
@@ -655,5 +779,28 @@ export function changeCombatReadiness(
     battle.units.find((u) => u.id === targetId),
     amount,
   );
+  return resumeStalledBattle(heroes, battle, random);
+}
+
+export function detonateEffects(
+  heroes,
+  previous,
+  targetId,
+  id,
+  random = Math.random,
+) {
+  if (!previous || previous.winner) return previous;
+  const battle = clone(previous),
+    target = battle.units.find((u) => u.id === targetId);
+  if (!target || !detonateUnitEffects(battle, target, id)) return previous;
+  resolveDeaths(heroes, battle);
+  const lost = SIDES.find(
+    (side) => !battle.units.some((u) => u.side === side && u.currentHp > 0),
+  );
+  if (lost) {
+    battle.winner = lost === "left" ? "right" : "left";
+    battle.active = null;
+  } else if (activeUnit(battle)?.currentHp <= 0)
+    nextTurn(battle, null, random, heroes);
   return resumeStalledBattle(heroes, battle, random);
 }

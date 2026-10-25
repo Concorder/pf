@@ -1,10 +1,11 @@
-import { changeBuff } from "./engine/buffs.js";
+import { changeBuff, setSanctuaryOfBattle } from "./engine/buffs.js";
 import { useState } from "react";
 import {
   createBattle,
   executeAttack,
   setSouls,
   changeCombatReadiness,
+  detonateEffects,
   resumeStalledBattle,
 } from "./engine/battle.js";
 export default function useBattleSession(heroes) {
@@ -86,6 +87,24 @@ export default function useBattleSession(heroes) {
           : { battle, history: [...s.history, s.battle] };
       });
     },
+    detonate: (target, id) => {
+      const seed = Math.floor(Math.random() * 0x100000000);
+      setSession((s) => {
+        let state = seed;
+        const random = () => {
+          state = (Math.imul(state, 1664525) + 1013904223) >>> 0;
+          return state / 0x100000000;
+        };
+        const battle = detonateEffects(heroes, s.battle, target, id, random);
+        return battle === s.battle
+          ? s
+          : { battle, history: [...s.history, s.battle] };
+      });
+    },
+    setSanctuary: (enabled) => setSession((s) => {
+      const battle = setSanctuaryOfBattle(s.battle, enabled);
+      return battle === s.battle ? s : {battle, history: [...s.history, s.battle]};
+    }),
     editSouls: (side, value) =>
       setSession((s) =>
         s.battle

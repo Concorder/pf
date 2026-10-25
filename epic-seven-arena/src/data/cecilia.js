@@ -1,3 +1,6 @@
+import { PROTECTION_PASSIVE_DESCRIPTIONS } from "./protectionPassiveRules.js";
+import { SKILL_PROTECTION_RULES } from "./skillProtectionRules.js";
+import { SKILL_UTILITY_RULES } from "./skillUtilityRules.js";
 import { resolveReadinessRules } from "./skillReadiness.js";
 import { resolveDebuffRules } from "./skillDebuffs.js";
 import {
@@ -133,7 +136,17 @@ export function normalizeSkill(hero, raw, index) {
       : /\btwo enemies\b/i.test(description)
         ? 2
         : null;
+  const utility = SKILL_UTILITY_RULES[hero.id]?.[`S${index + 1}`];
+  const reviewedUtility = utility?.description === description ? utility : null;
+  const protection = SKILL_PROTECTION_RULES[hero.id]?.[`S${index + 1}`];
+  const reviewedProtection = protection?.description === description && common.includes("cmn_ignore_dmg_sharing")
+    ? protection : null;
   const result = {
+    protectionBypass: reviewedProtection ? {
+      scope: reviewedProtection.scope,
+      ignoreDamageSharing: reviewedProtection.ignoreDamageSharing,
+      ignoreDamageReduction: reviewedProtection.ignoreDamageReduction,
+    } : null,
     ...parsed,
     enhancementLevel: enhancement.level,
     enhancementDamage: enhancement.damage,
@@ -146,7 +159,21 @@ export function normalizeSkill(hero, raw, index) {
     automaticDebuffs: debuffs.effects,
     automaticReadiness: resolveReadinessRules(hero, s, index),
     debuffsPending: debuffs.pending,
+    inflictsExtinction:
+      !!reviewedUtility?.extinction && common.includes("cmn_extinction"),
+    automaticDispel: reviewedUtility?.dispel || null,
+    dualAttackSelection:
+      hero.id === "c1089" &&
+      description ===
+        "Takes the lead to attack the enemy, and triggers a Dual Attack from a random ally. Damage dealt increases proportional to the caster's max Health."
+        ? "random"
+        : "highestAttack",
     passive,
+    openingOffering: hero.id === "c6005" && index === 1 && passive &&
+      description === PROTECTION_PASSIVE_DESCRIPTIONS.c6005 &&
+      (s.buff || []).some(b => b._id === "stic_sacrifice_aura"),
+    hecateRestrictions: hero.id === "c1178" && index === 1 && passive &&
+      description === PROTECTION_PASSIVE_DESCRIPTIONS.c1178 && common.includes("cmn_cannot_revive"),
     passiveRevival:
       hero.id === "c2007" &&
       passive &&
@@ -166,9 +193,12 @@ export function normalizeSkill(hero, raw, index) {
           )
         : null,
     triggersDualAttack:
-      hero.id === "c1001" &&
-      description ===
-        "Attacks the enemy repeatedly, before triggering a Dual Attack from the ally with the highest Attack.",
+      (hero.id === "c1089" &&
+        description ===
+          "Takes the lead to attack the enemy, and triggers a Dual Attack from a random ally. Damage dealt increases proportional to the caster's max Health.") ||
+      (hero.id === "c1001" &&
+        description ===
+          "Attacks the enemy repeatedly, before triggering a Dual Attack from the ally with the highest Attack."),
     canTriggerCounter: !/cannot trigger (?:a )?counterattack/i.test(
       description,
     ),
@@ -191,7 +221,11 @@ export function normalizeSkill(hero, raw, index) {
   };
   if (passive) {
     result.damageSupport = "passive";
-    result.supportReason = result.passiveRevival
+    result.supportReason = result.openingOffering
+      ? "Passive: Offering grant, sharing, one-time survival and bearer-death healing implemented; enemy CR-copy mechanic pending"
+      : result.hecateRestrictions
+        ? "Passive: cannot revive / grant Immortality aura implemented; attack penetration pending"
+        : result.passiveRevival
       ? "Passive: death revival implemented; Focus effects pending"
       : "Passive: triggered effects are not automated";
   } else if (common.includes("cmn_non_attack_skill")) {
@@ -227,6 +261,24 @@ export function normalizeSkill(hero, raw, index) {
       result.damageSupport = "unsupported";
       result.supportReason = "Missing numeric scaling coefficient";
     }
+  if (
+    hero.id === "c1072" &&
+    index === 2 &&
+    reviewedUtility?.extinction &&
+    parsed.damageSupport === "supported" &&
+    !passive &&
+    targets === 1 &&
+    ["supported", "unsupported"].includes(result.damageSupport) &&
+    [
+      "Damage coefficients parsed",
+      "Conditional or unverified defense penetration",
+    ].includes(result.supportReason)
+  ) {
+    result.penetration = 0.3;
+    result.penetrationPerDebuff = 0.1;
+    result.damageSupport = "supported";
+    result.supportReason = "Reviewed Sigret debuff-count penetration";
+  }
   return result;
 }
 export function createCatalog(baseline, records) {
@@ -278,7 +330,8 @@ export function syncTeamDefaults(teams, heroes) {
         S3: { gain: 0, cost: 0, cd: 0 },
       };
       const hero = heroes[h.name];
-      h.eeEnabled ??= !!hero.exclusiveEquipment;
+      h.eeEnabled ??=
+        !!hero.exclusiveEquipment && ["light", "dark"].includes(hero.attribute);
       h.eeOption ??= hero.exclusiveEquipment?.options[0]?.index ?? 0;
       h.skillsMaxed = true;
       const resolvedDefaults = defaultSkillSettings(hero, h);

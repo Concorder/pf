@@ -1,3 +1,4 @@
+import { RANDOM_DEBUFF_POOLS } from "../engine/debuffContainers.js";
 import { SKILL_DEBUFF_RULES } from "./skillDebuffRules.js";
 // Same value formatting as CeciliaBot: sum base + enhancement values, then ×1000 for percentages.
 export function resolveDebuffRules(hero, skill, index) {
@@ -31,7 +32,16 @@ export function resolveDebuffRules(hero, skill, index) {
   return {
     effects,
     pending:
-      refs.some((id) => !effects.some((e) => e.id === id)) ||
+      refs.some(
+        (id) =>
+          !effects.some(
+            (e) =>
+              e.id === id ||
+              RANDOM_DEBUFF_POOLS[e.id]?.includes(id) ||
+              (e.id === "stic_class_debuff_1" &&
+                ["stic_att_dn", "stic_def_dn"].includes(id)),
+          ),
+      ) ||
       /detonat|dispel|extra attack|steal|Combat Readiness/i.test(description),
   };
 }

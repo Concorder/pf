@@ -1,3 +1,5 @@
+import { planProtectedDamage } from "../engine/damageProtection.js";
+import {debuffGroupName} from "../engine/debuffContainers.js";
 import { activationBlockReason } from "../engine/triggers.js";
 import { maxHp } from "../engine/health.js";
 import { BUFFS } from "../engine/buffs.js";
@@ -16,7 +18,8 @@ export default function HitDialog() {
     d = skillData(l.heroes, u, p.skill),
     targets = affectedTargets(l.battle, u, target, d),
     [automaticDebuffs, setAutomaticDebuffs] = useState(true),
-    [automaticReadiness, setAutomaticReadiness] = useState(true);
+    [automaticReadiness, setAutomaticReadiness] = useState(true),
+    [automaticDispels, setAutomaticDispels] = useState(true);
   return (
     <Modal
       id="hitDialog"
@@ -66,12 +69,26 @@ export default function HitDialog() {
               : "Counters use a separate hit roll."}
         </p>
       )}
+      {(d.protectionBypass || u.ignoreDamageSharing || u.ignoreDamageReduction) && (
+        <p className="fine">
+          Protection exceptions: {d.protectionBypass?.ignoreDamageSharing || u.ignoreDamageSharing ? "ignores sharing. " : ""}
+          {d.protectionBypass?.ignoreDamageReduction || u.ignoreDamageReduction ? "Ignores reduction. " : ""}
+          Skill target conditions apply; manual artifact switches apply to all direct attacks. Damage limits remain active.
+        </p>
+      )}
+      {targets.some((t) => t.buffs?.some((b) => b.id === "stic_freezing" && b.turns > 0)) && (
+        <p className="fine">Frostbite disables the bearer’s reduction and sharing; damage limits remain active.</p>
+      )}
       <button
         type="button"
         className="primary"
         id="automaticHit"
         onClick={() =>
-          l.resolveHit("auto", { automaticDebuffs, automaticReadiness })
+          l.resolveHit("auto", {
+            automaticDebuffs,
+            automaticReadiness,
+            automaticDispels,
+          })
         }
       >
         Use skill · automatic hits
@@ -82,7 +99,7 @@ export default function HitDialog() {
         Evasion add to miss chance.
       </p>
       {targets.map((t) => {
-        const c = hitChances(u, t);
+        const c = hitChances(u, t, d);
         return (
           <p className="fine" key={t.id}>
             {t.name}: {c.relation} · {c.miss}% miss · {c.critical}% crit after a
@@ -106,7 +123,7 @@ export default function HitDialog() {
               </label>
               {d.automaticDebuffs.map((effect, index) => (
                 <p className="fine" key={index}>
-                  {BUFFS[effect.id]?.name || effect.id} · {effect.chance}% MAX
+                  {BUFFS[effect.id]?.name || debuffGroupName(effect.id) || "Unknown effect"} · {effect.chance}% MAX
                   proc
                   {effect.count > 1
                     ? ` × ${effect.count} independent rolls`
@@ -131,8 +148,8 @@ export default function HitDialog() {
           {d.debuffsPending && (
             <p className="fine">
               Other source mechanics are not fully automated. The listed debuffs
-              roll automatically; triggers, dispels and detonations still
-              require separate support.
+              roll automatically. Additional source effects may remain pending;
+              check Skill data &amp; support before resolving the attack.
             </p>
           )}
         </fieldset>
@@ -158,6 +175,26 @@ export default function HitDialog() {
           ))}
         </fieldset>
       )}
+      {d.automaticDispel && (
+        <label>
+          <input
+            id="automaticDispels"
+            type="checkbox"
+            checked={automaticDispels}
+            onChange={(e) => setAutomaticDispels(e.target.checked)}
+          />{" "}
+          Apply {d.automaticDispel.count ? `${d.automaticDispel.count}-buff` : "all-buff"} dispel automatically (
+          {d.automaticDispel.timing === "beforeAttack"
+            ? "before damage"
+            : "after damage"}
+          ; resistance checked)
+        </label>
+      )}
+      {d.inflictsExtinction && (
+        <p className="fine">
+          A target defeated by this skill receives Extinction and cannot revive.
+        </p>
+      )}
       <details>
         <summary>Manual hit override</summary>
         <div id="hitOptions" className="hit-options">
@@ -168,7 +205,7 @@ export default function HitDialog() {
             ["crushing", "Crushing", "◆", "130% damage"],
           ].map(([hit, label, icon, note]) => {
             const allowed = d.hitTypes?.includes(hit) ?? hit === "normal",
-              total = targets.reduce((sum, t) => sum + damage(u, t, d, hit), 0);
+              total = targets.reduce((sum, t) => sum + planProtectedDamage(l.battle, t, damage(u, t, d, hit), { attacker: u, skill: d }).targetDamage, 0);
             return (
               <button
                 key={hit}
@@ -177,7 +214,11 @@ export default function HitDialog() {
                 disabled={!allowed}
                 aria-label={`${label} hit`}
                 onClick={() =>
-                  l.resolveHit(hit, { automaticDebuffs, automaticReadiness })
+                  l.resolveHit(hit, {
+                    automaticDebuffs,
+                    automaticReadiness,
+                    automaticDispels,
+                  })
                 }
               >
                 <span className="hit-symbol">{icon}</span>

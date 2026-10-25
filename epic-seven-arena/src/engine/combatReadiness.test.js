@@ -191,7 +191,7 @@ test("reviewed enemy setbacks use enhanced amounts and skip misses, immunity and
     false,
   );
   let immune = changeBuff(b, "right-0", "stic_debuf_impossible", 2);
-  const blocked = executeAttack(heroes, immune, "S2", "right-0", "normal", rng);
+  const blocked = executeAttack(heroes, immune, "S2", "right-0", "normal", rng, {automaticDispels:false});
   assert.ok(
     blocked.log.some((e) => e.message === "Cermia: CR setback immunity."),
   );
