@@ -51,3 +51,11 @@ If the original target dies before the assist, the assist is skipped without red
 When one triggering skill/tag event qualifies watchers on both teams, reactions from the side opposing the event's actor run first, followed by reactions from that actor's team. Re-evaluate activation gates and conditions when dispatching each reaction, because an earlier reaction can defeat, Seal, disable or otherwise change a later participant. This rule does not establish the ordering of multiple reactions on the same side; stable ordering there remains an explicit sandbox policy until a skill-specific priority is reviewed.
 
 Watcher filters are extended during unit-by-unit review rather than trying to enumerate every possible predicate in advance. Skill completion, actual extra-turn start, damage received, and HP threshold events are distinct triggers; a skill's extra-turn capability tag does not substitute for an actual extra-turn-start event.
+
+## Reviewed condition watchers
+
+Completed skills emit immutable execution-tag events. Enemy-side watchers resolve before allied-side watchers relative to the skill user; within a side, insertion order is the current explicit sandbox policy. Handlers recheck death, Seal and action restrictions immediately before activation. Passive resource/CR effects can operate while stunned or bound; an additional skill cannot. Watcher cooldowns decrement at the bearer's turn start, never during a Dual Attack or another hero's turn. Nested events have a shared 32-activation budget per action.
+
+Reviewed handlers: Sol S2 enemy non-attack (+20 CR/+20 Fighting Spirit; two-turn cooldown); Designer Lilibet S2 enemy turn end (10 Spirit per living ally debuff including herself, full-Spirit self-cleanse/Defense/Immunity/+40 CR); Astromancer Elena S2 allied AoE excluding herself (Worship Me!, +20 CR/+10 souls, max-enhanced S2 cooldown). Worship Me! emits its own non-attack event and can trigger an opposing Sol. Metadata descriptions and referenced buffs must match the reviewed snapshot. Generic prose never executes code.
+
+Still pending: Sol's Volcanic Viper retaliation and Astromancer Elena's Star's Blessing/counterattack prevention. Designer Lilibet's EE effects remain separate from her implemented native S2.

@@ -471,6 +471,7 @@ function Skills() {
                   {data.equipmentEffect.reason}
                 </p>
               )}
+              {data?.damageSource && <p>Damage formula: <a href={data.damageSource.url} target="_blank" rel="noreferrer">e7calc</a> · reviewed conditional scaling</p>}
               {data?.sourceReview && <p>{data.sourceReview}</p>}
               <p>{data?.displayDescription ?? data?.description}</p>
               <small>{data?.note}</small>

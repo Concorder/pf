@@ -13,8 +13,9 @@ for (const [name, hero] of scopedHeroes.sort(([a],[b]) => a.localeCompare(b))) {
   for (const [key, s] of Object.entries(hero.skills || {})) {
     const gaps = [];
     const special = isCermiaSelfSkill(catalog, {name}, key);
-    if (!["supported", "nonAttack"].includes(s.damageSupport) && !special) gaps.push(s.supportReason || "Source data unavailable");
+    if (!["supported", "nonAttack"].includes(s.damageSupport) && !special && !s.passiveComplete) gaps.push(s.supportReason || "Source data unavailable");
     if (s.nonAttack?.pending.length) gaps.push(...s.nonAttack.pending);
+    if (s.watcherPending?.length) gaps.push(...s.watcherPending);
     if (s.sourceReview) gaps.push(s.sourceReview);
     if (s.debuffsPending) gaps.push("Unmapped/conditional debuff grants");
     if (s.soulburn) gaps.push("Soulburn enhanced execution (currently preview only)");
@@ -67,6 +68,8 @@ for (const {name, hero, key, s, gaps, ee, special} of entries) {
     `  - Current base support: ${s.damageSupport || "unknown"}. ${escape(s.supportReason)}`,
     ...gaps.map(g => `  - Review/work: ${escape(g)}`),
     `  - Description: ${escape(s.displayDescription || s.description || "No source description available.")}`);
+  if (s.watchers?.length) out.push(`  - Implemented watchers: ${s.watchers.map(w => w.id).join(", ")}.`);
+  if (s.damageSource) out.push(`  - Reviewed damage source: [${s.damageSource.provider}](${s.damageSource.url}), revision ${s.damageSource.revision}.`);
   if (s.resource) out.push(`  - Resource: ${s.resource.type}; base gain ${s.resource.gain}; required/spent ${s.resource.cost}${s.resource.criticalGainMultiplier ? "; critical-hit gain ×" + s.resource.criticalGainMultiplier : ""}${s.resource.outsideTurnGainMultiplier ? "; out-of-turn gain ×" + s.resource.outsideTurnGainMultiplier : ""}.`);
   if (s.resourcePassive) out.push(`  - Implemented resource passive portions: ${[s.resourcePassive.opening && "battle-start grant",s.resourcePassive.turnStart && "turn-start grant",s.resourcePassive.enemyGainMultiplier && "enemy gain blocking"].filter(Boolean).join(", ")}. Other passive effects still require separate handlers.`);
   if (s.sourceText) out.push(`  - ${s.nonAttack ? "Non-attack source note (no damage formula)" : s.damageSupport === "supported" ? "Supported damage formula (reference only)" : "Source multiplier text (requires review)"}: ${escape(s.sourceText)}`);

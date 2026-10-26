@@ -16,8 +16,8 @@ const teams=(name="ae-KARINA")=>{
 };
 const fixture=name=>createBattle(teams(name),{left:0,right:0},heroes);
 const seq=(...values)=>()=>values.length?values.shift():.999;
-test("27 reviewed natural-5-star grants resolve to valid max-enhanced effects without enabling lower-rarity kits",()=>{
- assert.equal(Object.keys(NAT5_DEBUFF_RULES).length,27);
+test("28 reviewed natural-5-star grants resolve to valid max-enhanced effects without enabling lower-rarity kits",()=>{
+ assert.equal(Object.keys(NAT5_DEBUFF_RULES).length,28);
  for(const code of Object.keys(NAT5_DEBUFF_RULES)){
   const h=Object.values(heroes).find(h=>h.code===code);assert.equal(h.rarity,5);
   const s=h.skills.S1;assert.equal(s.automaticDebuffs.length,1,h.name);

@@ -12,7 +12,7 @@ export function elementRelation(attacker, defender) {
   if (beats[d] === a) return "disadvantage";
   return "neutral";
 }
-export function hitChances(attacker, defender) {
+export function hitChances(attacker, defender, data = {}) {
   const relation = elementRelation(attacker.attribute, defender.attribute);
   const a = effectiveStats(attacker),
     d = effectiveStats(defender);
@@ -22,14 +22,14 @@ export function hitChances(attacker, defender) {
       100,
       Math.max(
         0,
-        (relation === "disadvantage" ? 50 : 0) + d.evasion + a.hitChancePenalty,
+        (relation === "disadvantage" ? 50 : 0) + d.evasion + a.hitChancePenalty - (data.hitChanceBonus || 0),
       ),
     ),
     critical: Math.min(
       100,
       Math.max(
         0,
-        a.chc - d.critResistance + (relation === "advantage" ? 15 : 0),
+        a.chc - d.critResistance + (relation === "advantage" ? 15 : 0) + (data.criticalChanceBonus || 0),
       ),
     ),
     crushing: relation === "advantage" ? 50 : 30,
@@ -37,7 +37,7 @@ export function hitChances(attacker, defender) {
 }
 // Independent checks: miss first, then critical, then crushing on non-critical hits.
 export function rollHit(attacker, defender, data, random = Math.random) {
-  const c = hitChances(attacker, defender);
+  const c = hitChances(attacker, defender, data);
   const allowed = (hit) => data.hitTypes?.includes(hit) ?? hit === "normal";
   if (allowed("miss") && random() * 100 < c.miss) return "miss";
   if (allowed("crit") && random() * 100 < c.critical) return "crit";

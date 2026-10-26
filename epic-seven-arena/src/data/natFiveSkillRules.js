@@ -404,6 +404,19 @@ export const NAT5_DEBUFF_RULES = {
         }
       ]
     }
+  },
+  "c1094": {
+    "S1": {
+      "description": "Attacks all enemies with the power of magic and has a 25% chance to inflict --stun-- for 1 turn. Damage dealt increases when the target has a debuff.",
+      "effects": [
+        {
+          "id": "stic_stun",
+          "turns": 1,
+          "chance": 25,
+          "count": 1
+        }
+      ]
+    }
   }
 };
 export const NAT5_RESOURCE_RULES = {

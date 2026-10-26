@@ -5,6 +5,7 @@ import {skillTags} from "../data/skillTags.js";
 export function recordSkillUse(battle, actor, skill, data, {kind = "active", targetId = null, soulburn = false} = {}) {
   const event = {
     id: (battle.skillUseSerial || 0) + 1,
+    type: "skillUsed",
     turn: battle.turn,
     turnOwnerId: battle.active,
     actorId: actor.id,

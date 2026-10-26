@@ -1,3 +1,5 @@
+import {resolvePassiveWatchers} from "./passiveWatchers.js";
+import {reviewedDamage} from "./reviewedDamage.js";
 import {resolveNonAttackSkill} from "./nonAttackSkills.js";
 import {SKILL_SOURCE_CORRECTIONS} from "./skillSourceCorrections.js";
 import {NAT5_RESOURCE_RULES} from "./natFiveSkillRules.js";
@@ -141,7 +143,7 @@ export function compactHero(h) {
 export function normalizeSkill(hero, raw, index) {
   const s = { ...raw, ...(raw.awakened || {}) },
     enhancement = maxEnhancements(s),
-    parsed = parseMultipliers(s.multipliers),
+    parsed = reviewedDamage(hero,s,index) || parseMultipliers(s.multipliers),
     description = String(s.description || "").replace(/\*|\+|_/g, ""),
     correction = SKILL_SOURCE_CORRECTIONS[hero.id]?.[`S${index + 1}`],
     sourceCorrection = correction?.description === description && correction.sourceText === s.multipliers ? correction : null,
@@ -176,6 +178,7 @@ export function normalizeSkill(hero, raw, index) {
       resourcePassive.opening.amount = row.slice(0, enhancement.level + 1).reduce((a,v) => a + (v || 0), 0);
     else delete resourcePassive.opening;
   }
+  const watcherReview = resolvePassiveWatchers(hero,s,index,Math.max(0,Number(s.cooldown || 0)+enhancement.cooldown));
   const result = {
     protectionBypass: reviewedProtection ? {
       scope: reviewedProtection.scope,
@@ -187,6 +190,9 @@ export function normalizeSkill(hero, raw, index) {
     sourceReview: sourceCorrection?.note || null,
     resource,
     resourcePassive,
+    watchers: watcherReview?.watchers || [],
+    watcherPending: watcherReview?.pending || [],
+    passiveComplete: !!watcherReview?.complete && (!watcherReview.requiresOpening || !!resourcePassive?.opening),
     nonAttack: resolveNonAttackSkill(hero, s, index),
     enhancementLevel: enhancement.level,
     enhancementDamage: enhancement.damage,
@@ -283,6 +289,8 @@ export function normalizeSkill(hero, raw, index) {
         ? "Passive: cannot revive / grant Immortality aura implemented; attack penetration pending"
         : result.passiveRevival
       ? "Passive: revival and maximum-Focus grant implemented; full-Focus skill/reset effects pending"
+      : result.watchers.length
+        ? result.passiveComplete ? "Passive: reviewed opening and condition watcher implemented" : "Passive: reviewed condition watcher implemented; " + result.watcherPending.join(", ") + " pending"
       : result.resourcePassive
         ? "Passive: reviewed resource grants/gain blocking implemented; other effects pending"
         : "Passive: triggered effects are not automated";

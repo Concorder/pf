@@ -1,3 +1,5 @@
+import {dispatchWatchers,tickWatcherCooldowns} from "./watchers.js";
+import {WATCHER_HANDLERS} from "./watcherHandlers.js";
 import {validNonAttackTarget,applyNonAttackSkill} from "./nonAttack.js";
 import { grantUnitResource, resourceValue, canPaySkillResource, spendSkillResource, applySkillResourceGain } from "./resources.js";
 import { recordSkillUse } from "./skillEvents.js";
@@ -33,6 +35,17 @@ import {
   BUFFS,
 } from "./buffs.js";
 import { SIDES, SKILLS, clone, roster, teamName } from "./heroes.js";
+function flushSkillWatchers(battle,budget) {
+  for (const event of battle.skillUseEvents || []) {
+    if (event.id <= (battle.lastWatchedSkillUseSerial || 0)) continue;
+    battle.lastWatchedSkillUseSerial=event.id;
+    dispatchWatchers(battle,event,WATCHER_HANDLERS,budget);
+  }
+  if ((battle.skillUseSerial || 0) > (battle.lastWatchedSkillUseSerial || 0)) {
+    if (budget.remaining>0) flushSkillWatchers(battle,budget);
+    else battle.lastWatchedSkillUseSerial=battle.skillUseSerial;
+  }
+}
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
 export const skillData = (heroes, u, s) => equippedSkill(heroes[u.name], u, s);
@@ -207,6 +220,7 @@ function nextTurn(battle, forcedId = null, random = Math.random, heroes = {}) {
   battle.time = Math.max(battle.time, next.readyAt);
   for (const s of SKILLS)
     next.cooldowns[s] = Math.max(0, next.cooldowns[s] - 1);
+  tickWatcherCooldowns(next);
   startTurnEffects(battle, next, random);
   for (const rule of next.resourcePassives || []) if (rule.turnStart?.type === next.resourceType)
     dispatchTrigger(battle, next, {kind: "passive", run: () => grantUnitResource(battle, next, rule.turnStart.amount)});
@@ -218,6 +232,8 @@ export const clampSouls = (value) =>
 export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
+    u.watchers = clone(Object.values(heroes[u.name]?.skills || {}).flatMap(s => s.watchers || []));
+    u.watcherCooldowns = {};
     u.resourcePassives = Object.values(heroes[u.name]?.skills || {}).filter(s => s.passive && s.resourcePassive).map(s => s.resourcePassive);
     u.resourceType = heroes[u.name]?.resourceType || u.resourceType || "";
     u.resourceValue = resourceValue(u);
@@ -326,6 +342,13 @@ export function damage(attacker, defender, d, hit) {
       (d.penetration || 0) + (d.penetrationPerDebuff || 0) * debuffCount,
     ),
   );
+  const targetStatus = d.damageCondition?.targetStatus;
+  const hasConditionalStatus = (defender.buffs || []).some(effect => {
+    const definition = BUFFS[effect.id];
+    return definition && !definition.unique && (effect.turns === null || effect.turns > 0) &&
+      (targetStatus === "buff" ? !definition.debuff : targetStatus === "debuff" ? !!definition.debuff : false);
+  });
+  const conditionalDamage = hasConditionalStatus ? d.damageCondition.multiplier : 1;
   const lightBonus =
     hasBuff(attacker, "stic_demonpower_keep") && defender.attribute === "light"
       ? 1.6
@@ -346,6 +369,7 @@ export function damage(attacker, defender, d, hit) {
         d.pow *
         hitMultiplier *
         lightBonus *
+        conditionalDamage *
         receivedDamageMultiplier(defender) *
         (1 + (d.enhancementDamage || 0) + (d.eeDamage || 0))) /
         (1 + (t.def * (1 - penetration)) / 300),
@@ -538,6 +562,8 @@ export function executeAttack(
     u = activeUnit(battle),
     actorDeathSerial = u.deaths || 0,
     tickableBuffs = new Set((u.buffs || []).map(buffTickKey));
+  const watcherBudget={remaining:32};
+  battle.lastWatchedSkillUseSerial ??= previous.skillUseSerial || 0;
   setCR(battle, u, 0, effectiveStats(u).spd);
   if (skill === "wait")
     log(
@@ -560,6 +586,9 @@ export function executeAttack(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
     );
     u.cooldowns[skill] = u.skills[skill].cd + 1;
+    grantBuff(battle,u,"stic_att_up2",2,"Hot Streak!",{casterId:u.id});
+    u.cooldowns.S3=0;
+    recordSkillUse(battle,u,skill,skillData(heroes,u,skill),{kind:"active",targetId:u.id});
     log(
       battle,
       `${u.name} uses Hot Streak!: Greater Attack, S3 cooldown reset and extra turn.`,
@@ -592,6 +621,7 @@ export function executeAttack(
       `${teamName(u.side)} · ${hit} hit · ${options.automaticDebuffs === false ? "manual debuffs" : "automatic skill debuffs"} · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls · simplified damage${d.note ? " · source note: " + d.note : ""}`,
     );
     resolveDeaths(heroes, battle);
+    flushSkillWatchers(battle,watcherBudget);
     if (options.automaticReactions !== false) {
       const queue = naturalDual ? [naturalDual] : [];
       if (d.triggersDualAttack) {
@@ -619,19 +649,19 @@ export function executeAttack(
               label: "configured counter chance",
             });
         }
-      resolveReactionQueue(heroes, battle, queue, random, options);
+      resolveReactionQueue(heroes, battle, queue, random, {...options,watcherBudget});
     }
   }
+  flushSkillWatchers(battle,watcherBudget);
   if ((u.deaths || 0) === actorDeathSerial) {
     endTurnEffects(battle, u);
     for (const name of expireBuffs(battle, u, tickableBuffs))
       log(battle, `${u.name}: ${name} expired.`, "End of bearer turn");
   }
   resolveDeaths(heroes, battle);
+  dispatchWatchers(battle,{type:"turnEnd",actorId:u.id,side:u.side,tags:[]},WATCHER_HANDLERS,watcherBudget);
+  flushSkillWatchers(battle,watcherBudget);
   if (selfSkill && u.currentHp > 0) {
-    grantBuff(battle, u, "stic_att_up2", 2, "Hot Streak!", { casterId: u.id });
-    u.cooldowns.S3 = 0;
-    recordSkillUse(battle, u, skill, skillData(heroes, u, skill), {kind: "active", targetId: u.id});
     setCR(battle, u, 100, effectiveStats(u).spd);
     nextTurn(battle, u.id, random, heroes);
   } else if (supportAction?.extraTurn && u.currentHp > 0) {
@@ -770,6 +800,7 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
       request.label || request.source || "Reaction",
     );
     resolveDeaths(heroes, battle);
+    flushSkillWatchers(battle,options.watcherBudget || {remaining:32});
   }
 }
 export function executeReaction(
@@ -807,7 +838,8 @@ export function executeReaction(
   )
     return previous;
   const battle = clone(previous);
-  resolveReactionQueue(heroes, battle, [request], random);
+  battle.lastWatchedSkillUseSerial ??= previous.skillUseSerial || 0;
+  resolveReactionQueue(heroes, battle, [request], random,{watcherBudget:{remaining:32}});
   const live = battle.units.filter((u) => u.currentHp > 0),
     lost = SIDES.find((side) => !live.some((u) => u.side === side));
   if (lost) {

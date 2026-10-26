@@ -2,7 +2,7 @@
 
 Generated from the bundled CeciliaBot snapshot (2026-10-22T22:41:17.340Z) and current normalization rules.
 Scope: **391 heroes**, **1173 skills**.
-Contains **1107 skill entries** across **391 heroes**.
+Contains **1104 skill entries** across **391 heroes**.
 
 Regenerate with `npm run report:skills`. This is an implementation/review queue, not a list of questions you must answer. Checked-off notes should be recorded in the relevant mechanics document or rules before regeneration, which replaces this file.
 
@@ -1085,17 +1085,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Astromancer Elena (c2091)
 
-- [ ] **S1 — Melody of Damnation** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Description: Attacks the enemy with a punishing melody. When the target has a debuff, increases damage dealt.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 0.9<br>20% increased damage if target debuffed<br>
-  - Unparsed formula lines: 20% increased damage if target debuffed
-
 - [ ] **S2 — Disciple of the Stars** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
+  - Current base support: passive. Passive: reviewed condition watcher implemented; Star's Blessing opening grant and conditional enemy counterattack blocking pending
+  - Review/work: Passive: reviewed condition watcher implemented; Star's Blessing opening grant and conditional enemy counterattack blocking pending
+  - Review/work: Star's Blessing opening grant and conditional enemy counterattack blocking
   - Description: At the start of battle, grants Star's Blessing for 1 turn. When the caster is granted Star's Blessing, enemy Heroes cannot counterattack. After an ally except for the caster uses an attack that targets all enemies, activates Worship Me!.<br>Worship Me! (gains 10 Soul): Increases Combat Readiness of the caster by 20%.
+  - Implemented watchers: astromancer-elena-ally-aoe.
   - Source multiplier text (requires review): Skill2<br>
 
 - [ ] **S3 — S3** — Base damage supported; secondary effects pending
@@ -2790,14 +2785,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.6<br>!pow: 1<br>100% self Defense (1 * Defense)<br>
   - Soulburn (10 souls): Increases effect chance to 100% and decreases Defense for 2 turns.
 
-- [ ] **S2 — Emergency Stitching** — Passive partially implemented or pending
-  - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
-  - Review/work: Passive: reviewed resource grants/gain blocking implemented; other effects pending
-  - Description: Starts the first battle with 50 Fighting Spirit. When an enemy's turn ends, gains 10 Fighting Spirit for each debuff inflicted on an ally, and when the caster's Fighting Spirit is full, consumes all Fighting Spirit to dispel all debuffs from the caster and grants increased Defense and immunity for 1 turn before increasing Combat Readiness by 40%.
-  - Resource: fightingSpirit; base gain 0; required/spent 0.
-  - Implemented resource passive portions: battle-start grant. Other passive effects still require separate handlers.
-  - Source multiplier text (requires review): Skill2<br>
-
 - [ ] **S3 — Model Disqualification** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
@@ -2920,14 +2907,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: Increases damage dealt by Purge by 10%, and removes 20 Soul from the enemy.
 
 ### Dizzy (c1094)
-
-- [ ] **S1 — I Used This to Catch Fish** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
-  - Description: Attacks all enemies with the power of magic and has a 25% chance to inflict --stun-- for 1 turn. Damage dealt increases when the target has a debuff.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 1<br>30% increased damage if target has a debuff<br>
-  - Unparsed formula lines: 30% increased damage if target has a debuff
 
 - [ ] **S3 — Emotional Gamma Ray** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -5089,13 +5068,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Kise (c1006)
 
-- [ ] **S1 — Full Moon Scythe** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S1 — Full Moon Scythe** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc conditional damage
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a scythe. When the target has a buff, increases damage dealt by 70%.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1.1<br>!pow: 1<br>70% increased damage is enemy is buffed<br>
-  - Unparsed formula lines: 70% increased damage is enemy is buffed
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1.1<br>!pow: 1<br>70% increased damage is enemy is buffed<br>
   - EE 1: Increases Combat Readiness of the caster by 15% after usrng Full Moon Scythe.
 
 - [ ] **S2 — Dark Scar** — Skill execution unsupported
@@ -8449,10 +8427,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: 20% increased damage if target has no buffs
 
 - [ ] **S2 — Volcanic Viper** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
+  - Current base support: passive. Passive: reviewed condition watcher implemented; Volcanic Viper reaction to incoming all-enemies attacks pending
+  - Review/work: Passive: reviewed condition watcher implemented; Volcanic Viper reaction to incoming all-enemies attacks pending
+  - Review/work: Volcanic Viper reaction to incoming all-enemies attacks
   - Review/work: Unmapped/conditional debuff grants
   - Description: When an enemy uses a non-attack skill, increases Combat Readiness of the caster by 20% and gains 20 Fighting Spirit. When suffering an attack that targets all allies, activates Volcanic Viper against the attacker. This effect is not activated by a counterattack, Dual Attack, or extra attack. Each effect can only be activated once every 2 turns.<br>Volcanic Viper (gains 2 Soul): Launches the enemy into the air and attacks repeatedly, inflicting --silence-- for 2 turns. Damage dealt increases proportional to the target's max Health.
+  - Implemented watchers: sol-enemy-non-attack.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill2<br>att_rate: 0.7<br>!pow: 1<br>4% target max Health<br>
 
@@ -9926,13 +9906,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Zahhak (c1119)
 
-- [ ] **S1 — Vulnerability Exposed** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S1 — Vulnerability Exposed** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc conditional damage
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy with a longsword. Increases Hit Chance and Critical Hit Chance of this skill by 50%. When the target has a buff, increases damage dealt.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1.1(1.8 soulburn)<br>!pow: 1<br>30% increased damage if target is buffed<br>
-  - Unparsed formula lines: 30% increased damage if target is buffed
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1.1(1.8 soulburn)<br>!pow: 1<br>30% increased damage if target is buffed<br>
   - Soulburn (10 souls): Increases damage dealt.
 
 - [ ] **S2 — Elaborate Plan** — Skill execution unsupported
