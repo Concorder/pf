@@ -7,7 +7,7 @@
 - Source modules, source icons and the generated static build are committed together. Inspect `git status` and preserve any future local changes before pulling or resetting.
 - User prefers previewing changes without a push. Commit/push only when explicitly requested.
 - Current implementation: 32 debuff types plus five unique effects, including partial support; reviewed automatic direct-grant mappings for 66 skills. Manual application remains available.
-- Last engine checks: 162 Node tests and production build passed. Desktop/mobile browser checks passed for Block, containers, detonation/Undo, dispels and Extinction.
+- Last engine checks: 167 Node tests and production build passed. Desktop/mobile browser checks passed for Block, containers, detonation/Undo, dispels and Extinction.
 - Run `npm test` and `npm run dev` from this directory. `npm run build` regenerates tracked static output at the app root for GitHub Pages.
 
 ## Remaining mechanics
@@ -142,3 +142,9 @@ See [remaining-mechanics.md](docs/remaining-mechanics.md) for this batch and the
 - [ ] Implement reviewed Soulburn execution and soul spending, including variant damage, extra turns, effects and resistance exceptions. Current button is explicitly a UI preview and does not change attacks or spend souls.
 
 - [x] Centralize Soulburn selection: auto-select and glow-pulse its API-defined skill, lock other skill buttons and guard programmatic skill/target actions. Cancel, insufficient souls, turn changes, Undo and Reset clear the lock. Keep enhanced execution explicitly pending rather than silently using normal damage. Desktop/mobile and reduced-motion checks passed.
+
+## Spirit Eye Celine protection fix
+
+- [x] Automatically apply the reviewed native 50% S2 attack cap before sharing. Verify 8,000 effective max HP → 4,000 cap → 1,200 target / 2,800 transfer without manual settings, including matching preview/popups/HP and Undo.
+- [x] Use effective post-injury max HP; preserve the native cap under Frostbite/sharing bypass; suppress native passive under Seal while independent manual caps remain.
+- [ ] Implement/review Celine's remaining S2 death-trigger cooldown/soul effects and other kit mechanics. Numeric cap is user-confirmed at 50%; cached variable/enhancement rows need review before replacing this value with automatic numeric normalization.

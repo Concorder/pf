@@ -18,7 +18,10 @@ export function planProtectedDamage(battle, target, incoming, { attacker, skill 
   const reduction = ignoreReduction ? 0 : Math.max(percent(target.damageReduction),
     ...allies.map(u => percent(u.teamDamageReduction)));
   const reduced = Math.floor(Math.max(0, incoming) * (1 - reduction / 100));
-  const limit = percent(target.damageLimit);
+  const nativeLimit = target.isHero !== false && !hasBuff(target, "stic_dizzy")
+    ? percent(target.passiveDamageLimit) : 0;
+  const limits = [percent(target.damageLimit), nativeLimit].filter(value => value > 0);
+  const limit = limits.length ? Math.min(...limits) : 0;
   const limited = limit > 0
     ? Math.min(reduced, Math.floor(maxHp(target) * limit / 100))
     : reduced;
@@ -40,5 +43,5 @@ export function planProtectedDamage(battle, target, incoming, { attacker, skill 
   const selected = candidates.sort((a,b) => b.share - a.share || a.recipient.id.localeCompare(b.recipient.id))[0];
   const recipient = selected?.recipient;
   const transferred = recipient && !ignoreSharing ? Math.floor(limited * selected.share / 100) : 0;
-  return { reduction, reduced, limited, targetDamage: limited - transferred, transferred, recipient };
+  return { reduction, limit, reduced, limited, targetDamage: limited - transferred, transferred, recipient };
 }

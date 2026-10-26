@@ -216,7 +216,7 @@ export default function HeroEditor() {
           <legend>Attack protection (manual configuration)</legend>
           {[
             ["damageReduction", "Personal damage reduction %"],
-            ["damageLimit", "Damage limit % of max HP (0 = disabled)"],
+            ["damageLimit", "Additional damage limit % of max HP (0 = no manual limit)"],
             ["damageShare", "Damage transferred % to the teammate selected below"],
             ["teamDamageShare", "Damage sharing provided to other allies % (artifact/manual)"],
             ["teamDamageReduction", "Team damage reduction provided % (includes self; artifact/manual)"],
@@ -228,6 +228,11 @@ export default function HeroEditor() {
                 onChange={(e) => setDraft((d) => ({ ...d, [key]: Number(e.target.value) }))} />
             </label>
           ))}
+          {l.heroes[draft.name]?.skills?.S2?.passiveDamageLimit && <p className="fine">
+            Native passive: {l.heroes[draft.name].skills.S2.passiveDamageLimit}% of effective max HP per attack,
+            applied automatically before sharing. Seal suppresses this native passive.
+            The manual field adds a separate cap; zero does not disable the native cap.
+          </p>}
           <label>
             Teammate receiving transferred damage
             <select id="damageShareSlot" value={draft.damageShareSlot ?? ""}

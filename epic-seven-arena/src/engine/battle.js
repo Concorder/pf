@@ -196,6 +196,7 @@ export function createBattle(teams, souls, heroes = {}) {
     u.attribute = heroes[u.name]?.attribute || u.attribute;
     u.role = heroes[u.name]?.role || u.role;
     u.hecateRestrictions = !!heroes[u.name]?.skills?.S2?.hecateRestrictions;
+    u.passiveDamageLimit = heroes[u.name]?.skills?.S2?.passiveDamageLimit || 0;
   }
   const battle = {
     units,

@@ -417,9 +417,7 @@ function Skills() {
                 {isCermiaSelfSkill(l.heroes, u, s)
                   ? "Self buff + cooldown reset + extra turn implemented"
                   : data?.passive
-                    ? data?.passiveRevival
-                      ? "Dark Contract revival + EE grant implemented; Focus/reset pending"
-                      : "Passive — triggers not automated"
+                    ? data?.supportReason || "Passive — triggers not automated"
                     : data?.damageSupport === "supported"
                       ? "Base damage supported"
                       : data?.supportReason || "Source data unavailable"}

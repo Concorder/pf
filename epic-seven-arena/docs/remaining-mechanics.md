@@ -29,7 +29,7 @@ These items stay visible in TODO rather than receiving inferred combat rules.
 
 ## Damage protection
 
-The hero editor now accepts final damage reduction %, damage limit % of effective max HP (zero disables the limit), transferred %, and a teammate recipient. These settings are manual and are not automatic imports of Spirit Eye Celine’s passive or an artifact. They remain active independently of Seal until explicit passive/artifact mappings exist.
+The hero editor accepts manual damage reduction %, an additional damage limit % of effective max HP (zero disables only the manual limit), transferred %, and a teammate recipient. These manual settings remain independent of Seal. Spirit Eye Celine now additionally receives a guarded native 50% passive limit at battle start; Seal suppresses that native passive. When multiple positive limits apply, the smaller cap wins. Artifact protection imports remain separate.
 
 Direct attacks, including secondary attacks, calculate reduction first, cap the remaining damage second, then split that capped amount. With 10,000 max HP, a 50% cap and 20% sharing, a sufficiently large reduced hit deals 4,000 to the target and 1,000 to the recipient. Below the cap, only that smaller reduced amount is split. Transfer is based on the capped hit, not actual HP lost to overkill. Integer transfer is rounded down; the target takes the remainder.
 
@@ -84,3 +84,11 @@ Manual controls select one, two or all removable effects. Limited cleanses retai
 Example using existing supported buffs: a three-turn Speed Up and two-turn Defense Up sort before one-turn Immunity. A two-buff strip removes those two protections and leaves Immunity. With only two-turn Defense Up plus one-turn Immunity, a two-buff strip removes both before subsequent debuff rolls.
 
 User-confirmed refresh behavior: every successful reapplication updates the effect's application order. Duration remains the primary key; among equal remaining durations the refreshed effect becomes newest/rightmost. A separate application-order serial changes without replacing the effect instance, preserving duration revision tracking and Undo. Failed grants and ignored global-timer reapplications do not change age. The April 2024 provenance of the supplied rule was not independently researched in this change.
+
+## Spirit Eye Celine native cap fix
+
+The protection pipeline already calculated reduction → cap → sharing, but previously only the manual cap field was populated. Spirit Eye Celine now receives an automatic 50% per-attack limit from her reviewed S2 mapping, before Offering or manual sharing. No editor setup is required; zero in the manual field does not disable the native passive. HP-based cap calculations use effective max HP after injury/modifiers, not remaining current HP. Frostbite and sharing-bypass clauses do not bypass the cap; Seal suppresses this native passive while independent manual caps remain.
+
+User-specified regression: 8,000 effective max HP → 4,000 capped damage → 2,800 transferred to Offering → 1,200 on Celine. The hit popup, floating numbers and actual HP loss share this result. At 17,000 effective max HP, the corresponding ceiling is 2,550, so a 2,253 hit is below that ceiling.
+
+The numeric 50% threshold is explicitly user-confirmed. Cached CeciliaBot variable/enhancement rows are inconsistent with that value, so it is not inferred from their sum. The source wording and cap reference guard the native handler; changed wording requires review. Celine's S2 death-trigger cooldown reduction/souls and remaining hero-specific mechanics are still pending.
