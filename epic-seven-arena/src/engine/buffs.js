@@ -1,3 +1,4 @@
+import { recordDamageEvent } from "./damageEvents.js";
 import { alliesOf } from "./targeting.js";
 import { hecateRestrictionsActive } from "./globalRestrictions.js";
 import {
@@ -737,6 +738,7 @@ export function applySkillBuffs(battle, actor, code, skill, data) {
 export function sufferDamage(battle, unit, amount, options = {}) {
   const before = unit.currentHp;
   const incoming = Math.max(0, Math.floor(amount));
+  recordDamageEvent(battle, unit, incoming, options);
   let floor = 0, offeringSurvival = false;
   if (before > 0 && incoming >= before) {
     const offering = (unit.buffs || []).find(b => b.id === "stic_sacrifice_aura" &&

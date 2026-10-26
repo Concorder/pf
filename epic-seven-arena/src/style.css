@@ -2556,3 +2556,164 @@ h3 small {
 /* Removal protection is distinct from unique effects, which are not buffs. */
 .undispellable-buff-badge { background: #8ed8ef; border-color: #d3f5ff; box-shadow: 0 0 5px #9ee8fa99; }
 .unique-effect-badge { background: #40334c; border-color: #c7a8df; }
+
+/* Team souls sit at the foot of the battlefield, outside the hero/skill hit areas. */
+.battlefield {
+  background: var(--arena-background) center bottom / cover no-repeat, #25374a;
+}
+.battlefield-souls {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 8px 24px 13px 7%;
+  background: linear-gradient(180deg, #142638b0, #101e30e8);
+  box-shadow: inset 0 1px #b6d3df21;
+}
+.battlefield-soul-meter { width: min(34%, 260px); min-width: 0; }
+.soul-meter-heading { display: flex; align-items: center; gap: 10px; height: 22px; }
+.soul-meter-heading label { font-size: 8px; font-weight: 700; letter-spacing: 1.8px; color: #d3eef6; cursor: text; }
+.soul-meter-heading input {
+  width: 40px; padding: 1px 3px; min-height: 0; border: 1px solid transparent;
+  background: transparent; font-size: 15px; font-weight: 700; color: #a4f2ff;
+  text-align: center; border-radius: 4px; appearance: textfield;
+}
+.soul-meter-heading input::-webkit-inner-spin-button { appearance: none; }
+.soul-meter-heading input:hover, .soul-meter-heading input:focus { border-color: #6fd4ee80; background: #0c1c2cb3; }
+.soul-bulbs { display: flex; align-items: end; gap: 3px; height: 38px; padding: 0 3px; }
+.soul-bulb { width: 24px; height: 36px; flex-shrink: 1; overflow: visible; }
+.soul-bulb.is-filled { filter: drop-shadow(0 0 5px #3cbaff) drop-shadow(0 0 2px #506cff); }
+.soul-bulb.is-empty { opacity: .16; filter: grayscale(.6); }
+.soul-flame { fill: none; stroke: #6ac8ff; stroke-width: 2; stroke-linecap: round; }
+.soul-vessel { stroke: #598bff; stroke-width: 1.4; }
+.soul-heart { fill: #c3ffff; stroke: #218cdd; stroke-width: 1.5; }
+.soul-neck { fill: none; stroke: #ccffff; stroke-width: 2; }
+.soul-segments { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; padding: 3px; border: 1px solid #809caa6b; border-radius: 7px; background: #111a28bb; }
+.soul-segment { height: 4px; border-radius: 3px; background: #65727c42; transform: skewX(-22deg); }
+.soul-segment.is-filled { background: #65deff; box-shadow: 0 0 5px #4996ff, inset 0 1px #c9ffff; }
+.soul-meter-right .soul-meter-heading, .soul-meter-right .soul-bulbs { justify-content: flex-end; }
+.soul-meter-right .soul-segments { direction: rtl; }
+.battle-hud { display: block; padding: 11px 24px; }
+.battle-hud .action-guide { border: 0; padding: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.battle-hud .action-guide > div { margin: 0; }
+@media (max-width: 600px) {
+  .battlefield-souls { padding: 7px 12px 11px; gap: 26px; }
+  .battlefield-soul-meter { width: 44%; }
+  .soul-meter-heading { gap: 3px; }
+  .soul-meter-heading label { font-size: 6px; letter-spacing: 1px; }
+  .soul-meter-heading input { font-size: 13px; width: 32px; }
+  .soul-bulbs { height: 32px; gap: 1px; }
+  .soul-bulb { width: 19px; height: 30px; min-width: 0; }
+  .soul-segments { gap: 2px; }
+  .battle-hud { padding: 8px 12px; }
+  .battle-hud .action-guide > .eyebrow { display: none; }
+  .battle-hud .action-guide > div { width: 100%; justify-content: space-between; font-size: 8px; }
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.arena:fullscreen .battlefield { display: flex; flex-direction: column; flex: 1; min-height: 0; width: 100%; }
+.arena:fullscreen .scene { max-height: none; min-height: 0; }
+.arena:fullscreen .battlefield-souls { flex-shrink: 0; }
+.arena:fullscreen .battle-hud { min-height: 0; flex-shrink: 0; }
+
+/* Damage numbers originate below the affected unit; MISS stays above it. */
+.damage-floats, .damage-float-group { position: absolute; inset: 0; pointer-events: none; }
+.damage-floats { z-index: 40; inset: auto; }
+.damage-float {
+  position: absolute; top: calc(100% + 6px); left: calc(50% + var(--damage-shift, 0px));
+  font-family: "Arial Black", Impact, "Manrope", sans-serif; font-weight: 900;
+  font-style: italic; font-size: clamp(26px, 3vw, 42px); line-height: 1;
+  letter-spacing: -1.5px; white-space: nowrap; pointer-events: none;
+  animation: damage-rise 1500ms cubic-bezier(.16,.75,.3,1) var(--damage-delay, 0ms) both;
+}
+.damage-number-outline {
+  position: absolute; inset: 0; color: #101016; -webkit-text-stroke: 5px #101016;
+  text-shadow: 1px 3px 0 #080913, 0 3px 7px #0009;
+}
+.damage-number-fill { position: relative; color: #ffffff; }
+.damage-crit { font-size: clamp(34px, 4vw, 56px); }
+.damage-crit .damage-number-fill {
+  background: linear-gradient(180deg, #ff623e 3%, #ff942e 35%, #ffd63b 70%, #fff266 100%);
+  background-clip: text; -webkit-background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 2px #ffb84066);
+}
+.damage-miss .damage-number-fill { color: #aeb5bf; }
+.damage-miss-label {
+  position: absolute; left: 50%; top: -22px; font: italic 800 13px "Manrope", sans-serif;
+  letter-spacing: 2px; color: #c3c9d1; -webkit-text-stroke: 2px #141821; paint-order: stroke fill;
+  text-shadow: 0 2px 3px #000; pointer-events: none;
+  animation: miss-label-rise 1500ms ease-out var(--damage-delay, 0ms) both;
+}
+@keyframes damage-rise {
+  0% { opacity: 0; transform: translate(-50%, 10px) scale(.6) skewX(-4deg); }
+  12% { opacity: 1; transform: translate(-50%, -5px) scale(1.16) skewX(-4deg); }
+  28% { opacity: 1; transform: translate(-50%, -8px) scale(1) skewX(-4deg); }
+  72% { opacity: 1; transform: translate(-50%, -18px) scale(1) skewX(-4deg); }
+  100% { opacity: 0; transform: translate(-50%, -30px) scale(.97) skewX(-4deg); }
+}
+@keyframes miss-label-rise {
+  0% { opacity: 0; transform: translate(-50%, 5px); }
+  12%, 70% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -25px); }
+}
+@media (max-width: 600px) {
+  .damage-float { font-size: 24px; letter-spacing: -1px; }
+  .damage-crit { font-size: 31px; }
+  .damage-number-outline { -webkit-text-stroke-width: 3px; }
+  .damage-miss-label { font-size: 10px; top: -17px; letter-spacing: 1.4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .damage-float { animation-name: damage-fade; }
+  .damage-miss-label { animation-name: damage-fade; }
+  @keyframes damage-fade {
+    0%, 75% { opacity: 1; transform: translateX(-50%); }
+    100% { opacity: 0; transform: translateX(-50%); }
+  }
+}
+
+/* Soulburn uses API affordability; skill-specific effects remain a labelled UI preview. */
+.battlefield-souls { align-items: flex-end; }
+.soulburn-slot { position: relative; height: 53px; margin-bottom: 2px; }
+.soulburn-button {
+  position: absolute; bottom: 0; left: 0; width: 154px; height: 48px; padding: 0 12px 4px;
+  border: 2px solid #b74cff; border-radius: 7px; transform: skewX(-12deg);
+  background: linear-gradient(180deg, #cc74ff 0%, #8a31ed 30%, #5917a7 85%);
+  box-shadow: inset 0 2px 4px #f4caff8c, 0 0 10px #bd4bff70, 0 3px 3px #081324;
+  text-align: center; cursor: pointer; overflow: visible;
+}
+.soulburn-button .soulburn-word {
+  display: block; font: italic 1000 31px/1 "Arial Black", "Manrope", sans-serif;
+  color: #9ff8ff; -webkit-text-stroke: 1px #a5c9ff; paint-order: stroke fill;
+  text-shadow: 0 2px 0 #3b40b2, 0 0 5px #c7ffff; letter-spacing: -1px;
+}
+.soulburn-button small { display: block; font: italic 800 12px/1.1 "Manrope", sans-serif; color: #f9ecff; text-shadow: 0 1px #41215c; }
+.soulburn-button.is-ready { animation: soulburn-pulse .5s ease-in-out infinite; }
+.soulburn-button.is-armed { background: linear-gradient(#90949799, #3d424bd9); border-color: #6d747c; box-shadow: inset 0 2px #bbc2c755, 0 3px 4px #07111d; }
+.soulburn-button.is-armed .soulburn-word { color: #fafafa; -webkit-text-stroke-color: #e2e5e6; text-shadow: 0 2px 2px #171a20; padding-right: 15px; font-size: 29px; }
+.soulburn-arrow { position: absolute; right: 10px; top: 0; font-size: 36px; font-weight: 800; color: #e0e3e5; }
+.soulburn-preview-note { position: absolute; bottom: 3px; left: 168px; color: #b7a7d2; font-size: 7px; width: 80px; line-height: 1.5; }
+.soul-meter-right .soulburn-button { left: auto; right: 0; }
+.soul-meter-right .soulburn-preview-note { left: auto; right: 168px; }
+@keyframes soulburn-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
+@media (max-width: 600px) {
+  .soulburn-slot { height: 48px; }
+  .soulburn-button { width: 112px; height: 39px; padding: 1px 6px 4px; }
+  .soulburn-button .soulburn-word { font-size: 24px; }
+  .soulburn-button small { font-size: 9px; }
+  .soulburn-button.is-armed .soulburn-word { font-size: 23px; }
+  .soulburn-arrow { font-size: 28px; right: 6px; }
+  .soulburn-preview-note { bottom: -9px; left: 0; width: auto; white-space: nowrap; font-size: 6px; }
+  .soul-meter-right .soulburn-preview-note { right: 0; left: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .soulburn-button.is-ready { animation: none; } }
+
+/* Soulburn marks only its source-defined skill; other skill buttons stay disabled. */
+.skill-button.soulburn-affected {
+  border-color: #ffe992; outline: 1px solid #fff1a0;
+  box-shadow: 0 0 10px #ffe16acc, 0 0 20px #ffc13577, inset 0 0 12px #fff0a344;
+  animation: soulburn-skill-glow 1s ease-in-out infinite;
+}
+@keyframes soulburn-skill-glow {
+  0%, 100% { box-shadow: 0 0 6px #ffe16a99, 0 0 13px #ffc13555, inset 0 0 7px #fff0a333; }
+  50% { box-shadow: 0 0 13px #fff2ad, 0 0 27px #ffc135aa, inset 0 0 15px #fff0a366; }
+}
+@media (prefers-reduced-motion: reduce) { .skill-button.soulburn-affected { animation: none; } }

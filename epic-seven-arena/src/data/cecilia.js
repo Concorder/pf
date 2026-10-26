@@ -169,6 +169,11 @@ export function normalizeSkill(hero, raw, index) {
         ? "random"
         : "highestAttack",
     passive,
+    soulburn: (s.soulburn ?? raw.soulburn) && Number.isFinite(Number(s.soul_requirement ?? raw.soul_requirement)) &&
+      Number(s.soul_requirement ?? raw.soul_requirement) > 0 ? {
+        cost: Number(s.soul_requirement ?? raw.soul_requirement),
+        description: String(s.soul_description ?? raw.soul_description ?? "").replace(/\*|\+|_/g, ""),
+      } : null,
     openingOffering: hero.id === "c6005" && index === 1 && passive &&
       description === PROTECTION_PASSIVE_DESCRIPTIONS.c6005 &&
       (s.buff || []).some(b => b._id === "stic_sacrifice_aura"),

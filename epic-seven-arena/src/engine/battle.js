@@ -366,9 +366,9 @@ function performSkillAttack(
     const outcome = hit === "auto" ? rollHit(u, t, d, random) : hit;
     const protection = planProtectedDamage(battle, t, damage(u, t, d, outcome), { attacker: u, skill: d });
     const amount = protection.targetDamage;
-    sufferDamage(battle, t, amount);
+    sufferDamage(battle, t, amount, { hit: outcome });
     if (protection.transferred > 0) {
-      sufferDamage(battle, protection.recipient, protection.transferred);
+      sufferDamage(battle, protection.recipient, protection.transferred, { kind: "shared" });
       log(battle,
         `${t.name} shares ${protection.transferred.toLocaleString()} damage with ${protection.recipient.name}.`,
         `Reduction → limit → share · ${protection.limited.toLocaleString()} before sharing · transfer bypasses further protection`,

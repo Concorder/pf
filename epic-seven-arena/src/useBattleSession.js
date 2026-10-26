@@ -1,3 +1,4 @@
+import { newDamageEvents } from "./engine/damageEvents.js";
 import { changeBuff, setSanctuaryOfBattle } from "./engine/buffs.js";
 import { useState } from "react";
 import {
@@ -9,16 +10,16 @@ import {
   resumeStalledBattle,
 } from "./engine/battle.js";
 export default function useBattleSession(heroes) {
-  const [session, setSession] = useState({ battle: null, history: [] });
+  const [session, setSession] = useState({ battle: null, history: [], damageEvents: [] });
   return {
     ...session,
     start: (teams, souls) =>
-      setSession({ battle: createBattle(teams, souls, heroes), history: [] }),
-    reset: () => setSession({ battle: null, history: [] }),
+      setSession({ battle: createBattle(teams, souls, heroes), history: [], damageEvents: [] }),
+    reset: () => setSession({ battle: null, history: [], damageEvents: [] }),
     undo: () =>
       setSession((s) =>
         s.history.length
-          ? { battle: s.history.at(-1), history: s.history.slice(0, -1) }
+          ? { battle: s.history.at(-1), history: s.history.slice(0, -1), damageEvents: [] }
           : s,
       ),
     attack: (skill, target, hit = "auto", options = {}) => {
@@ -41,7 +42,7 @@ export default function useBattleSession(heroes) {
         );
         return battle === s.battle
           ? s
-          : { battle, history: [...s.history, s.battle] };
+          : { battle, history: [...s.history, s.battle], damageEvents: newDamageEvents(s.battle, battle) };
       });
     },
     editBuff: (target, id, turns, remove, options = {}) => {
@@ -64,7 +65,7 @@ export default function useBattleSession(heroes) {
         if (battle !== s.battle) resumeStalledBattle(heroes, battle, random);
         return battle === s.battle
           ? s
-          : { battle, history: [...s.history, s.battle] };
+          : { battle, history: [...s.history, s.battle], damageEvents: newDamageEvents(s.battle, battle) };
       });
     },
     editReadiness: (target, amount) => {
@@ -84,7 +85,7 @@ export default function useBattleSession(heroes) {
         );
         return battle === s.battle
           ? s
-          : { battle, history: [...s.history, s.battle] };
+          : { battle, history: [...s.history, s.battle], damageEvents: newDamageEvents(s.battle, battle) };
       });
     },
     detonate: (target, id) => {
@@ -98,12 +99,12 @@ export default function useBattleSession(heroes) {
         const battle = detonateEffects(heroes, s.battle, target, id, random);
         return battle === s.battle
           ? s
-          : { battle, history: [...s.history, s.battle] };
+          : { battle, history: [...s.history, s.battle], damageEvents: newDamageEvents(s.battle, battle) };
       });
     },
     setSanctuary: (enabled) => setSession((s) => {
       const battle = setSanctuaryOfBattle(s.battle, enabled);
-      return battle === s.battle ? s : {battle, history: [...s.history, s.battle]};
+      return battle === s.battle ? s : {battle, history: [...s.history, s.battle], damageEvents: []};
     }),
     editSouls: (side, value) =>
       setSession((s) =>
@@ -111,6 +112,7 @@ export default function useBattleSession(heroes) {
           ? {
               battle: setSouls(s.battle, side, value),
               history: [...s.history, s.battle],
+              damageEvents: [],
             }
           : s,
       ),

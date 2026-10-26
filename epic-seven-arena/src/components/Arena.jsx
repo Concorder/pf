@@ -1,3 +1,5 @@
+import DamageFloats from "./DamageFloats.jsx";
+import SoulMeter from "./SoulMeter.jsx";
 import {debuffGroupName} from "../engine/debuffContainers.js";
 import { maxHp, originalMaxHp, injuryAmount, injuryFraction } from "../engine/health.js";
 import ElementIcon from "./ElementIcon.jsx";
@@ -43,6 +45,7 @@ function HeroUnit({ side, slot }) {
       type="button"
       data-side={side}
       data-slot={slot}
+      data-unit-id={unit?.id}
       className={[
         "hero-card",
         !h && "empty-slot",
@@ -94,6 +97,7 @@ function HeroUnit({ side, slot }) {
         </>
       ) : (
         <>
+          <DamageFloats unitId={unit.id} />
           <div className="unit-status">
             <div className="unit-buffs">
               {orderedEffects(l.battle, unit.buffs).map((b, index) => (
@@ -372,9 +376,10 @@ function Skills() {
             <button
               key={s}
               type="button"
-              className={`skill-button ${l.selectedSkill === s ? "selected" : ""}`}
+              className={`skill-button ${l.selectedSkill === s ? "selected" : ""} ${l.soulburnSelection?.skill === s ? "soulburn-affected" : ""}`}
               aria-label={`${s}${cd ? `, ${cd} turns remaining` : ""}`}
-              disabled={!canUse(l.heroes, l.battle, l.active, s)}
+              aria-pressed={l.selectedSkill === s}
+              disabled={!canUse(l.heroes, l.battle, l.active, s) || !!(l.soulburnSelection && l.soulburnSelection.skill !== s)}
               title={
                 data?.source
                   ? `${data.name} · ${isCermiaSelfSkill(l.heroes, u, s) ? "Self buff, S3 reset and extra turn" : data.passive ? "Passive" : data.damageSupport === "supported" ? "Damage supported" : data.supportReason}\n${data.description}\n${data.sourceText}`
@@ -426,6 +431,7 @@ function Skills() {
                   ? ` · EE damage +${Math.round(data.eeDamage * 100)}%`
                   : ""}
               </p>
+              {data?.soulburn && <p>Soulburn · {data.soulburn.cost} souls · {data.soulburn.description} Enhanced effect not automated; button preview only.</p>}
               {data?.automaticDebuffs?.length > 0 && (
                 <p>
                   Automatic debuffs:{" "}
@@ -467,7 +473,9 @@ function Skills() {
         })}
       </details>
       <div id="skillSummary" className="skill-summary">
-        {!l.active
+        {l.soulburnSelection
+          ? `Soulburn · ${l.soulburnSelection.skill} · ${l.soulburnSelection.cost} souls · preview only`
+          : !l.active
           ? l.battle?.winner
             ? "Reset to try another matchup"
             : "Start the battle to use skills"
@@ -489,6 +497,7 @@ export default function Arena() {
       ref={l.arenaRef}
       aria-label="Battle arena"
     >
+      <div className="battlefield">
       <div className="scene" id="scene">
         <div className="scene-vignette" />
         <div className="arena-top">
@@ -557,6 +566,11 @@ export default function Arena() {
         <ActiveHero />
         <Skills />
       </div>
+      <div className="battlefield-souls">
+        <SoulMeter side="left" />
+        <SoulMeter side="right" />
+      </div>
+      </div>
       {l.pending &&
         (l.pending.kind === "self" ? <SelfSkillDialog /> : <HitDialog />)}
       {l.buffTarget && <BuffDialog />}
@@ -565,32 +579,6 @@ export default function Arena() {
         className="battle-hud"
         aria-label="Battle controls"
       >
-        <div className="soul-station">
-          <span className="eyebrow">TEAM SOULS</span>
-          <div className="soul-pools">
-            {["left", "right"].map((side, i) => (
-              <React.Fragment key={side}>
-                {i > 0 && <span className="soul-divider" />}
-                <label className="souls">
-                  <span className="orb" />
-                  <span className="soul-value">
-                    <input
-                      id={`souls-${side}`}
-                      aria-label={`${teamName(side)} souls`}
-                      type="number"
-                      min="0"
-                      max="99"
-                      value={(l.battle?.souls || l.souls)[side]}
-                      onChange={(e) => l.editSouls(side, e.target.value)}
-                    />
-                    <span>{teamName(side).toUpperCase()}</span>
-                  </span>
-                </label>
-              </React.Fragment>
-            ))}
-          </div>
-          <span className="soul-note">Click a number to adjust</span>
-        </div>
         <div className="action-guide">
           <span className="eyebrow">PLAY YOUR NEXT MOVE</span>
           <div>

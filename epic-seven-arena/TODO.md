@@ -7,7 +7,7 @@
 - Source modules, source icons and the generated static build are committed together. Inspect `git status` and preserve any future local changes before pulling or resetting.
 - User prefers previewing changes without a push. Commit/push only when explicitly requested.
 - Current implementation: 32 debuff types plus five unique effects, including partial support; reviewed automatic direct-grant mappings for 66 skills. Manual application remains available.
-- Last engine checks: 159 Node tests and production build passed. Desktop/mobile browser checks passed for Block, containers, detonation/Undo, dispels and Extinction.
+- Last engine checks: 162 Node tests and production build passed. Desktop/mobile browser checks passed for Block, containers, detonation/Undo, dispels and Extinction.
 - Run `npm test` and `npm run dev` from this directory. `npm run build` regenerates tracked static output at the app root for GitHub Pages.
 
 ## Remaining mechanics
@@ -129,3 +129,16 @@ See [remaining-mechanics.md](docs/remaining-mechanics.md) for this batch and the
 
 - [ ] Show injury as a pale red segment on the right side of each health bar, proportional to the persistent injury percentage. Keep it distinct from missing current HP and consistent across arena units and the current-turn panel.
 - [ ] Display current HP / effective max HP after injury and other max-HP modifiers, rather than the original uninjured maximum. Keep labels consistent after injury, Collapse application/removal, healing, revival and Undo.
+
+## Battlefield soul meters
+
+- [x] Move soul meters to the foot of the battlefield, your team left and opponent right. Each bulb represents 10 souls; nine smaller segments show individual souls. Keep editable totals, artifact startup, skill gains and Undo connected to battle state. Desktop/tablet/mobile and fullscreen browser checks passed.
+
+## Damage feedback and Soulburn UI
+
+- [x] Float damage beneath targets: orange/yellow outlined crits, white normal/crushing hits, grey misses with MISS above the character. Capture actual resolved hit types per AoE target/reaction and separate transferred damage without changing combat math.
+- [x] Keep popups inside battlefield edges, above UI without intercepting clicks, and fully colored on defeated units. Fade/Undo/reset cleanup and reduced-motion behavior are checked on desktop/mobile.
+- [x] Source-driven Soulburn button above active team souls: affordable API cost, Burn/Cancel preview states, two pulses per second, reduced-motion override, automatic clearing on turn/hero/affordability changes.
+- [ ] Implement reviewed Soulburn execution and soul spending, including variant damage, extra turns, effects and resistance exceptions. Current button is explicitly a UI preview and does not change attacks or spend souls.
+
+- [x] Centralize Soulburn selection: auto-select and glow-pulse its API-defined skill, lock other skill buttons and guard programmatic skill/target actions. Cancel, insufficient souls, turn changes, Undo and Reset clear the lock. Keep enhanced execution explicitly pending rather than silently using normal damage. Desktop/mobile and reduced-motion checks passed.

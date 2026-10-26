@@ -7,6 +7,7 @@ import {
   canUse,
   clampSouls,
   forcedTarget,
+  skillData,
 } from "./engine/battle.js";
 import useBattleSession from "./useBattleSession.js";
 import Arena from "./components/Arena.jsx";
@@ -23,6 +24,7 @@ export default function App() {
     [error, setError] = useState(""),
     [souls, setStartingSouls] = useState({ left: 0, right: 0 }),
     [selectedSkill, setSelectedSkill] = useState(null),
+    [soulburnChoice, setSoulburnChoice] = useState(null),
     [pending, setPending] = useState(null),
     [buffTarget, setBuffTarget] = useState(null),
     [editing, setEditing] = useState(null),
@@ -131,6 +133,21 @@ export default function App() {
       units.find((u) => u.id === inspected) ||
       units.find((u) => u.currentHp > 0) ||
       units[0];
+  const soulburnSelection = soulburnChoice && active?.id === soulburnChoice.actorId &&
+    battle?.turn === soulburnChoice.turn && !battle?.winner &&
+    battle.souls[active.side] >= soulburnChoice.cost ? soulburnChoice : null;
+  useEffect(() => {
+    if (soulburnChoice && !soulburnSelection) setSoulburnChoice(null);
+  }, [soulburnChoice, soulburnSelection]);
+  function toggleSoulburn(skill) {
+    if (soulburnSelection) { setSoulburnChoice(null); return; }
+    if (!active || !battle || battle.winner) return;
+    const effect = skillData(heroes, active, skill)?.soulburn;
+    if (!effect || battle.souls[active.side] < effect.cost) return;
+    setSoulburnChoice({actorId: active.id, turn: battle.turn, skill, cost: effect.cost});
+    setSelectedSkill(skill);
+    setPending(null);
+  }
   function openEditor(side, slot) {
     if (battle) return toast("Reset the battle to edit teams.");
     setInspected(`${side}-${slot}`);
@@ -202,6 +219,7 @@ export default function App() {
     setEditing(null);
   }
   function chooseSkill(skill) {
+    if (soulburnSelection && skill !== soulburnSelection.skill) return toast("Cancel Soulburn to choose another skill.");
     setSelectedSkill(skill);
     if (
       active &&
@@ -217,6 +235,7 @@ export default function App() {
       });
   }
   function chooseTarget(targetId) {
+    if (soulburnSelection) return toast("Soulburn preview: enhanced skill execution is not enabled yet. Cancel Burn to use the normal skill.");
     if (active && isCermiaSelfSkill(heroes, active, selectedSkill))
       return chooseSkill(selectedSkill);
     if (!active) return;
@@ -237,6 +256,8 @@ export default function App() {
       });
   }
   function attack(skill, targetId, hit, options) {
+    if (soulburnSelection && skill !== "wait") return toast("Soulburn execution is pending. Cancel Burn to use the normal skill.");
+    setSoulburnChoice(null);
     session.attack(skill, targetId, hit, options);
     setPending(null);
     setSelectedSkill(null);
@@ -251,6 +272,7 @@ export default function App() {
     else setPending(null);
   }
   function reset() {
+    setSoulburnChoice(null);
     if (battle) setStartingSouls(battle.initialSouls);
     setBuffTarget(null);
     session.reset();
@@ -259,6 +281,7 @@ export default function App() {
     toast("Battle reset. Your builds are kept.");
   }
   function undo() {
+    setSoulburnChoice(null);
     setBuffTarget(null);
     session.undo();
     setSelectedSkill(null);
@@ -299,11 +322,14 @@ export default function App() {
     teams,
     units,
     battle,
+    damageEvents: session.damageEvents,
     history,
     active,
     preview,
     souls,
     selectedSkill,
+    soulburnSelection,
+    toggleSoulburn,
     setSelectedSkill: chooseSkill,
     pending,
     setPending,
