@@ -7,7 +7,7 @@
 - Source modules, source icons and the generated static build are committed together. Inspect `git status` and preserve any future local changes before pulling or resetting.
 - User prefers previewing changes without a push. Commit/push only when explicitly requested.
 - Current implementation: 32 debuff types plus five unique effects, including partial support; reviewed automatic direct-grant mappings for 66 skills. Manual application remains available.
-- Last engine checks: 167 Node tests and production build passed. Desktop/mobile browser checks passed for Block, containers, detonation/Undo, dispels and Extinction.
+- Last engine checks: 216 Node tests and production build passed. Desktop/mobile browser checks passed for Block, containers, detonation/Undo, dispels and Extinction.
 - Run `npm test` and `npm run dev` from this directory. `npm run build` regenerates tracked static output at the app root for GitHub Pages.
 
 ## Remaining mechanics
@@ -29,7 +29,7 @@
   - [ ] Expand hero-specific passive/additional-attack mappings and implement reviewed secondary reaction chains; the current queue does not recursively enqueue attacks.
   - [x] Highest-Attack Dual Attacks skip disabled allies in effective-ATK order, and do not occur if all teammates are ineligible (user clarification).
   - [ ] Verify reaction soul rules and broader chain ordering against game evidence.
-  - [ ] Complete Arbiter Focus generation/consumption, full-Focus S3 and start-turn cooldown reset.
+  - [ ] Complete Arbiter Focus consumption, full-Focus S3 and start-turn cooldown reset (flat cast gains and revival grant now implemented).
   - [x] Add guarded automatic Extinction application before death passives (Sigret, Glenn, Lilibet and Top Model Luluca source rules; unsupported damage formulas remain blocked).
 - [x] Implement skill-driven Combat Readiness changes and already-resolved manual CR controls. See `docs/readiness-and-global-timers.md`.
   - [x] Restrict: prevent non-Speed CR increases.
@@ -43,7 +43,7 @@
 - [x] Add manually configured direct-attack damage reduction → max-HP limit → sharing, with no recursive transfer and Undo.
   - [ ] Map source-specific protection passives/artifacts, their stacking and suppression rules; broader source-specific event ordering remains pending.
 - [x] Block: suppress external buffs and external cleansing while allowing the bearer’s own effects.
-  - [ ] Clarify “some beneficial effects” coverage for healing, CR and other effects before extending suppression.
+  - [ ] Research “some beneficial effects” coverage for healing, CR and other effects before extending suppression.
 - [ ] Verify Magic Nail and Rupture coefficients, defense interactions and trigger timing. Their descriptions omit required numbers; do not guess.
 - [ ] Omen: find its actual trigger/rule; “Something is watching” is insufficient.
 - [x] Resolve reviewed Random / Class Debuff containers into actual statuses, including manual application and guarded skill grants.
@@ -82,7 +82,7 @@
 - Provoke enforces the required S1 and target; the user confirms the action in this manually controlled sandbox.
 - Extend meaningful engine tests for each new rule, then check the relevant UI and build. Avoid claiming complete hero support when secondary effects remain pending.
 
-## Deferred clarification queue
+## Resolved rules and deferred source research
 
 See [remaining-mechanics.md](docs/remaining-mechanics.md) for this batch and the rules intentionally left unresolved.
 
@@ -148,3 +148,33 @@ See [remaining-mechanics.md](docs/remaining-mechanics.md) for this batch and the
 - [x] Automatically apply the reviewed native 50% S2 attack cap before sharing. Verify 8,000 effective max HP → 4,000 cap → 1,200 target / 2,800 transfer without manual settings, including matching preview/popups/HP and Undo.
 - [x] Use effective post-injury max HP; preserve the native cap under Frostbite/sharing bypass; suppress native passive under Seal while independent manual caps remain.
 - [ ] Implement/review Celine's remaining S2 death-trigger cooldown/soul effects and other kit mechanics. Numeric cap is user-confirmed at 50%; cached variable/enhancement rows need review before replacing this value with automatic numeric normalization.
+
+## Max-enhancement skill text
+
+- [x] Resolve all 611 active cached skill description placeholders into max-enhancement values in skill details and tooltips. Handle multiple variables, percentage rows, flat resources, decreasing cooldowns and the reviewed native Celine 50% cap.
+- [x] Preserve raw source descriptions for exact mechanic guards; expose separate formatted display text. Apply the same display formatter to equipment descriptions and Soulburn text where source variables exist.
+- [x] Catalogue coverage test rejects unresolved/missing cached variables; unknown future source values display “value unavailable” instead of fabricated numbers. Desktop/mobile checks cover real percentage, Fighting Spirit, cooldown and passive examples.
+
+- [x] Shared skill classification and visible tags, separating passive/attack/non-attack, single/all-enemies/two-target attacks, and normal versus Soulburn extra-turn capability. Classification stays independent of formula support; uncertain sources remain explicit.
+- [ ] Connect reviewed passive/artifact reactions to resolved skill-use tags at the correct execution stage. Classify individual triggered skills and form/EE/conditional variants at execution time; do not infer actual extra-turn grants from capability tags.
+
+- [x] Accept equivalent explicit HP/Defense multiplier spellings and percentage-only terms; separate labelled Soulburn values from normal casts and preserve contradictory/conditional formula guards. Fixed passive/non-attack scaling checks that masked their actual support reason. 34 additional source formulas parse, enabling base damage for 30 additional active skills; secondary mechanics still require their own review.
+
+- [x] Dual Attack execution emits `dual-attack` plus base attack tags for the assisting hero's normal S1, with actor/turn-owner context. No permanent tag on the caller or catalog S1; Soulburn-only tags cannot leak to assists. Direct dual requests reject S2/S3, and transformation handlers can disable participation explicitly.
+- [x] Natural Dual Attack rolls each eligible assisting ally independently using that ally's final chance (5% base, 20% cap per hero). No successes means no assist; one success selects that hero; multiple successes select one successful hero uniformly. Active hero chance is unused. Guaranteed calls bypass RNG, S1 prohibitions apply, and reactions cannot chain. Highest-ATK guaranteed calls retain next-eligible fallback. Automatic artifact/buff chance mappings remain pending.
+
+
+- [x] Optional per-unit Fighting Spirit (max 100) / Focus (max 5), decimal values, native source fields, cast gains/costs, manual gain multipliers and Undo-safe controls. Red Fighting Spirit under HP; Focus as five partially fillable blocks.
+- [x] Reviewed resource-only mappings: 15 opening grants, Urban Shadow Choux turn-start Focus, Solitaria/Elvira gain blocking with Seal/death, Arbiter revival Focus. Unmapped threshold/consumes-all/retaliation and resource-death reset rules remain pending.
+- [x] Natural 5★ source/coverage audit: 213 merged-catalog heroes / 639 skills, 27 direct S1 debuff mappings, reviewed Aria/Violet/Choux conditional modifiers, fixed-penetration parsing and starting-cooldown support. See `docs/nat5-review.md` and `docs/unsupported-nat5-skills.md`; complex branches and source-version disagreements remain explicit.
+
+- Source policy: e7calc is authoritative for damage formulas/coefficients and Soulburn damage. CeciliaBot remains metadata/descriptions/icons. Fribbels is base stats/portraits only. Do not use Fribbels damage values to validate or override e7calc. Existing CeciliaBot multiplier imports remain provisional until matched to current e7calc; full migration/live synchronization is pending.
+
+- [x] Shared non-attack cast execution and friendly-avatar targeting; team/self confirmation without a hit popup. Eight guarded support casts cover team/self/selected buffs, explicit caster exclusion, cleansing, CR, cooldown reset/reduction, Iseria S2 cooldown-effect immunity, extra turns, resource gains and Undo. Other non-attack effects (barriers/healing/transformations/special statuses) still need their own handlers; targeting stated in descriptions is not an open question.
+
+- Review policy: derive ally/enemy/team/self targeting, explicit caster exclusions, positions, durations and stated triggers from CeciliaBot descriptions. Missing handlers are implementation work, not clarification requests. Research damage coefficients in e7calc and ambiguous interactions in sources first; ask the user only about a specific unresolved contradiction or undocumented interaction. See `docs/review-policy.md`.
+
+- [x] Research additional/fixed damage against maintained e7calc source `tyopoyt/epic7-damage-calc` at `39070976ce3cd0435cbcf5d430f2711cf0ef0005` (2026-10-22), replacing the old 2024-beta reference for new work. Findings and citations: `docs/additional-and-fixed-damage.md`.
+- [ ] Implement source-mapped additional/fixed damage components using those findings, including independent trigger conditions, dedicated modifiers and event-specific protection handling. Keep unresolved Laceration eligibility deferred.
+- [ ] Update old-beta DoT coefficients after reviewing the maintained source: current e7calc uses Bleed 40% ATK and Burn 70% ATK, rather than the current engine's 30%/60%. Research recorded; engine unchanged in this pass.
+- [x] Record user-confirmed cross-team watcher priority: for the same triggering event, opposing-side reactions precede the event actor's team. Filters remain extensible unit by unit; same-side order is a separate rule.

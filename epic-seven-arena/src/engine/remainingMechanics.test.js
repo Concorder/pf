@@ -6,7 +6,7 @@ import { defaultTeams, makeHero } from "./heroes.js";
 import {
   createBattle,
   activeUnit,
-  executeAttack,
+  executeAttack as executeBattleAttack,
   damage,
   detonateEffects,
   selectRandomDualAlly,
@@ -391,3 +391,8 @@ test("Frostbite changes executed damage without disabling limits; cleanse restor
   assert.equal(get(protectedHit).currentHp, 6000);
   assert.equal(get(protectedHit, "right-3").currentHp, hp - 1000);
 });
+
+// These fixtures isolate debuffs/protection/guaranteed reactions from natural RNG.
+function executeAttack(heroes, battle, skill, targetId, hit, random, options = {}) {
+  return executeBattleAttack(heroes, battle, skill, targetId, hit, random, {...options, automaticDualAttacks: false});
+}

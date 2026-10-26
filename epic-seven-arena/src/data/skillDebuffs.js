@@ -1,10 +1,11 @@
+import {NAT5_DEBUFF_RULES} from "./natFiveSkillRules.js";
 import { RANDOM_DEBUFF_POOLS } from "../engine/debuffContainers.js";
 import { SKILL_DEBUFF_RULES } from "./skillDebuffRules.js";
 // Same value formatting as CeciliaBot: sum base + enhancement values, then ×1000 for percentages.
 export function resolveDebuffRules(hero, skill, index) {
   const description = String(skill.description || "").replace(/\*|\+|_/g, "");
   const refs = (skill.debuff || []).map((d) => d._id);
-  const reviewed = SKILL_DEBUFF_RULES[hero.id]?.[`S${index + 1}`];
+  const reviewed = SKILL_DEBUFF_RULES[hero.id]?.[`S${index + 1}`] ?? NAT5_DEBUFF_RULES[hero.id]?.[`S${index + 1}`];
   if (!reviewed || reviewed.description !== description || skill.passive)
     return { effects: [], pending: refs.length > 0 };
   const effects = [];

@@ -1,3 +1,10 @@
+import {resolveNonAttackSkill} from "./nonAttackSkills.js";
+import {SKILL_SOURCE_CORRECTIONS} from "./skillSourceCorrections.js";
+import {NAT5_RESOURCE_RULES} from "./natFiveSkillRules.js";
+import {RESOURCE_PASSIVE_RULES} from "./resourcePassiveRules.js";
+import { nativeResourceType, skillResourceRule } from "../engine/resources.js";
+import { classifySkill } from "./skillTags.js";
+import { formatSkillDescription } from "./skillText.js";
 import { PROTECTION_PASSIVE_DESCRIPTIONS } from "./protectionPassiveRules.js";
 import { SKILL_PROTECTION_RULES } from "./skillProtectionRules.js";
 import { SKILL_UTILITY_RULES } from "./skillUtilityRules.js";
@@ -21,7 +28,12 @@ export function parseMultipliers(text) {
     if (!line) continue;
     if (/^Skill\s*[123]$/i.test(line)) continue;
     // A clearly labelled soulburn alternative is excluded from the normal cast.
-    line = line.replace(/\(\s*[\d.]+\s+soulburn\s*\)/gi, "").trim();
+    line = line.replace(/\(\s*[\d.]+%?\s+(?:with\s+)?soulburn\s*\)/gi, "").trim();
+    // Normalize only explicit equivalent stat-coefficient spellings. Keep all
+    // conditional tails and contradictory parenthetical arithmetic for review.
+    line = line.replace(/^(?:Max )?Health scaling\s*:?\s*([\d.]+)%\s+(?:caster['’]s|self) max Health/i, "$1% self max Health");
+    line = line.replace(/^Max Health scaling\s*:?\s*([\d.]+)%\s*(?=\()/i, "$1% self max Health ");
+    line = line.replace(/^(\d+(?:\.\d+)?% self Defense) scaling\b/i, "$1");
     let m = line.match(
       new RegExp(`^(att_rate|!pow|pow!)\\s*:\\s*(${NUMBER})$`, "i"),
     );
@@ -33,7 +45,7 @@ export function parseMultipliers(text) {
     }
     m = line.match(
       new RegExp(
-        `^(${NUMBER})%\\s+(self max Health|self Defense|self Speed|target max Health)\\s*\\(\\s*(${NUMBER})\\s*\\*\\s*(Health|Defense|Speed)\\s*\\)\\s*$`,
+        `^(${NUMBER})%\\s+(self max Health|self Defense|self Speed|target max Health)\\s*(?:\\(\\s*(${NUMBER})\\s*\\*\\s*(?:self\\s+)?(?:max\\s+)?(Health|Defense|Speed)\\s*\\))?\\s*$`,
         "i",
       ),
     );
@@ -50,19 +62,20 @@ export function parseMultipliers(text) {
             ? "defense"
             : "health";
       if (
-        Math.abs(Number(m[1]) / 100 - Number(m[3])) > 1e-9 ||
-        m[4].toLowerCase() !== expected ||
+        (m[3] !== undefined && (Math.abs(Number(m[1]) / 100 - Number(m[3])) > 1e-9 ||
+        m[4].toLowerCase() !== expected)) ||
         values[key] !== undefined
       )
         unknown.push(original);
-      else values[key] = Number(m[3]);
+      else values[key] = Number(m[1]) / 100;
       continue;
     }
     unknown.push(original);
   }
   const supported =
     Number.isFinite(values.rate) &&
-    values.rate > 0 &&
+    values.rate >= 0 &&
+    (values.rate > 0 || ["selfHpScaling", "selfDefScaling", "targetHpScaling"].some(key => values[key] > 0)) &&
     Number.isFinite(values.pow) &&
     values.pow > 0 &&
     !unknown.length;
@@ -94,6 +107,10 @@ export function compactHero(h) {
         [
           ["soul_gain", 99],
           ["cooldown", 20],
+          ["focus_gain", 5],
+          ["focus_requirement", 5],
+          ["fighting_spirit_gain", 100],
+          ["fighting_spirit_requirement", 100],
         ].every(
           ([key, max]) =>
             s[key] === undefined ||
@@ -126,7 +143,10 @@ export function normalizeSkill(hero, raw, index) {
     enhancement = maxEnhancements(s),
     parsed = parseMultipliers(s.multipliers),
     description = String(s.description || "").replace(/\*|\+|_/g, ""),
-    common = (s.common || []).map((c) => c._id),
+    correction = SKILL_SOURCE_CORRECTIONS[hero.id]?.[`S${index + 1}`],
+    sourceCorrection = correction?.description === description && correction.sourceText === s.multipliers ? correction : null,
+    commonRefs = (s.common || []).filter(c => !(sourceCorrection?.ignoreRootNonAttackMarker && c._id === "cmn_non_attack_skill")),
+    common = commonRefs.map((c) => c._id),
     passive = !!raw.passive || !!s.passive,
     debuffs = resolveDebuffRules(hero, s, index);
   const targets = common.includes("cmn_aoe")
@@ -141,6 +161,21 @@ export function normalizeSkill(hero, raw, index) {
   const protection = SKILL_PROTECTION_RULES[hero.id]?.[`S${index + 1}`];
   const reviewedProtection = protection?.description === description && common.includes("cmn_ignore_dmg_sharing")
     ? protection : null;
+  const gainRule = NAT5_RESOURCE_RULES[hero.id]?.[`S${index + 1}`];
+  const resource = skillResourceRule(hero, s);
+  if (resource && gainRule?.description === description) Object.assign(resource, {
+    criticalGainMultiplier: gainRule.criticalGainMultiplier,
+    outsideTurnGainMultiplier: gainRule.outsideTurnGainMultiplier,
+  });
+  const passiveRule = RESOURCE_PASSIVE_RULES[hero.id];
+  const resourcePassive = passive && passiveRule?.skill === `S${index + 1}` && passiveRule.description === description
+    ? structuredClone(passiveRule) : null;
+  if (resourcePassive?.opening && typeof resourcePassive.opening.amount === "object") {
+    const row = s.values?.[resourcePassive.opening.amount.variable];
+    if (Array.isArray(row) && row.every(v => v === null || Number.isFinite(v)))
+      resourcePassive.opening.amount = row.slice(0, enhancement.level + 1).reduce((a,v) => a + (v || 0), 0);
+    else delete resourcePassive.opening;
+  }
   const result = {
     protectionBypass: reviewedProtection ? {
       scope: reviewedProtection.scope,
@@ -148,6 +183,11 @@ export function normalizeSkill(hero, raw, index) {
       ignoreDamageReduction: reviewedProtection.ignoreDamageReduction,
     } : null,
     ...parsed,
+    ...classifySkill({...s, awakened: undefined, common: commonRefs, passive}),
+    sourceReview: sourceCorrection?.note || null,
+    resource,
+    resourcePassive,
+    nonAttack: resolveNonAttackSkill(hero, s, index),
     enhancementLevel: enhancement.level,
     enhancementDamage: enhancement.damage,
     enhancements: enhancement.entries,
@@ -169,10 +209,11 @@ export function normalizeSkill(hero, raw, index) {
         ? "random"
         : "highestAttack",
     passive,
+    startsOnCooldown: common.includes("cmn_full_skill_cooldown") && /begins.*battle with full cooldown count/i.test(description),
     soulburn: (s.soulburn ?? raw.soulburn) && Number.isFinite(Number(s.soul_requirement ?? raw.soul_requirement)) &&
       Number(s.soul_requirement ?? raw.soul_requirement) > 0 ? {
         cost: Number(s.soul_requirement ?? raw.soul_requirement),
-        description: String(s.soul_description ?? raw.soul_description ?? "").replace(/\*|\+|_/g, ""),
+        description: formatSkillDescription(String(s.soul_description ?? raw.soul_description ?? "").replace(/\*|\+|_/g, ""), s.soul_values ?? s.values, {level: enhancement.level}),
       } : null,
     openingOffering: hero.id === "c6005" && index === 1 && passive &&
       description === PROTECTION_PASSIVE_DESCRIPTIONS.c6005 &&
@@ -207,6 +248,7 @@ export function normalizeSkill(hero, raw, index) {
       (hero.id === "c1001" &&
         description ===
           "Attacks the enemy repeatedly, before triggering a Dual Attack from the ally with the highest Attack."),
+    canTriggerDualAttack: !/(?:cannot|does not) trigger (?:a )?Dual Attack/i.test(description),
     canTriggerCounter: !/cannot trigger (?:a )?counterattack/i.test(
       description,
     ),
@@ -227,6 +269,10 @@ export function normalizeSkill(hero, raw, index) {
     hitTypes: ["crit", "crushing", "normal", "miss"],
     note: "Normal cast, awakened skill, MAX enhancements; only reviewed secondary effects are automated.",
   };
+  result.displayDescription = formatSkillDescription(description, s.values, {
+    level: enhancement.level,
+    overrides: result.passiveDamageLimit ? {0: `${result.passiveDamageLimit}%`} : {},
+  });
   if (passive) {
     result.damageSupport = "passive";
     result.supportReason = result.passiveDamageLimit
@@ -236,11 +282,15 @@ export function normalizeSkill(hero, raw, index) {
       : result.hecateRestrictions
         ? "Passive: cannot revive / grant Immortality aura implemented; attack penetration pending"
         : result.passiveRevival
-      ? "Passive: death revival implemented; Focus effects pending"
-      : "Passive: triggered effects are not automated";
+      ? "Passive: revival and maximum-Focus grant implemented; full-Focus skill/reset effects pending"
+      : result.resourcePassive
+        ? "Passive: reviewed resource grants/gain blocking implemented; other effects pending"
+        : "Passive: triggered effects are not automated";
   } else if (common.includes("cmn_non_attack_skill")) {
-    result.damageSupport = "unsupported";
-    result.supportReason = "Non-damaging skill: effect support pending";
+    result.damageSupport = result.nonAttack ? "nonAttack" : "unsupported";
+    result.supportReason = result.nonAttack
+      ? `Non-attack cast implemented${result.nonAttack.pending.length ? "; pending: " + result.nonAttack.pending.join(", ") : ""}`
+      : "Non-damaging skill: effect support pending";
   } else if (!targets) {
     result.damageSupport = "unsupported";
     result.supportReason = "Unverified target count";
@@ -251,9 +301,12 @@ export function normalizeSkill(hero, raw, index) {
     )
   )
     result.hitTypes = result.hitTypes.filter((x) => x !== "crit");
-  if (common.includes("cmn_penetration")) {
-    const m = description.match(/penetrates?[^.]*?(\d+(?:\.\d+)?)%/i);
-    if (m && !/depending|proportional|increases? by|up to/i.test(description))
+  if (!passive && !common.includes("cmn_non_attack_skill") && common.includes("cmn_penetration")) {
+    const clauses = description.match(/[^.!?]*\bpenetrat(?:e[sd]?|ion)\b[^.!?]*/gi) || [];
+    const m = clauses.length === 1 && clauses[0].match(/penetrates?[^.]*?(\d+(?:\.\d+)?)%/i);
+    // HP/DEF/Speed scaling in a separate sentence does not make a fixed
+    // penetration percentage conditional. Target-specific/variable clauses do.
+    if (m && !/when|if |depending|proportional|increases? by|up to|highest|lowest|difference|elite|boss/i.test(clauses[0]))
       result.penetration = Number(m[1]) / 100;
     else {
       result.damageSupport = "unsupported";
@@ -267,7 +320,7 @@ export function normalizeSkill(hero, raw, index) {
     ["cmn_def_scaling", "selfDefScaling"],
     ["cmn_target_max_health", "targetHpScaling"],
   ])
-    if (common.includes(tag) && !Number.isFinite(result[key])) {
+    if (!passive && !common.includes("cmn_non_attack_skill") && common.includes(tag) && !Number.isFinite(result[key])) {
       result.damageSupport = "unsupported";
       result.supportReason = "Missing numeric scaling coefficient";
     }
@@ -295,6 +348,8 @@ export function createCatalog(baseline, records) {
   const result = structuredClone(baseline);
   for (const h of Object.values(result))
     for (const s of Object.values(h.skills || {})) {
+      s.tags = ["unclassified"];
+      s.targetScope = null;
       s.damageSupport = "unsupported";
       s.supportReason = "API skill data unavailable";
       s.source = "Fribbels fallback";
@@ -319,6 +374,7 @@ export function createCatalog(baseline, records) {
       zodiac: h.zodiac,
       source: "CeciliaBot",
       exclusiveEquipment: normalizeEquipment(h),
+      resourceType: nativeResourceType(h),
       sourceDetailPending: !!h.sourceDetailPending,
       skills: Object.fromEntries(
         h.skills
@@ -344,6 +400,10 @@ export function syncTeamDefaults(teams, heroes) {
         !!hero.exclusiveEquipment && ["light", "dark"].includes(hero.attribute);
       h.eeOption ??= hero.exclusiveEquipment?.options[0]?.index ?? 0;
       h.skillsMaxed = true;
+      h.resourceType = hero.resourceType || h.resourceType || "";
+      h.resourceValue ??= 0;
+      h.resourceOpeningOverride ??= false;
+      h.resourceGainMultiplier ??= 1;
       const resolvedDefaults = defaultSkillSettings(hero, h);
       h.sourceDefaults = {};
       for (const skill of ["S1", "S2", "S3"]) {

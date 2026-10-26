@@ -6,7 +6,7 @@ import { defaultTeams, makeHero, validTeams } from "./heroes.js";
 import {
   createBattle,
   activeUnit,
-  executeAttack,
+  executeAttack as executeBattleAttack,
   executeReaction,
   resolveDeaths,
   selectHighestAttackDualAlly,
@@ -353,3 +353,8 @@ test("highest-ATK equipment Dual Attacks use the same eligible-ally fallback and
     false,
   );
 });
+
+// These fixtures isolate debuffs/protection/guaranteed reactions from natural RNG.
+function executeAttack(heroes, battle, skill, targetId, hit, random, options = {}) {
+  return executeBattleAttack(heroes, battle, skill, targetId, hit, random, {...options, automaticDualAttacks: false});
+}

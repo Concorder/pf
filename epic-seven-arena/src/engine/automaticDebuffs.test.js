@@ -4,7 +4,7 @@ import fs from "node:fs";
 import { createCatalog } from "../data/cecilia.js";
 import { resolveDebuffRules } from "../data/skillDebuffs.js";
 import { defaultTeams, makeHero } from "./heroes.js";
-import { createBattle, executeAttack, activeUnit } from "./battle.js";
+import { createBattle, executeAttack as executeBattleAttack, activeUnit } from "./battle.js";
 import { hasBuff, applySkillDebuffs } from "./buffs.js";
 const baseline = JSON.parse(
   fs.readFileSync(new URL("../../public/data/heroes.json", import.meta.url)),
@@ -195,3 +195,8 @@ test("Bomb planting runs automatically and crit-only grants do not roll on norma
   assert.equal(copy.buffs.filter((e) => e.id === "stic_blood").length, 2);
   assert.equal(hasBuff(copy, "stic_def_dn"), false);
 });
+
+// These fixtures isolate debuffs/protection/guaranteed reactions from natural RNG.
+function executeAttack(heroes, battle, skill, targetId, hit, random, options = {}) {
+  return executeBattleAttack(heroes, battle, skill, targetId, hit, random, {...options, automaticDualAttacks: false});
+}

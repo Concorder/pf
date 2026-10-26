@@ -18,6 +18,7 @@ export function activationBlockReason(
   )
     return "Seal";
   if (!REACTIONS.has(kind)) return null;
+  if (kind === "dual" && unit.canDualAttack === false) return "cannot use a basic skill as a Dual Attack";
   if (
     unit.isHero !== false &&
     kind === "counter" &&

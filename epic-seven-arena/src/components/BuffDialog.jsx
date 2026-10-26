@@ -1,3 +1,4 @@
+import UnitResource from "./UnitResource.jsx";
 import { isDebuffContainer } from "../engine/debuffContainers.js";
 import { maxHp, originalMaxHp, injuryAmount, injuryFraction } from "../engine/health.js";
 import {
@@ -67,6 +68,7 @@ export default function BuffDialog() {
       <p className="fine">Blocks new buffs and debuffs on heroes, including undispellable buffs.
         Unique effects remain available. This toggles the immunity rule only; Notos’s S3,
         transformation, healing and domain lifecycle are not automated.</p>
+      <UnitResource unit={unit} edit={l.battle.winner ? null : l.editResource} />
       <div className="buff-roster">
         {l.units
           .filter((u) => u.currentHp > 0)

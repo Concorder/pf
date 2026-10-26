@@ -8,7 +8,10 @@
     "build": "vite build && node scripts/publish-build.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test": "node --test src/engine/*.test.js src/data/*.test.js",
-    "refresh:data": "node scripts/refresh-data.mjs"
+    "refresh:data": "node scripts/refresh-data.mjs",
+    "report:skills": "node scripts/report-unsupported-skills.mjs",
+    "report:skills:nat5": "node scripts/report-unsupported-skills.mjs --rarity=5",
+    "audit:skills:nat5": "node scripts/audit-nat5-skills.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

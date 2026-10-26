@@ -1,3 +1,4 @@
+import { formatSkillDescription } from "../data/skillText.js";
 export function maxEnhancements(skill) {
   const entries = skill.enhancements || [];
   const sum = (key) =>
@@ -74,6 +75,7 @@ export function normalizeEquipment(hero) {
           index,
           skill: `S${s.skill}`,
           description,
+          displayDescription: formatSkillDescription(description, s.values, {level: (s.enhancements || []).length}),
           damageBonus: damage ? Number(damage[1]) / 100 : 0,
           cooldownReduction: cooldown ? Number(cooldown[1]) : 0,
           opening,

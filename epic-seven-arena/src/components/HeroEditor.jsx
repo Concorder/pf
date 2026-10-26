@@ -1,3 +1,4 @@
+import {UNIT_RESOURCES} from "../engine/resources.js";
 import { syncTeamDefaults } from "../data/cecilia.js";
 import { equippedEE } from "../engine/progression.js";
 import React, { useState, useRef } from "react";
@@ -139,7 +140,7 @@ export default function HeroEditor() {
                   </select>
                 </label>
                 <p className="fine">
-                  {equippedEE(l.heroes[draft.name], draft)?.option.description}
+                  {equippedEE(l.heroes[draft.name], draft)?.option.displayDescription ?? equippedEE(l.heroes[draft.name], draft)?.option.description}
                 </p>
                 <p className="fine">
                   {equippedEE(l.heroes[draft.name], draft)?.option.reason}
@@ -196,6 +197,34 @@ export default function HeroEditor() {
           </p>
         )}
         {loading && <p role="status">Fetching hero details…</p>}
+        <fieldset className="resource-settings">
+          <legend>Unit resource</legend>
+          <label>Resource type
+            <select id="resourceType" value={draft.resourceType || ""}
+              disabled={!!l.heroes[draft.name].resourceType}
+              onChange={e => setDraft(d => ({...d, resourceType: e.target.value, resourceValue: 0}))}>
+              <option value="">None</option>
+              {Object.entries(UNIT_RESOURCES).map(([key, def]) => <option key={key} value={key}>{def.name}</option>)}
+            </select>
+          </label>
+          {draft.resourceType && <>
+            <label><input id="resourceOpeningOverride" type="checkbox" checked={!!draft.resourceOpeningOverride}
+              onChange={e => setDraft(d => ({...d, resourceOpeningOverride: e.target.checked}))} />
+              Override automatic battle-start resource</label>
+            <label>Initial {UNIT_RESOURCES[draft.resourceType].name}
+              <input id="initialResource" type="number" min="0" max={UNIT_RESOURCES[draft.resourceType].max}
+                step="any" required value={draft.resourceValue ?? 0}
+                onChange={e => setDraft(d => ({...d, resourceValue: Number(e.target.value), resourceOpeningOverride: true}))} />
+            </label>
+            <label>Resource gain multiplier (manual)
+              <input id="resourceGainMultiplier" type="number" min="0" max="2" step="any"
+                required value={draft.resourceGainMultiplier ?? 1}
+                onChange={e => setDraft(d => ({...d, resourceGainMultiplier: Number(e.target.value)}))} />
+            </label>
+            <p className="fine">Focus supports decimals, including 2.5. Use 0.5 for halved gains.
+              Initial values are manual setup overrides; only reviewed passive grants and reductions are automatic.</p>
+          </>}
+        </fieldset>
         <div className="stat-grid" id="statFields">
           {Object.entries(FIELDS).map(([key, [label, min, max]]) => (
             <label key={key}>
@@ -269,6 +298,17 @@ export default function HeroEditor() {
             Use only for an applicable artifact or manual effect; conditional artifact triggers need manual adjustment.
             Reviewed skill exceptions apply automatically to their specified targets.</p>
         </fieldset>
+        <label>
+          Dual Attack chance % (final total)
+          <input id="dualAttackChance" type="number" min="5" max="20" step="any" required
+            value={draft.dualAttackChance ?? 5}
+            onChange={e => setDraft(d => ({...d, dualAttackChance: Number(e.target.value)}))} />
+        </label>
+        <p className="fine">
+          Defaults to 5%; capped at 20%. Include applicable gear, artifact and buff bonuses
+          in this total. When an ally uses S1, each eligible teammate rolls their own chance
+          to assist. Multiple successes are resolved randomly. Guaranteed Dual Attacks bypass these rolls.
+        </p>
         <label>
           Counterattack chance % (gear/manual)
           <input

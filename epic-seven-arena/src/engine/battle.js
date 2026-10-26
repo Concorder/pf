@@ -1,3 +1,6 @@
+import {validNonAttackTarget,applyNonAttackSkill} from "./nonAttack.js";
+import { grantUnitResource, resourceValue, canPaySkillResource, spendSkillResource, applySkillResourceGain } from "./resources.js";
+import { recordSkillUse } from "./skillEvents.js";
 import { alliesOf, allyInPosition } from "./targeting.js";
 import { planProtectedDamage } from "./damageProtection.js";
 import { rollEffect } from "./effects.js";
@@ -40,7 +43,8 @@ function eligibleDualAllies(heroes, battle, caller) {
     (ally) =>
       !activationBlockReason(battle, ally, "dual") &&
       skillData(heroes, ally, "S1")?.damageSupport === "supported" &&
-      !skillData(heroes, ally, "S1")?.passive,
+      !skillData(heroes, ally, "S1")?.passive &&
+      canPaySkillResource(ally, skillData(heroes, ally, "S1")),
   );
 }
 export function selectHighestAttackDualAlly(heroes, battle, caller) {
@@ -63,6 +67,28 @@ export function selectRandomDualAlly(
     ? allies[Math.min(allies.length - 1, Math.floor(random() * allies.length))]
     : null;
 }
+// Final configured build chance includes gear/artifact/buff contributions once.
+// Old saved builds inherit the user-confirmed 5% base.
+export function dualAttackChance(unit) {
+  const value = Number(unit?.dualAttackChance ?? 5);
+  return Math.min(20, Math.max(5, Number.isFinite(value) ? value : 5));
+}
+export function selectNaturalDualAlly(heroes, battle, caller, random = Math.random) {
+  // Each eligible assisting hero rolls once against its own final chance.
+  // Only successful allies enter the uniform tie-break; the caller never rolls.
+  const successful = eligibleDualAllies(heroes, battle, caller)
+    .filter(ally => random() * 100 <= dualAttackChance(ally));
+  if (!successful.length) return null;
+  if (successful.length === 1) return successful[0];
+  return successful[Math.min(successful.length - 1, Math.floor(random() * successful.length))];
+}
+function naturalDualRequest(heroes, battle, caller, skill, data, targetId, random, options) {
+  if (options.automaticReactions === false || options.automaticDualAttacks === false ||
+      skill !== "S1" || data.triggersDualAttack || data.canTriggerDualAttack === false) return null;
+  const ally = selectNaturalDualAlly(heroes, battle, caller, random);
+  return ally ? {kind: "dual", actorId: ally.id, callerId: caller.id, targetId,
+    skill: "S1", source: "naturalDualChance", label: `${caller.name} S1 · natural Dual Attack (${ally.name}: ${dualAttackChance(ally)}%)`} : null;
+}
 export function forcedTarget(battle, unit) {
   if (!battle || !unit) return null;
   const enemies = battle.units.filter(
@@ -78,6 +104,13 @@ export function forcedTarget(battle, unit) {
     (b) => b.id === "stic_provoke" && b.turns > 0,
   );
   return effect ? enemies.find((t) => t.id === effect.casterId) || null : null;
+}
+export function isValidSkillTarget(heroes,battle,caster,skill,target) {
+  if (!caster || !target || !battle || target.currentHp <= 0) return false;
+  const data = skillData(heroes,caster,skill);
+  if (data?.nonAttack) return validNonAttackTarget(battle,caster,data.nonAttack,target.id);
+  const forced = forcedTarget(battle,caster);
+  return target.side !== caster.side && (!forced || target.id === forced.id);
 }
 export function canUse(heroes, battle, u, s) {
   if (!u || !battle || battle.winner) return false;
@@ -95,12 +128,14 @@ export function canUse(heroes, battle, u, s) {
   return (
     !!d &&
     !d.passive &&
-    (isCermiaSelfSkill(heroes, u, s) ||
+    (isCermiaSelfSkill(heroes, u, s) || d.nonAttack ||
       ((!d.damageSupport || d.damageSupport === "supported") &&
         Number.isFinite(d.rate) &&
-        d.rate > 0 &&
+        d.rate >= 0 &&
+        (d.rate > 0 || [d.selfHpScaling, d.selfDefScaling, d.targetHpScaling].some(value => value > 0)) &&
         Number.isFinite(d.pow) &&
         d.pow > 0)) &&
+    canPaySkillResource(u, d) &&
     !u.cooldowns[s] &&
     battle.souls[u.side] >= u.skills[s].cost
   );
@@ -173,6 +208,8 @@ function nextTurn(battle, forcedId = null, random = Math.random, heroes = {}) {
   for (const s of SKILLS)
     next.cooldowns[s] = Math.max(0, next.cooldowns[s] - 1);
   startTurnEffects(battle, next, random);
+  for (const rule of next.resourcePassives || []) if (rule.turnStart?.type === next.resourceType)
+    dispatchTrigger(battle, next, {kind: "passive", run: () => grantUnitResource(battle, next, rule.turnStart.amount)});
   resolveDeaths(heroes, battle, { turnAlreadyStarted: true });
   if (next.currentHp <= 0) nextTurn(battle, null, random, heroes);
 }
@@ -181,6 +218,10 @@ export const clampSouls = (value) =>
 export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
+    u.resourcePassives = Object.values(heroes[u.name]?.skills || {}).filter(s => s.passive && s.resourcePassive).map(s => s.resourcePassive);
+    u.resourceType = heroes[u.name]?.resourceType || u.resourceType || "";
+    u.resourceValue = resourceValue(u);
+    u.resourceGainMultiplier ??= 1;
     u.baseMaxHp = u.stats.hp;
     delete u.injury;
     u.injuryFraction = 0;
@@ -190,7 +231,7 @@ export function createBattle(teams, souls, heroes = {}) {
     u.isHero ??= true;
     delete u.frozenCR;
     u.readyAt = 10000 / u.stats.spd;
-    u.cooldowns = { S1: 0, S2: 0, S3: 0 };
+    u.cooldowns = Object.fromEntries(SKILLS.map(s => [s, heroes[u.name]?.skills?.[s]?.startsOnCooldown ? u.skills[s].cd : 0]));
     u.buffs = [];
     u.code = heroes[u.name]?.code || u.code;
     u.attribute = heroes[u.name]?.attribute || u.attribute;
@@ -211,6 +252,10 @@ export function createBattle(teams, souls, heroes = {}) {
       SIDES.map((side) => [side, clampSouls(souls[side])]),
     ),
   };
+  for (const unit of units) if (!unit.resourceOpeningOverride)
+    for (const rule of unit.resourcePassives)
+      if (rule.opening?.type === unit.resourceType)
+        dispatchTrigger(battle, unit, {kind: "passive", run: () => grantUnitResource(battle, unit, rule.opening.amount)});
   for (const side of SIDES)
     battle.souls[side] = clampSouls(
       battle.initialSouls[side] +
@@ -350,6 +395,7 @@ function performSkillAttack(
     cursedIds = battle.units
       .filter((t) => hasBuff(t, "stic_curse2"))
       .map((t) => t.id);
+  if (!spendSkillResource(u, d)) return {data: d, hits, results};
   for (const t of targets) {
     if (options.automaticDispels !== false)
       applySkillDispel(battle, u, t, d, "normal", random, "beforeAttack");
@@ -413,6 +459,7 @@ function performSkillAttack(
   applySkillBuffs(battle, u, heroes[u.name].code, skill, d);
   if (options.automaticReadiness !== false)
     for (const effect of d.automaticReadiness || []) {
+      if (effect.outsideTurnOnly && battle.active === u.id) continue;
       if (effect.target === "caster")
         applyCRChange(
           battle,
@@ -451,7 +498,9 @@ function performSkillAttack(
         }
     }
 
-  return { data: d, hits, results };
+  applySkillResourceGain(battle, u, d, hits);
+  const skillUse = recordSkillUse(battle, u, skill, d, {kind: options.actionKind || "active", targetId});
+  return { data: d, hits, results, skillUse };
 }
 
 export function executeAttack(
@@ -466,6 +515,8 @@ export function executeAttack(
   const actor = activeUnit(previous);
   if (!canUse(heroes, previous, actor, skill)) return previous;
   const selfSkill = isCermiaSelfSkill(heroes, actor, skill);
+  const supportAction = skill !== "wait" ? skillData(heroes,actor,skill)?.nonAttack : null;
+  if (supportAction && !validNonAttackTarget(previous,actor,supportAction,targetId)) return previous;
   const forced = forcedTarget(previous, actor);
   if (forced && skill !== "wait" && targetId !== forced.id) return previous;
   const originalTarget = previous.units.find(
@@ -474,6 +525,7 @@ export function executeAttack(
   if (
     skill !== "wait" &&
     !selfSkill &&
+    !supportAction &&
     (!originalTarget ||
       !(
         hit === "auto" ||
@@ -493,6 +545,16 @@ export function executeAttack(
       `${u.name} ${hasBuff(u, "stic_stun") ? "loses the turn to Stun" : "passes"}.`,
       `${teamName(u.side)} · no souls gained`,
     );
+  else if (supportAction) {
+    const data = skillData(heroes,u,skill);
+    spendSkillResource(u,data);
+    battle.souls[u.side] = clampSouls(battle.souls[u.side]-u.skills[skill].cost+u.skills[skill].gain);
+    u.cooldowns[skill] = u.skills[skill].cd+1;
+    applyNonAttackSkill(heroes,battle,u,data,targetId);
+    applySkillResourceGain(battle,u,data);
+    recordSkillUse(battle,u,skill,data,{kind:"active",targetId:targetId || u.id});
+    log(battle,`${u.name} uses ${data.name}.`,"Non-attack skill · no hit or resistance roll");
+  }
   else if (selfSkill) {
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
@@ -504,6 +566,8 @@ export function executeAttack(
       `${teamName(u.side)} · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls`,
     );
   } else {
+    const naturalDual = naturalDualRequest(heroes, battle, u, skill,
+      skillData(heroes, u, skill), targetId, random, options);
     const {
       data: d,
       hits,
@@ -516,7 +580,7 @@ export function executeAttack(
       targetId,
       hit,
       random,
-      options,
+      {...options, actionKind: "active"},
     );
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
@@ -529,7 +593,7 @@ export function executeAttack(
     );
     resolveDeaths(heroes, battle);
     if (options.automaticReactions !== false) {
-      const queue = [];
+      const queue = naturalDual ? [naturalDual] : [];
       if (d.triggersDualAttack) {
         queue.push({
           kind: "dual",
@@ -567,8 +631,12 @@ export function executeAttack(
   if (selfSkill && u.currentHp > 0) {
     grantBuff(battle, u, "stic_att_up2", 2, "Hot Streak!", { casterId: u.id });
     u.cooldowns.S3 = 0;
+    recordSkillUse(battle, u, skill, skillData(heroes, u, skill), {kind: "active", targetId: u.id});
     setCR(battle, u, 100, effectiveStats(u).spd);
     nextTurn(battle, u.id, random, heroes);
+  } else if (supportAction?.extraTurn && u.currentHp > 0) {
+    setCR(battle,u,100,effectiveStats(u).spd);
+    nextTurn(battle,u.id,random,heroes);
   } else {
     nextTurn(battle, null, random, heroes);
   }
@@ -611,6 +679,7 @@ export function resolveDeaths(
             })
           )
             return false;
+          if (unit.resourceType === "focus") grantUnitResource(battle, unit, 5);
           unit.cooldowns.S2 =
             unit.skills.S2.cd +
             (turnAlreadyStarted && battle.active === unit.id ? 0 : 1);
@@ -643,6 +712,7 @@ export function resolveDeaths(
 function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
   // Secondary attacks never recursively enqueue attacks; keep a hard cap for future dispatchers.
   for (const request of queue.slice(0, 32)) {
+    if (request.kind === "dual" && request.callerId && !battle.units.some(u => u.id === request.callerId && u.currentHp > 0)) continue;
     const actor = ["highestAttack", "random"].includes(request.selection)
         ? (request.selection === "random"
             ? selectRandomDualAlly
@@ -676,8 +746,9 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
         );
       continue;
     }
+    if (request.kind === "dual" && request.skill && request.skill !== "S1") continue;
     const data = skillData(heroes, actor, request.skill || "S1");
-    if (!data || data.passive || data.damageSupport !== "supported") continue;
+    if (!data || data.passive || data.damageSupport !== "supported" || !canPaySkillResource(actor, data)) continue;
     if (
       request.chance !== undefined &&
       random() * 100 >= Math.max(0, Math.min(100, request.chance))
@@ -691,7 +762,7 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
       target.id,
       request.hit || "auto",
       random,
-      options,
+      {...options, actionKind: request.kind},
     );
     log(
       battle,
@@ -710,7 +781,8 @@ export function executeReaction(
   if (
     !previous ||
     previous.winner ||
-    !["additional", "counter", "dual"].includes(request.kind)
+    !["additional", "counter", "dual"].includes(request.kind) ||
+    (request.kind === "dual" && request.skill && request.skill !== "S1")
   )
     return previous;
   const actor = previous.units.find((u) => u.id === request.actorId),
@@ -726,7 +798,7 @@ export function executeReaction(
   )
     return previous;
   const data = skillData(heroes, actor, request.skill || "S1");
-  if (!data || data.passive || data.damageSupport !== "supported")
+  if (!data || data.passive || data.damageSupport !== "supported" || !canPaySkillResource(actor, data))
     return previous;
   if (
     request.hit &&

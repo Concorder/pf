@@ -1,3 +1,4 @@
+import { UNIT_RESOURCES } from "./resources.js";
 import { defaultSkillSettings } from "./progression.js";
 export { POSITIONS } from "./formation.js";
 export const SIDES = ["left", "right"];
@@ -78,7 +79,12 @@ export function makeHero(heroes, name, preset = "damage") {
     eeEnabled,
     eeOption,
     sourceDefaults: clone(settings),
+    resourceType: hero.resourceType || "",
+    resourceValue: 0,
+    resourceOpeningOverride: false,
+    resourceGainMultiplier: 1,
     counterChance: 0,
+    dualAttackChance: 5,
     damageReduction: 0,
     damageLimit: 0,
     damageShare: 0,
@@ -129,6 +135,16 @@ export function validTeams(teams, heroes) {
                   h.stats[k] >= FIELDS[k][1] &&
                   h.stats[k] <= FIELDS[k][2],
               ) &&
+              (!h.resourceType || !!UNIT_RESOURCES[h.resourceType]) &&
+              Number.isFinite(h.resourceValue ?? 0) &&
+              (h.resourceValue ?? 0) >= 0 &&
+              (h.resourceValue ?? 0) <= (UNIT_RESOURCES[h.resourceType]?.max ?? 0) &&
+              Number.isFinite(h.resourceGainMultiplier ?? 1) &&
+              (h.resourceGainMultiplier ?? 1) >= 0 &&
+              (h.resourceGainMultiplier ?? 1) <= 2 &&
+              Number.isFinite(h.dualAttackChance ?? 5) &&
+              (h.dualAttackChance ?? 5) >= 5 &&
+              (h.dualAttackChance ?? 5) <= 20 &&
               Number.isFinite(h.counterChance ?? 0) &&
               (h.counterChance ?? 0) >= 0 &&
               (h.counterChance ?? 0) <= 100 &&

@@ -20,7 +20,7 @@ The effects panel exposes all-removable cleanse/dispel and base detonation. Burn
 - Automatic conditional protection passive/artifact mappings, equal-strength source selection and AoE/death-passive ordering. Strongest-applicable sharing/reduction is user-confirmed.
 - Magic Nail and Rupture coefficients/defense interactions; Omen’s actual trigger.
 - Combined injury edge cases, global timer origins/refreshes and above-100% CR priority (see the dedicated health/readiness documents).
-- Arbiter Focus generation/consumption and full-Focus scaling using a consistent current source.
+- Arbiter conditional Focus consumption and full-Focus scaling using a consistent current source.
 - Researcher Carrot S1’s conflicting source description/reference.
 - Hero-specific detonation coefficients, remaining combined injury details and automatic trigger conditions.
 - Reaction-chain ordering/souls, remaining hero passives/EE conditions and general healing coefficients.

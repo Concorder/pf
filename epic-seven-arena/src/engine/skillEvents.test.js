@@ -1,0 +1,72 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import {createCatalog} from "../data/cecilia.js";
+import {hasSkillTag, skillTags} from "../data/skillTags.js";
+import {createBattle,executeAttack,executeReaction,activeUnit} from "./battle.js";
+import {defaultTeams,makeHero} from "./heroes.js";
+import {changeBuff} from "./buffs.js";
+import {recordSkillUse} from "./skillEvents.js";
+const root=new URL("../../public/data/",import.meta.url);
+const heroes=createCatalog(JSON.parse(fs.readFileSync(new URL("heroes.json",root))),JSON.parse(fs.readFileSync(new URL("cecilia.json",root))).heroes);
+const get=(b,id)=>b.units.find(u=>u.id===id);
+const fixture=()=>{
+ const teams=defaultTeams(heroes);
+ teams.left=[makeHero(heroes,"Ras"),makeHero(heroes,"Vildred"),makeHero(heroes,"Cermia"),null];
+ for(const t of Object.values(teams))for(const u of t.filter(Boolean))u.stats.hp=100000;
+ teams.left[0].stats.spd=350;teams.left[1].stats.atk=5000;
+ return createBattle(teams,{left:0,right:0},heroes);
+};
+test("guaranteed Dual Attack emits an assisting S1 use with dual-attack plus attack tags",()=>{
+ const b=fixture();const next=executeAttack(heroes,b,"S2","right-0","normal",()=>.5);
+ const events=next.skillUseEvents;
+ assert.equal(events.length,2);
+ assert.equal(events[0].actorId,b.active);assert.equal(events[0].kind,"active");
+ assert.ok(!events[0].tags.includes("dual-attack"));
+ assert.equal(events[1].actorId,"left-1");assert.equal(events[1].skill,"S1");
+ assert.equal(events[1].turnOwnerId,b.active);assert.equal(events[1].turn,b.turn);
+ assert.equal(events[1].kind,"dual");assert.equal(events[1].soulburn,false);
+ assert.ok(events[1].tags.includes("attack"));assert.ok(events[1].tags.includes("dual-attack"));
+ assert.equal(hasSkillTag(heroes.Vildred.skills.S1,"dual-attack"),false);
+ assert.equal(hasSkillTag(heroes.Vildred.skills.S1,"dual-attack",{kind:"dual"}),true);
+ assert.equal(b.skillUseEvents,undefined);
+});
+test("Dual Attack does not tick assisting cooldowns, effects, time or turn-start poison, and applies S1 effects",()=>{
+ let b=fixture();b=changeBuff(b,"left-1","stic_dot",2,false,{casterId:"right-0"});
+ b=changeBuff(b,"left-1","stic_att_up",2);get(b,"left-1").cooldowns.S3=3;
+ const actor=get(b,"left-1"), target=get(b,"right-0");
+ const next=executeReaction(heroes,b,{kind:"dual",actorId:actor.id,targetId:target.id,hit:"normal"},()=>.5);
+ assert.equal(next.turn,b.turn);assert.equal(next.active,b.active);assert.equal(next.time,b.time);
+ assert.equal(get(next,actor.id).currentHp,actor.currentHp);
+ assert.equal(get(next,actor.id).readyAt,actor.readyAt);
+ assert.deepEqual(get(next,actor.id).cooldowns,actor.cooldowns);
+ assert.deepEqual(get(next,actor.id).buffs,actor.buffs);
+ assert.deepEqual(next.souls,b.souls);
+ assert.ok(get(next,target.id).currentHp<target.currentHp);
+ assert.ok(next.skillUseEvents[0].tags.includes("dual-attack"));
+ // Cermia S1's reviewed Unhealable grant works during her Dual Attack.
+ const cermia=executeReaction(heroes,b,{kind:"dual",actorId:"left-2",targetId:target.id,hit:"normal"},()=>.5);
+ assert.ok(get(cermia,target.id).buffs.some(effect=>effect.id==="stic_heal_impossible"));
+});
+test("blocked or non-basic Dual Attacks do not emit events; counter cannot initiate a dual chain",()=>{
+ let b=fixture();
+ assert.equal(executeReaction(heroes,b,{kind:"dual",actorId:"left-1",targetId:"right-0",skill:"S3"}),b);
+ get(b,"left-1").canDualAttack=false;
+ assert.equal(executeReaction(heroes,b,{kind:"dual",actorId:"left-1",targetId:"right-0"}),b);
+ b=changeBuff(b,"left-2","stic_stun",2);
+ const next=executeAttack(heroes,b,"S2","right-0","normal",()=>.5);
+ assert.equal(next.skillUseEvents.length,1);
+ const counter=executeReaction(heroes,b,{kind:"counter",actorId:"right-0",targetId:b.active,hit:"normal"},()=>.5);
+ assert.equal(counter.skillUseEvents.length,1);assert.equal(counter.skillUseEvents[0].kind,"counter");
+ assert.ok(!counter.skillUseEvents[0].tags.includes("dual-attack"));
+});
+test("dual execution cannot acquire Soulburn-only extra-turn tags, and events are bounded snapshots",()=>{
+ const h=heroes.Lilias.skills.S1, b=fixture(),u=activeUnit(b);
+ assert.ok(skillTags(h,{soulburn:true}).includes("extraTurn"));
+ for(let i=0;i<70;i++)recordSkillUse(b,u,"S1",h,{kind:"dual",soulburn:true});
+ assert.equal(b.skillUseEvents.length,64);assert.equal(b.skillUseEvents[0].id,7);
+ assert.ok(!b.skillUseEvents.at(-1).tags.includes("extraTurn"));
+ assert.equal(b.skillUseEvents.at(-1).soulburn,false);
+ assert.ok(b.skillUseEvents.at(-1).tags.includes("dual-attack"));
+ assert.ok(!h.tags.includes("dual-attack"));
+});

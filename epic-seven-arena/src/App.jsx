@@ -8,6 +8,7 @@ import {
   clampSouls,
   forcedTarget,
   skillData,
+  isValidSkillTarget,
 } from "./engine/battle.js";
 import useBattleSession from "./useBattleSession.js";
 import Arena from "./components/Arena.jsx";
@@ -221,6 +222,11 @@ export default function App() {
   function chooseSkill(skill) {
     if (soulburnSelection && skill !== soulburnSelection.skill) return toast("Cancel Soulburn to choose another skill.");
     setSelectedSkill(skill);
+    const support = active && skillData(heroes,active,skill)?.nonAttack;
+    if (support && canUse(heroes,battle,active,skill)) {
+      setPending(support.target === "ally" ? null : {kind:"support",actorId:active.id,targetId:active.id,skill,turn:battle.turn});
+      return;
+    }
     if (
       active &&
       canUse(heroes, battle, active, skill) &&
@@ -242,18 +248,21 @@ export default function App() {
     if (!selectedSkill || !canUse(heroes, battle, active, selectedSkill))
       return toast("Select an available skill first.");
     const target = units.find(
-      (u) => u.id === targetId && u.currentHp > 0 && u.side !== active.side,
+      (u) => u.id === targetId && isValidSkillTarget(heroes,battle,active,selectedSkill,u),
     );
     const forced = forcedTarget(battle, active);
     if (forced && targetId !== forced.id)
       return toast(`Provoke: use S1 on ${forced.name}.`);
     if (target)
       setPending({
+        kind: skillData(heroes,active,selectedSkill)?.nonAttack ? "support" : "attack",
         actorId: active.id,
         targetId,
         skill: selectedSkill,
         turn: battle.turn,
       });
+    else if (skillData(heroes,active,selectedSkill)?.nonAttack)
+      toast("Choose a living ally highlighted in the arena.");
   }
   function attack(skill, targetId, hit, options) {
     if (soulburnSelection && skill !== "wait") return toast("Soulburn execution is pending. Cancel Burn to use the normal skill.");
@@ -346,7 +355,14 @@ export default function App() {
     resolveHit,
     undo,
     editSouls,
+    editResource: session.editResource,
     fullscreen,
+    startBattle: () => {
+      busyRef.current = true;
+      refreshController.current?.abort();
+      session.start(teams, souls);
+      setSelectedSkill(null);
+    },
   };
   return (
     <LabContext.Provider value={context}>
@@ -397,19 +413,6 @@ export default function App() {
               <button id="reset" className="subtle" onClick={reset}>
                 ↺ Reset
               </button>
-              <button
-                id="start"
-                className="primary"
-                disabled={!!battle}
-                onClick={() => {
-                  busyRef.current = true;
-                  refreshController.current?.abort();
-                  session.start(teams, souls);
-                  setSelectedSkill(null);
-                }}
-              >
-                Start battle →
-              </button>
             </div>
           </div>
           <div className="data-status" role="status">
@@ -455,7 +458,7 @@ export default function App() {
             Automatic hits and reviewed buffs, debuffs, Combat Readiness effects,
             dispels and selected reactions are implemented. Manual overrides and
             Undo are available. Hero support is partial: check Skill data &amp;
-            support for pending mechanics. Focus and many passive/artifact effects
+            support for pending mechanics. Many resource-dependent passive/artifact effects
             remain pending.
           </p>
           <footer>

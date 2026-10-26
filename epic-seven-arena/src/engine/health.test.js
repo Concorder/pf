@@ -14,7 +14,7 @@ import {
 import {
   createBattle,
   damage,
-  executeAttack,
+  executeAttack as executeBattleAttack,
   activeUnit,
   forcedTarget,
 } from "./battle.js";
@@ -355,3 +355,8 @@ test("Venom follows max-HP increases using the same basis as injury limits", () 
   assert.equal(injuryAmount(get(b)), 2000);
   assert.equal(maxHp(get(b)), 18000);
 });
+
+// These fixtures isolate debuffs/protection/guaranteed reactions from natural RNG.
+function executeAttack(heroes, battle, skill, targetId, hit, random, options = {}) {
+  return executeBattleAttack(heroes, battle, skill, targetId, hit, random, {...options, automaticDualAttacks: false});
+}

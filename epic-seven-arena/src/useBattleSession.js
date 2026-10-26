@@ -1,3 +1,4 @@
+import {setUnitResource} from "./engine/resources.js";
 import { newDamageEvents } from "./engine/damageEvents.js";
 import { changeBuff, setSanctuaryOfBattle } from "./engine/buffs.js";
 import { useState } from "react";
@@ -104,6 +105,10 @@ export default function useBattleSession(heroes) {
     },
     setSanctuary: (enabled) => setSession((s) => {
       const battle = setSanctuaryOfBattle(s.battle, enabled);
+      return battle === s.battle ? s : {battle, history: [...s.history, s.battle], damageEvents: []};
+    }),
+    editResource: (id, value) => setSession(s => {
+      const battle = setUnitResource(s.battle, id, value);
       return battle === s.battle ? s : {battle, history: [...s.history, s.battle], damageEvents: []};
     }),
     editSouls: (side, value) =>

@@ -1,6 +1,7 @@
+import {NAT5_READINESS_RULES} from "./natFiveSkillRules.js";
 import { SKILL_CR_RULES } from "./skillReadinessRules.js";
 export function resolveReadinessRules(hero, skill, index) {
-  const rule = SKILL_CR_RULES[hero.id]?.[`S${index + 1}`];
+  const rule = SKILL_CR_RULES[hero.id]?.[`S${index + 1}`] ?? NAT5_READINESS_RULES[hero.id]?.[`S${index + 1}`];
   if (
     !rule ||
     skill.passive ||

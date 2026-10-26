@@ -662,6 +662,7 @@ export function applySkillDebuffs(
     )
       continue;
     if (effect.requiresCrit && hit !== "crit") continue;
+    const procChance = Math.min(100, effect.chance + (battle.active !== actor.id ? effect.chanceBonusOutsideTurn || 0 : 0));
     for (let stack = 0; stack < (effect.count || 1); stack++) {
       const unique = !!BUFFS[effect.id]?.unique;
       const ignoreResistance = unique ||
@@ -670,7 +671,7 @@ export function applySkillDebuffs(
         (effect.ignoreResistanceIfLowerHP && maxHp(target) < maxHp(actor));
       const result = rollEffect(
         {
-          procChance: effect.chance,
+          procChance,
           effectiveness: effectiveStats(actor).eff || 0,
           resistance: effectiveStats(target).efr || 0,
           hit,
@@ -697,7 +698,7 @@ export function applySkillDebuffs(
       }
       battle.log.unshift({
         message: `${target.name}: ${BUFFS[actualId]?.name || actualId || "Class debuff"} ${actualId ? result.reason : "unsupported class"}.`,
-        details: `${actor.name} ${skill} · ${effect.chance}% MAX proc · ${ignoreResistance ? "ignores resistance" : "EFF / ER check"}${effect.count > 1 ? ` · stack ${stack + 1}/${effect.count}` : ""}`,
+        details: `${actor.name} ${skill} · ${procChance}% MAX proc · ${ignoreResistance ? "ignores resistance" : "EFF / ER check"}${effect.count > 1 ? ` · stack ${stack + 1}/${effect.count}` : ""}`,
         turn: battle.turn,
       });
     }

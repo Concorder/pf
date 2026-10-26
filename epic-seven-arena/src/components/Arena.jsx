@@ -1,3 +1,6 @@
+import NonAttackDialog from "./NonAttackDialog.jsx";
+import UnitResource from "./UnitResource.jsx";
+import { skillTagLabels, SKILL_TAG_LABELS } from "../data/skillTags.js";
 import DamageFloats from "./DamageFloats.jsx";
 import SoulMeter from "./SoulMeter.jsx";
 import {debuffGroupName} from "../engine/debuffContainers.js";
@@ -23,6 +26,7 @@ import {
   canUse,
   skillData,
   forcedTarget,
+  isValidSkillTarget,
 } from "../engine/battle.js";
 import Portrait from "./Portrait.jsx";
 import HitDialog from "./HitDialog.jsx";
@@ -34,12 +38,10 @@ function HeroUnit({ side, slot }) {
   const targetable =
     unit &&
     l.active &&
-    unit.side !== l.active.side &&
     unit.currentHp > 0 &&
     l.selectedSkill &&
     canUse(l.heroes, l.battle, l.active, l.selectedSkill) &&
-    (!forcedTarget(l.battle, l.active) ||
-      forcedTarget(l.battle, l.active).id === unit.id);
+    isValidSkillTarget(l.heroes,l.battle,l.active,l.selectedSkill,unit);
   return (
     <button
       type="button"
@@ -84,7 +86,7 @@ function HeroUnit({ side, slot }) {
             "Drag a hero here, or use “Move to empty slot” in their editor.",
           );
         if (!l.battle) l.openEditor(side, slot);
-        else if (targetable || unit.side !== l.active?.side)
+        else if (targetable || unit.side !== l.active?.side || (l.active && skillData(l.heroes,l.active,l.selectedSkill)?.nonAttack))
           l.chooseTarget(unit.id);
         else l.toast("Reset the battle to edit builds.");
       }}
@@ -124,6 +126,7 @@ function HeroUnit({ side, slot }) {
                   style={{ width: `${(unit.currentHp / maxHp(unit)) * 100}%` }}
                 />
               </div>
+              <UnitResource unit={unit} compact />
               <div className="unit-cr">
                 <span
                   style={{ width: `${readiness(unit, l.battle, l.units)}%` }}
@@ -255,6 +258,7 @@ function ActiveHero() {
           </span>
           <span id="activeSpeed">{Math.round(effectiveStats(u).spd)} SPD</span>
         </div>
+        <UnitResource unit={u} edit={l.battle && !l.battle.winner ? l.editResource : null} />
         {maxHp(u) < originalMaxHp(u) && (
           <span className="hp-capacity-note" id="activeHpCapacity">
             Max HP reduced · injury {(injuryFraction(u) * 100).toFixed(1)}% ({injuryAmount(u).toLocaleString()} HP)
@@ -382,7 +386,7 @@ function Skills() {
               disabled={!canUse(l.heroes, l.battle, l.active, s) || !!(l.soulburnSelection && l.soulburnSelection.skill !== s)}
               title={
                 data?.source
-                  ? `${data.name} · ${isCermiaSelfSkill(l.heroes, u, s) ? "Self buff, S3 reset and extra turn" : data.passive ? "Passive" : data.damageSupport === "supported" ? "Damage supported" : data.supportReason}\n${data.description}\n${data.sourceText}`
+                  ? `${data.name} · ${skillTagLabels(data, {soulburn: l.soulburnSelection?.skill === s}).join(" · ")}\n${isCermiaSelfSkill(l.heroes, u, s) ? "Self buff, S3 reset and extra turn" : data.passive ? "Passive" : data.damageSupport === "supported" ? "Damage supported" : data.supportReason}\n${data.displayDescription ?? data.description}\n${data.sourceText}`
                   : data?.rate
                     ? `${data.targets || 1} target(s) · ATK rate ${data.rate} · POW ${data.pow} · +${u.skills[s].gain} souls · cost ${u.skills[s].cost}${data.note ? " · " + data.note : ""}`
                     : "Passive or unsupported action"
@@ -413,6 +417,10 @@ function Skills() {
               <b>
                 {s} · {data?.name || "Unknown skill"}
               </b>
+              <div className="skill-tags" aria-label="Skill tags">
+                {skillTagLabels(data, {soulburn: l.soulburnSelection?.skill === s}).map(label => <span key={label}>{label}</span>)}
+                {data?.targetScope === "variantDependent" && <span>Target scope varies by form</span>}
+              </div>
               <span>
                 {isCermiaSelfSkill(l.heroes, u, s)
                   ? "Self buff + cooldown reset + extra turn implemented"
@@ -429,7 +437,7 @@ function Skills() {
                   ? ` · EE damage +${Math.round(data.eeDamage * 100)}%`
                   : ""}
               </p>
-              {data?.soulburn && <p>Soulburn · {data.soulburn.cost} souls · {data.soulburn.description} Enhanced effect not automated; button preview only.</p>}
+              {data?.soulburn && <p>Soulburn · {data.soulburn.cost} souls · {data.soulburnTags?.map(tag => SKILL_TAG_LABELS[tag]).join(" · ")} · {data.soulburn.description} Enhanced effect not automated; button preview only.</p>}
               {data?.automaticDebuffs?.length > 0 && (
                 <p>
                   Automatic debuffs:{" "}
@@ -458,12 +466,13 @@ function Skills() {
               )}
               {data?.equipmentEffect && (
                 <p>
-                  EE: {data.equipmentEffect.description}
+                  EE: {data.equipmentEffect.displayDescription ?? data.equipmentEffect.description}
                   <br />
                   {data.equipmentEffect.reason}
                 </p>
               )}
-              <p>{data?.description}</p>
+              {data?.sourceReview && <p>{data.sourceReview}</p>}
+              <p>{data?.displayDescription ?? data?.description}</p>
               <small>{data?.note}</small>
               <pre>{data?.sourceText}</pre>
             </div>
@@ -479,6 +488,8 @@ function Skills() {
             : "Start the battle to use skills"
           : isCermiaSelfSkill(l.heroes, u, l.selectedSkill)
             ? `S2 · self buff · +${settings?.gain || 0} souls · extra turn`
+            : d?.nonAttack
+              ? `${l.selectedSkill} · ${d.nonAttack.target === "ally" ? "click an ally" : "team buff"} · +${settings?.gain || 0} souls`
             : d && settings
               ? `${l.selectedSkill} · click an enemy · ${d.targets || 1} target${d.targets > 1 ? "s" : ""} · +${settings.gain} souls`
               : "Select a skill, then click an enemy"}
@@ -523,6 +534,11 @@ export default function Arena() {
             ⛶
           </button>
         </div>
+        {!l.battle && (
+          <button id="start" className="primary arena-start" onClick={l.startBattle}>
+            Start battle →
+          </button>
+        )}
         <ReadinessRail />
         {["left", "right"].map((side) => (
           <div
@@ -570,7 +586,7 @@ export default function Arena() {
       </div>
       </div>
       {l.pending &&
-        (l.pending.kind === "self" ? <SelfSkillDialog /> : <HitDialog />)}
+        (l.pending.kind === "self" ? <SelfSkillDialog /> : l.pending.kind === "support" ? <NonAttackDialog /> : <HitDialog />)}
       {l.buffTarget && <BuffDialog />}
       <section
         id="battleControls"
@@ -584,10 +600,10 @@ export default function Arena() {
               01 <b>Select a skill</b>
             </span>
             <span>
-              02 <b>Click an enemy</b>
+              02 <b>Choose a target</b>
             </span>
             <span>
-              03 <b>Choose the hit</b>
+              03 <b>Confirm the skill</b>
             </span>
           </div>
         </div>
