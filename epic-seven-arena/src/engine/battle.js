@@ -48,7 +48,13 @@ function flushSkillWatchers(battle,budget) {
 }
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
-export const skillData = (heroes, u, s) => equippedSkill(heroes[u.name], u, s);
+export const skillData = (heroes, u, s, kind = "active") => {
+  const data=equippedSkill(heroes[u.name],u,s);
+  if (!data?.celineS1) return data;
+  const nimble=kind!=="dual" && (u.buffs || []).some(b=>BUFFS[b.id]?.effectType==="buff" && (b.turns===null || b.turns>0));
+  return {...data,name:nimble?"Nimble Sword":data.name,celineNimble:nimble,
+    penetration:nimble?0.5:0,canTriggerDualAttack:!nimble};
+};
 function eligibleDualAllies(heroes, battle, caller) {
   if (!caller || caller.currentHp <= 0) return [];
   // A Dual Attack partner is a separate unit; this is an action rule, not the definition of “ally”.
@@ -411,7 +417,7 @@ function performSkillAttack(
   random,
   options = {},
 ) {
-  const d = skillData(heroes, u, skill),
+  const d = skillData(heroes, u, skill, options.actionKind || "active"),
     target = battle.units.find((t) => t.id === targetId),
     targets = affectedTargets(battle, u, target, d),
     results = [],
@@ -420,6 +426,7 @@ function performSkillAttack(
       .filter((t) => hasBuff(t, "stic_curse2"))
       .map((t) => t.id);
   if (!spendSkillResource(u, d)) return {data: d, hits, results};
+  if (d.celineNimble) grantBuff(battle,u,"stic_att_up",1,"Nimble Sword",{casterId:u.id});
   for (const t of targets) {
     if (options.automaticDispels !== false)
       applySkillDispel(battle, u, t, d, "normal", random, "beforeAttack");
@@ -464,6 +471,7 @@ function performSkillAttack(
       `${t.name}: ${amount.toLocaleString()} damage (${outcome})${t.currentHp === 0 ? " · defeated" : ""}`,
     );
   }
+  if (d.celineNimble) healUnit(battle,u,hits.reduce((sum,h)=>sum+h.amount,0)*0.25,"Nimble Sword lifesteal");
   afterAttackEffects(battle, u, hits, cursedIds);
   for (const hitResult of hits) {
     const t = battle.units.find((t) => t.id === hitResult.id);
@@ -617,7 +625,7 @@ export function executeAttack(
     u.cooldowns[skill] = u.skills[skill].cd + 1;
     log(
       battle,
-      `${u.name} uses ${skill}. ${results.join(" / ")}`,
+      `${u.name} uses ${d.celineNimble ? "Nimble Sword" : skill}. ${results.join(" / ")}`,
       `${teamName(u.side)} · ${hit} hit · ${options.automaticDebuffs === false ? "manual debuffs" : "automatic skill debuffs"} · +${u.skills[skill].gain} / −${u.skills[skill].cost} souls · simplified damage${d.note ? " · source note: " + d.note : ""}`,
     );
     resolveDeaths(heroes, battle);
@@ -638,15 +646,16 @@ export function executeAttack(
       if (d.canTriggerCounter !== false)
         for (const hitResult of hits.filter((h) => !h.defeated)) {
           const defender = battle.units.find((t) => t.id === hitResult.id);
-          if ((defender.counterChance || 0) > 0)
+          const possessionCounter=hitResult.outcome === "crit" && hasBuff(defender,"stic_possession_keep");
+          if ((defender.counterChance || 0) > 0 || possessionCounter)
             queue.push({
               kind: "counter",
               actorId: defender.id,
               targetId: u.id,
               skill: "S1",
-              source: "counterStat",
-              chance: defender.counterChance,
-              label: "configured counter chance",
+              source: possessionCounter ? "buff" : "counterStat",
+              chance: possessionCounter ? 100 : defender.counterChance,
+              label: possessionCounter ? "Possession · suffered critical hit" : "configured counter chance",
             });
         }
       resolveReactionQueue(heroes, battle, queue, random, {...options,watcherBudget});

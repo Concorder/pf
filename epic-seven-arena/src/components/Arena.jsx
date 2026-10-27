@@ -471,7 +471,8 @@ function Skills() {
                   {data.equipmentEffect.reason}
                 </p>
               )}
-              {data?.damageSource && <p>Damage formula: <a href={data.damageSource.url} target="_blank" rel="noreferrer">e7calc</a> · reviewed conditional scaling</p>}
+              {data?.celineS1 && <p>{data.celineNimble ? "Nimble Sword: Attack Up before damage, 50% Defense penetration, 25% lifesteal; cannot trigger a Dual Attack." : "Mighty Strike: a buff enables Nimble Sword; assisting Dual Attacks always use Mighty Strike."}</p>}
+              {data?.damageSource && <p>Damage formula: <a href={data.damageSource.url} target="_blank" rel="noreferrer">e7calc</a> · reviewed formula</p>}
               {data?.sourceReview && <p>{data.sourceReview}</p>}
               <p>{data?.displayDescription ?? data?.description}</p>
               <small>{data?.note}</small>

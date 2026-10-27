@@ -1,5 +1,33 @@
 // Reviewed non-attack casts. Descriptions guard declarative effects; no prose is executed.
 export const NON_ATTACK_RULES = {
+  "c2103": {
+  "S3": {
+    "description": "Opens the gate of the spirits to revive all dead allies. Dispels all debuffs from all allies before granting immortality for 1 turn, and grants possession to the caster for 3 turns.",
+    "target": "team",
+    "effects": [
+      {
+        "kind": "cleanse",
+        "target": "team",
+        "count": "all"
+      },
+      {
+        "kind": "buff",
+        "target": "team",
+        "id": "stic_immortality",
+        "turns": 1
+      },
+      {
+        "kind": "buff",
+        "target": "caster",
+        "id": "stic_possession_keep",
+        "turns": 3
+      }
+    ],
+    "pending": [
+      "Revival HP percentage awaiting verification; dead allies are not revived yet"
+    ]
+  }
+},
   "c1030": {
     "S2": {
       "description": "Enhances all allies with a drone, granting increased Attack and increased Speed for 3 turns. Grants an extra turn.",

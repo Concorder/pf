@@ -309,7 +309,7 @@ export function normalizeSkill(hero, raw, index) {
     )
   )
     result.hitTypes = result.hitTypes.filter((x) => x !== "crit");
-  if (!passive && !common.includes("cmn_non_attack_skill") && common.includes("cmn_penetration")) {
+  if (!passive && !result.celineS1 && !common.includes("cmn_non_attack_skill") && common.includes("cmn_penetration")) {
     const clauses = description.match(/[^.!?]*\bpenetrat(?:e[sd]?|ion)\b[^.!?]*/gi) || [];
     const m = clauses.length === 1 && clauses[0].match(/penetrates?[^.]*?(\d+(?:\.\d+)?)%/i);
     // HP/DEF/Speed scaling in a separate sentence does not make a fixed

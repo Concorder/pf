@@ -59,3 +59,11 @@ Completed skills emit immutable execution-tag events. Enemy-side watchers resolv
 Reviewed handlers: Sol S2 enemy non-attack (+20 CR/+20 Fighting Spirit; two-turn cooldown); Designer Lilibet S2 enemy turn end (10 Spirit per living ally debuff including herself, full-Spirit self-cleanse/Defense/Immunity/+40 CR); Astromancer Elena S2 allied AoE excluding herself (Worship Me!, +20 CR/+10 souls, max-enhanced S2 cooldown). Worship Me! emits its own non-attack event and can trigger an opposing Sol. Metadata descriptions and referenced buffs must match the reviewed snapshot. Generic prose never executes code.
 
 Still pending: Sol's Volcanic Viper retaliation and Astromancer Elena's Star's Blessing/counterattack prevention. Designer Lilibet's EE effects remain separate from her implemented native S2.
+
+## Spirit Eye Celine active skills and Possession
+
+S3 now cleanses all living allies (caster included) before granting one-turn Immortality and three-turn Possession to herself. Hecate, Sanctuary and Cannot Buff retain their existing effect-grant restrictions. **S3 revival remains pending verification of the return-HP fraction** and is explicitly listed as pending in the cast confirmation and support report.
+
+Possession is an undispellable **buff**, not a unique effect: +25% Attack, and a guaranteed S1 counter when suffering a critical hit. It obeys Cannot Buff on grant; counter gates include Bind, incapacitation and Cannot Counterattack. Seal suppresses passive skills, not an existing Possession buff. Configured counter chance and Possession enqueue only one counter for the same hit. Secondary attacks retain the existing non-recursive reaction policy.
+
+S1 uses Mighty Strike without a buff, or during a Dual Attack. Otherwise, any actual buff (including Immortality or Possession, excluding unique effects) selects Nimble Sword: Attack Up before damage for one turn, 50% Defense penetration, 25% lifesteal with normal healing restrictions, and no outgoing Dual Attack. Both variants use e7calc's 1.0 ATK rate / 0.9 POW and max enhancements. Soulburn/EE first-use effects and S2 death-trigger cooldown/souls remain pending.

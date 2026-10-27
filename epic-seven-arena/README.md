@@ -233,3 +233,5 @@ Current damage-formula research uses the maintained [tyopoyt/epic7-damage-calc](
 
 
 The next 5★ batch adds e7calc-verified conditional S1 damage for Kise, Zahhak, Dizzy and Astromancer Elena, including Zahhak S1 hit/crit bonuses and Dizzy S1 Stun. It also adds reviewed watchers for Sol’s enemy non-attack resource/CR effect, Designer Lilibet’s enemy-turn-end Spirit/cleanse/buffs, and Astromancer Elena’s allied-AoE Worship Me! follow-up. Opposing-side watchers resolve first for the same event. Sol’s retaliation, Elena’s Star’s Blessing and remaining EE/Soulburn branches stay in the unsupported checklist. See [reaction rules](docs/triggers-and-revival.md) for timing and restrictions.
+
+Spirit Eye Celine's S1 and S3 are usable: any buff enables Nimble Sword outside Dual Attacks, with Attack Up, 50% Defense penetration and 25% lifesteal. S3 cleanses living allies and grants Immortality plus self Possession. Possession adds 25% Attack and counters critical hits. S3 revival HP, Soulburn/EE and S2 death-trigger effects remain explicitly pending; see [Celine mechanics](docs/triggers-and-revival.md#spirit-eye-celine-active-skills-and-possession).

@@ -5,5 +5,5 @@ export function reviewedDamage(hero,skill,index) {
   const requiredScope=rule.targets===3?"cmn_aoe":"cmn_single_target";
   if (!(skill.common || []).some(c=>c._id===requiredScope)) return null;
   const {description,sourceText,targets,...values}=structuredClone(rule);
-  return {...values,damageSupport:"supported",supportReason:"Reviewed e7calc conditional damage",unparsed:[]};
+  return {...values,damageSupport:"supported",supportReason:values.celineS1 ? "Reviewed e7calc Mighty Strike / Nimble Sword" : "Reviewed e7calc conditional damage",unparsed:[]};
 }

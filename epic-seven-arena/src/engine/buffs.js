@@ -241,6 +241,11 @@ export const BUFFS = {
     unique: true, undispellable: true, permanent: true, manual: false,
     icon: "stic_sacrifice_aura",
   },
+  stic_possession_keep: {
+    name: "Possession",
+    description: "Undispellable buff: Attack +25%; counterattacks when suffering a critical hit. Cannot Buff prevents granting it.",
+    stat: "atk", amount: 0.25, undispellable: true, icon: "stic_possession_keep",
+  },
   stic_immortality: {
     name: "Immortality",
     description: "Cannot be reduced below 1 HP by damage while active. Granting is blocked by Cannot Buff, Sanctuary and Hecate.",

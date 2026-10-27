@@ -4775,14 +4775,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Spirit Eye Celine (c2103)
 
-- [ ] **S1 — Mighty Strike** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S1 — Mighty Strike** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc Mighty Strike / Nimble Sword
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a sheath. When this skill is used, if it was not triggered by a Dual Attack and the caster has a buff, uses Nimble Sword instead.<br>Nimble Sword: After granting increased Attack to the caster for 1 turn, swiftly attacks the enemy, and absorbs some of the damage dealt as Health. Penetrates the target's Defense by 50%. This skill does not trigger a Dual Attack.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 0.9<br><br><br>Skill1 Extra (Nimble Sword)<br>att_rate: 1<br>!pow: 0.9<br>25% Lifesteal<br>Penetration 50%
-  - Unparsed formula lines: Skill1 Extra (Nimble Sword); att_rate: 1; !pow: 0.9; 25% Lifesteal; Penetration 50%
+  - Implemented: buff-dependent Nimble Sword (except Dual Attacks), pre-hit Attack Up, 50% penetration, 25% lifesteal, and no outgoing Dual Attack in Nimble Sword form.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br><br><br>Skill1 Extra (Nimble Sword)<br>att_rate: 1<br>!pow: 0.9<br>25% Lifesteal<br>Penetration 50%
   - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Sixth Sense** — Passive partially implemented or pending
@@ -4794,12 +4793,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: No info
   - EE 1: When the casters uses Soulburn for the first time, increases damage dealt by 50% and does not cost any Soul.
 
-- [ ] **S3 — Spirit Gate: Burning Possession** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
+- [ ] **S3 — Spirit Gate: Burning Possession** — Non-attack cast supported; remaining effects listed below
+  - Current base support: nonAttack. Non-attack cast implemented; pending: Revival HP percentage awaiting verification; dead allies are not revived yet
+  - Review/work: Revival HP percentage awaiting verification; dead allies are not revived yet
   - Description: Opens the gate of the spirits to revive all dead allies. Dispels all debuffs from all allies before granting immortality for 1 turn, and grants possession to the caster for 3 turns.
-  - Source multiplier text (requires review): Skill3<br>Possession: increases attack by 25%<br>
+  - Non-attack source note (no damage formula): Skill3<br>Possession: increases attack by 25%<br>
   - Unparsed formula lines: Possession: increases attack by 25%
 
 ### Stark (c1174)

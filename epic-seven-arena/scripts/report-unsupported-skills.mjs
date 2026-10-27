@@ -20,7 +20,7 @@ for (const [name, hero] of scopedHeroes.sort(([a],[b]) => a.localeCompare(b))) {
     if (s.debuffsPending) gaps.push("Unmapped/conditional debuff grants");
     if (s.soulburn) gaps.push("Soulburn enhanced execution (currently preview only)");
     // These are audit prompts, not a claim that every referenced effect is absent.
-    if (!s.passive && !special && !s.nonAttack && s.buffRefs?.length) gaps.push("Audit buff recipients, conditions and durations against implemented grants");
+    if (!s.passive && !special && !s.nonAttack && !s.celineS1 && s.buffRefs?.length) gaps.push("Audit buff recipients, conditions and durations against implemented grants");
     if (!s.passive && s.tags?.includes("extraTurn") && !special && !s.nonAttack) gaps.push("Review source-specific extra-turn execution/conditions (tag is capability metadata)");
     const ee = (hero.exclusiveEquipment?.options || []).filter(o => o.skill === key && o.support !== "supported");
     for (const option of ee) gaps.push(`EE option ${option.index + 1}: ${option.reason}`);
@@ -68,6 +68,7 @@ for (const {name, hero, key, s, gaps, ee, special} of entries) {
     `  - Current base support: ${s.damageSupport || "unknown"}. ${escape(s.supportReason)}`,
     ...gaps.map(g => `  - Review/work: ${escape(g)}`),
     `  - Description: ${escape(s.displayDescription || s.description || "No source description available.")}`);
+  if (s.celineS1) out.push("  - Implemented: buff-dependent Nimble Sword (except Dual Attacks), pre-hit Attack Up, 50% penetration, 25% lifesteal, and no outgoing Dual Attack in Nimble Sword form.");
   if (s.watchers?.length) out.push(`  - Implemented watchers: ${s.watchers.map(w => w.id).join(", ")}.`);
   if (s.damageSource) out.push(`  - Reviewed damage source: [${s.damageSource.provider}](${s.damageSource.url}), revision ${s.damageSource.revision}.`);
   if (s.resource) out.push(`  - Resource: ${s.resource.type}; base gain ${s.resource.gain}; required/spent ${s.resource.cost}${s.resource.criticalGainMultiplier ? "; critical-hit gain ×" + s.resource.criticalGainMultiplier : ""}${s.resource.outsideTurnGainMultiplier ? "; out-of-turn gain ×" + s.resource.outsideTurnGainMultiplier : ""}.`);
