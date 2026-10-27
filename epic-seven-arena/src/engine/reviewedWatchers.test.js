@@ -30,7 +30,7 @@ test('reviewed conditional damage uses classified status and e7calc provenance',
 test('Zahhak S1 hit and critical bonuses are skill-specific',()=>{
  const b=fixture('Zahhak'),a=unit(b,'left-0'),t=unit(b,'right-0');a.attribute='fire';t.attribute='ice';a.stats.chc=0;
  assert.equal(hitChances(a,t).miss,50);assert.equal(hitChances(a,t,heroes.Zahhak.skills.S1).miss,0);
- assert.equal(hitChances(a,t,heroes.Zahhak.skills.S1).critical,50);assert.equal(hitChances(a,t,heroes.Zahhak.skills.S3).critical,0);
+ assert.equal(hitChances(a,t,heroes.Zahhak.skills.S1).critical,50);assert.equal(hitChances(a,t,heroes.Zahhak.skills.S3).critical,50);
 });
 test('Sol enemy non-attack watcher grants resources once, respects Seal and freezes metadata',()=>{
  const b=fixture();assert.equal(unit(b,'right-0').watchers.length,1);

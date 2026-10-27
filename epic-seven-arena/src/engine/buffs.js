@@ -241,6 +241,14 @@ export const BUFFS = {
     unique: true, undispellable: true, permanent: true, manual: false,
     icon: "stic_sacrifice_aura",
   },
+  stic_invincible: {name:"Invincibility",description:"Prevents incoming damage while active.",icon:"stic_invincible"},
+  stic_protect: {name:"Barrier",description:"Absorbs damage before Health. Only the stronger barrier applies.",icon:"stic_protect",manual:false},
+  stic_bless: {name:"Revive",description:"Revives at 30% max Health on lethal damage; consumed on death.",icon:"stic_bless"},
+  stic_heal: {name:"Continuous Healing",description:"Recovers 15% max Health at the start of the bearer’s turn. Stackable.",icon:"stic_heal",stackable:true},
+  stic_detection_keep: {name:"Perception",description:"Undispellable buff: Critical Hit Chance and Critical Hit Damage +15%.",icon:"stic_detection_keep",undispellable:true},
+  stic_spirit_keep: {name:"Spirit’s Blessing",description:"Undispellable buff: Effect Resistance +60%.",stat:"efr",amount:60,icon:"stic_spirit_keep",undispellable:true},
+  stic_increase_hit: {name:"Increased Hit Chance",description:"Hit Chance +50%.",icon:"stic_increase_hit"},
+  stic_icecream_keep: {name:"Ice Cream",description:"Undispellable buff: after being attacked, heals 20% max Health and is removed.",icon:"stic_icecream_keep",undispellable:true},
   stic_possession_keep: {
     name: "Possession",
     description: "Undispellable buff: Attack +25%; counterattacks when suffering a critical hit. Cannot Buff prevents granting it.",
@@ -340,6 +348,16 @@ export function effectiveStats(unit) {
     critResistance: unit.stats.critResistance || 0,
   };
   const modifiers = {};
+  // Entered Attack/Crit Chance are stat-screen totals: account for innate
+  // bonuses before combining buffs or suppressing the passive with Seal.
+  const innateAttack=(unit.reviewedPassives||[]).reduce((n,p)=>n+(p.staticPassive?.attack||0),0);
+  const innateCrit=(unit.reviewedPassives||[]).reduce((n,p)=>n+(p.staticPassive?.critChance||0),0);
+  s.atk/=1+innateAttack;s.chc-=innateCrit;
+  if(unit.currentHp>0&&!hasBuff(unit,"stic_dizzy"))for(const passive of unit.reviewedPassives||[]) {
+    const p=passive.staticPassive;
+    if(p?.attack)modifiers.atk=(modifiers.atk||0)+p.attack;
+    s.chc+=p?.critChance||0;s.critResistance+=p?.critResistance||0;
+  }
   for (const [id, def] of Object.entries(BUFFS)) {
     if (!hasBuff(unit, id)) continue;
     if (
@@ -354,10 +372,12 @@ export function effectiveStats(unit) {
     )
       continue;
     if (!def.stat) continue;
-    if (["chc", "chd", "evasion", "hitChancePenalty"].includes(def.stat))
+    if (["chc", "chd", "evasion", "hitChancePenalty", "efr"].includes(def.stat))
       s[def.stat] += def.amount;
     else modifiers[def.stat] = (modifiers[def.stat] || 0) + def.amount;
   }
+  if(unit.violetReadyPassive&&!unit.cooldowns.S3&&!hasBuff(unit,"stic_dizzy"))s.evasion+=35;
+  if (hasBuff(unit,"stic_detection_keep")) {s.chc+=15;s.chd+=15;}
   if (hasBuff(unit, "stic_discharge_aura")) {
     modifiers.atk = (modifiers.atk || 0) - 0.5;
     modifiers.spd = (modifiers.spd || 0) - 0.5;
@@ -384,7 +404,7 @@ export function effectiveStats(unit) {
   for (const [stat, amount] of Object.entries(modifiers))
     s[stat] *= Math.max(0.01, 1 + amount);
   s.evasion = Math.max(0, Math.min(100, s.evasion));
-  s.chc = Math.min(100, s.chc);
+  s.chc = Math.max(0,Math.min(100, s.chc));
   s.chd = Math.min(350, s.chd);
   return s;
 }
@@ -670,7 +690,7 @@ export function applySkillDebuffs(
     const procChance = Math.min(100, effect.chance + (battle.active !== actor.id ? effect.chanceBonusOutsideTurn || 0 : 0));
     for (let stack = 0; stack < (effect.count || 1); stack++) {
       const unique = !!BUFFS[effect.id]?.unique;
-      const ignoreResistance = unique ||
+      const ignoreResistance = unique || !!effect.ignoreResistance ||
         (!!effect.ignoreResistanceAgainst &&
           target.attribute === effect.ignoreResistanceAgainst) ||
         (effect.ignoreResistanceIfLowerHP && maxHp(target) < maxHp(actor));
@@ -743,8 +763,14 @@ export function applySkillBuffs(battle, actor, code, skill, data) {
 
 export function sufferDamage(battle, unit, amount, options = {}) {
   const before = unit.currentHp;
-  const incoming = Math.max(0, Math.floor(amount));
+  let incoming = Math.max(0, Math.floor(amount));
+  if (hasBuff(unit,"stic_invincible")) incoming=0;
   recordDamageEvent(battle, unit, incoming, options);
+  const barrier=unit.buffs?.find(b=>b.id==="stic_protect"&&hasBuff(unit,b.id));
+  if (barrier?.barrier>0 && incoming>0) {
+    const absorbed=Math.min(barrier.barrier,incoming);barrier.barrier-=absorbed;incoming-=absorbed;
+    if(barrier.barrier<=0)unit.buffs=unit.buffs.filter(b=>b!==barrier);
+  }
   let floor = 0, offeringSurvival = false;
   if (before > 0 && incoming >= before) {
     const offering = (unit.buffs || []).find(b => b.id === "stic_sacrifice_aura" &&
@@ -776,6 +802,7 @@ export function sufferDamage(battle, unit, amount, options = {}) {
       unitId: unit.id,
       serial: unit.deaths,
       sealed: hasBuff(unit, "stic_dizzy"),
+      reviveBuff: hasBuff(unit,"stic_bless"),
     });
   }
   // Distinct injury sources add, each based on actual HP lost, with a shared 50% cap.
@@ -827,6 +854,7 @@ export function startTurnEffects(battle, unit, random) {
     });
   }
   tickPeriodic(battle, unit);
+  if (unit.currentHp>0)for(const effect of [...(unit.buffs||[])])if(effect.id==="stic_heal"&&hasBuff(unit,effect.id))healUnit(battle,unit,maxHp(unit)*.15,"Continuous Healing");
 }
 export function endTurnEffects(battle, unit) {
   if (unit.currentHp <= 0 || !hasBuff(unit, "stic_deceptive")) return;
@@ -846,6 +874,10 @@ export function endTurnEffects(battle, unit) {
 export function afterAttackEffects(battle, attacker, hits, cursedIds) {
   for (const hit of hits) {
     const target = battle.units.find((u) => u.id === hit.id);
+    if(target.currentHp>0&&hasBuff(target,"stic_icecream_keep")) {
+      target.buffs=target.buffs.filter(b=>b.id!=="stic_icecream_keep");
+      healUnit(battle,target,maxHp(target)*.2,"Ice Cream");
+    }
     if (hit.vampiric)
       healUnit(battle, attacker, maxHp(attacker) * 0.1, "Vampiric Touch");
     for (const bearer of battle.units.filter(
@@ -886,6 +918,10 @@ export function applyCRChange(
   amount,
   source = "Manual resolved CR change",
 ) {
+  if(!hasBuff(unit,"stic_dizzy"))for(const passive of unit.reviewedPassives||[]) {
+    if(amount<0&&passive.staticPassive?.crDecreaseReduction)amount*=1-Math.min(1,passive.staticPassive.crDecreaseReduction);
+    if(amount>0&&passive.staticPassive?.crIncreaseMultiplier)amount*=passive.staticPassive.crIncreaseMultiplier;
+  }
   const result = shiftCR(battle, unit, amount, effectiveStats(unit).spd);
   battle.log.unshift({
     message: `${unit.name}: CR ${result.amount >= 0 ? "+" : ""}${Number(result.amount.toFixed(2))}%${result.reason ? ` (${result.reason})` : ""}.`,
@@ -946,6 +982,12 @@ export function globalTurnEffects(battle) {
   }
 }
 
+export function decreaseBuffDurations(battle,target,turns) {
+  const speed=effectiveStats(target).spd;
+  for(const b of target.buffs || [])if(BUFFS[b.id]?.effectType==="buff"&&!BUFFS[b.id]?.undispellable&&b.turns>0)b.turns=Math.max(0,b.turns-turns);
+  target.buffs=(target.buffs||[]).filter(b=>b.turns===null||b.turns>0);
+  preserveReadiness(battle,target,speed);clampHealth(target);
+}
 export function dispelBuffs(battle, target, count = 1, source = "Dispel") {
   if (count !== Infinity && (!Number.isInteger(count) || count < 1)) return 0;
   const speed = effectiveStats(target).spd;

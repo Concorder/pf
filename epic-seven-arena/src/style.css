@@ -2758,3 +2758,5 @@ h3 small {
 .resource-compact .resource-caption { display: none; }
 .resource-compact .resource-track { margin-top: 0; height: 4px; }
 .resource-compact.resource-focus .resource-track { height: 5px; gap: 2px; }
+
+.unit-barrier{height:3px;background:#163245;margin-top:2px;overflow:hidden;border-radius:2px}.unit-barrier>span{display:block;height:100%;background:linear-gradient(90deg,#54bce3,#c4f5ff);transition:width .25s}

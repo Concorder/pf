@@ -1,5 +1,197 @@
-// Reviewed direct grants, guarded by source descriptions; ordering is explicit.
+// Reviewed per-skill debuff grants, guarded by exact source descriptions.
 export const SKILL_DEBUFF_RULES = {
+  "c1115": {
+    "S3": {
+      "description": "Attacks the enemy with a gust of wind, --decreasing Defense-- for 2 turns, and grants increased Attack (Greater) to the caster for 2 turns.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "chance": 100,
+          "turns": 2,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1069": {
+    "S2": {
+      "description": "Attacks the enemy with light, decreasing buff durations by 1 turn before a {{variable}} chance to --stun-- for 1 turn. Grants invincibility to the caster for 1 turn and increases Combat Readiness by 50%.",
+      "effects": [
+        {
+          "id": "stic_stun",
+          "chance": {
+            "variable": 0
+          },
+          "turns": 1,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1044": {
+    "S2": {
+      "description": "Attacks all enemies by calling upon a trained monster, with a {{variable}} chance each to inflict two --bleeding-- effects for 2 turns and a {{variable}} chance to inflict --stun-- for 1 turn.",
+      "effects": [
+        {
+          "id": "stic_blood",
+          "chance": {
+            "variable": 0
+          },
+          "turns": 2,
+          "count": 2
+        },
+        {
+          "id": "stic_stun",
+          "chance": {
+            "variable": 1
+          },
+          "turns": 1,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1053": {
+    "S1": {
+      "description": "Attacks the enemy with wind magic, with a {{variable}} chance to transfer one debuff from the caster and inflict one --random debuff-- for 2 turns.",
+      "effects": [
+        {
+          "id": "cmn_random_debuff3",
+          "turns": 2,
+          "chance": {
+            "variable": 0
+          },
+          "count": 1
+        }
+      ]
+    },
+    "S3": {
+      "description": "Attacks all enemies with sand magic, dispelling all buffs and making them --unable to be buffed-- for 2 turns, before decreasing Combat Readiness by 30%.",
+      "effects": [
+        {
+          "id": "stic_buf_impossible",
+          "turns": 2,
+          "chance": 100,
+          "count": 1
+        }
+      ]
+    },
+    "S2": {
+      "description": "Attacks all enemies by releasing a hot sand hurricane, with a {{variable}} chance each to inflict --decreased Hit Chance-- and --decreased Attack-- for 2 turns.",
+      "effects": [
+        {
+          "id": "stic_blind",
+          "chance": {
+            "variable": 0
+          },
+          "turns": 2,
+          "count": 1
+        },
+        {
+          "id": "stic_att_dn",
+          "chance": {
+            "variable": 0
+          },
+          "turns": 2,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1156": {
+    "S3": {
+      "description": "Fiercely attacks the wicked enemy, with a {{variable}} chance each to dispel all buffs from the target, make them --unable to be buffed--, and --decrease Defense-- for 2 turns. Damage dealt increases proportional to the caster's max Health.",
+      "effects": [
+        {
+          "id": "stic_buf_impossible",
+          "chance": 100,
+          "turns": 2,
+          "count": 1
+        },
+        {
+          "id": "stic_def_dn",
+          "chance": 100,
+          "turns": 2,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1016": {
+    "S2": {
+      "description": "Attacks all enemies with a dragon howl, dispelling one buff, before a {{variable}} chance to --decrease Defense-- for 2 turns and a {{variable}} chance to --silence-- for 1 turn.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "chance": {
+            "variable": 0
+          },
+          "turns": 2,
+          "count": 1
+        },
+        {
+          "id": "stic_silence",
+          "chance": {
+            "variable": 1
+          },
+          "turns": 1,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1093": {
+    "S1": {
+      "description": "Attacks the enemy repeatedly, with a {{variable}} chance each to inflict two --bleeding effects-- for 2 turns. A critical hit will reduce the caster's skill cooldowns by 1 turn.",
+      "effects": [
+        {
+          "id": "stic_blood",
+          "turns": 2,
+          "chance": {
+            "variable": 0
+          },
+          "count": 2
+        }
+      ]
+    },
+    "S2": {
+      "description": "Attacks the enemy with expert swordsmanship and has a {{variable}} chance each to inflict three --bleeding-- effects for 2 turns. One bleeding effect ignores Effect Resistance. A critical hit will grant an extra turn.",
+      "effects": [
+        {
+          "id": "stic_blood",
+          "turns": 2,
+          "chance": {
+            "variable": 0
+          },
+          "count": 2
+        },
+        {
+          "id": "stic_blood",
+          "turns": 2,
+          "chance": {
+            "variable": 0
+          },
+          "count": 1,
+          "ignoreResistance": true
+        }
+      ]
+    }
+  },
+  "c1071": {
+    "S3": {
+      "description": "Attacks all enemies by creating a powerful gust of wind, with a {{variable}} chance to --decrease Defense-- for 2 turns. Increases damage dealt when Razorwind Fan is triggered by Windbreak Fan.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "turns": 2,
+          "chance": {
+            "variable": 0
+          },
+          "count": 1
+        }
+      ]
+    }
+  },
   "c1079": {
     "S1": {
       "description": "Attacks the enemy with a flaming sword and has a {{variable}} chance to inflict --unhealable-- for 1 turn.",
@@ -1033,32 +1225,6 @@ export const SKILL_DEBUFF_RULES = {
           "chance": {
             "variable": 0
           },
-          "count": 1
-        }
-      ]
-    }
-  },
-  "c1053": {
-    "S1": {
-      "description": "Attacks the enemy with wind magic, with a {{variable}} chance to transfer one debuff from the caster and inflict one --random debuff-- for 2 turns.",
-      "effects": [
-        {
-          "id": "cmn_random_debuff3",
-          "turns": 2,
-          "chance": {
-            "variable": 0
-          },
-          "count": 1
-        }
-      ]
-    },
-    "S3": {
-      "description": "Attacks all enemies with sand magic, dispelling all buffs and making them --unable to be buffed-- for 2 turns, before decreasing Combat Readiness by 30%.",
-      "effects": [
-        {
-          "id": "stic_buf_impossible",
-          "turns": 2,
-          "chance": 100,
           "count": 1
         }
       ]

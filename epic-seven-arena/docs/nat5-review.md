@@ -18,10 +18,10 @@ The runtime parses CeciliaBot multiplier text and uses guarded e7calc conditiona
 
 | Classification | Skills |
 | --- | ---: |
-| supported | 227 |
+| supported | 240 |
 | passive | 132 |
-| unsupported | 271 |
-| nonAttack | 9 |
+| unsupported | 249 |
+| nonAttack | 18 |
 
 Supported means the base damage calculation is available. Buffs, passives, Soulburn and conditional follow-ups can remain incomplete; see [the per-skill queue](unsupported-nat5-skills.md).
 
@@ -30,11 +30,11 @@ Supported means the base damage calculation is available. Buffs, passives, Soulb
 | Primary blocker | Skills |
 | --- | ---: |
 | Passive / reaction handlers | 132 |
-| Non-attack effects awaiting handlers | 70 |
-| Healing, barriers or lifesteal mixed into formula text | 62 |
-| Conditional damage / unrecognized source syntax | 54 |
+| Non-attack effects awaiting handlers | 61 |
+| Healing, barriers or lifesteal mixed into formula text | 57 |
+| Conditional damage / unrecognized source syntax | 48 |
 | Multiple forms, procs or resource-dependent variants | 32 |
-| Conditional / unspecified penetration | 27 |
+| Conditional / unspecified penetration | 25 |
 | Additional damage / detonation handlers | 17 |
 | Missing / inconsistent coefficient data | 5 |
 | Target-scope verification | 4 |

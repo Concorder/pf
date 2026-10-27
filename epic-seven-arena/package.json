@@ -11,7 +11,8 @@
     "refresh:data": "node scripts/refresh-data.mjs",
     "report:skills": "node scripts/report-unsupported-skills.mjs",
     "report:skills:nat5": "node scripts/report-unsupported-skills.mjs --rarity=5",
-    "audit:skills:nat5": "node scripts/audit-nat5-skills.mjs"
+    "audit:skills:nat5": "node scripts/audit-nat5-skills.mjs",
+    "report:skills:earth": "node scripts/report-unsupported-skills.mjs --earth"
   },
   "dependencies": {
     "react": "^19.2.0",

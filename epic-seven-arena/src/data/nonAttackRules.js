@@ -1,5 +1,244 @@
 // Reviewed non-attack casts. Descriptions guard declarative effects; no prose is executed.
 export const NON_ATTACK_RULES = {
+
+  "c2022": {
+    "S2": {
+      "description": "Blesses an ally, dispelling two debuffs and recovering Health proportional to the caster\u2019s max Health before increasing Combat Readiness by 30%.",
+      "target": "ally",
+      "effects": [
+        {
+          "kind": "cleanse",
+          "target": "selected",
+          "count": 2
+        },
+        {
+          "kind": "heal",
+          "target": "selected",
+          "ratio": 0.16,
+          "basis": "casterHp",
+          "enhance": "healing"
+        },
+        {
+          "kind": "readiness",
+          "target": "selected",
+          "amount": 30
+        }
+      ],
+      "sourceText": "Skill2\natt_rate: n/a\n!pow: n/a\nHeal strength: 16% self max Health\n"
+    },
+    "S3": {
+      "description": "Through the benediction of a Spirit Lord, revives all dead allies to 30% Health. For allies that are not dead, dispels all debuffs before recovering Health proportional to the caster's max Health. At the start of the first battle, grants Spirit's Blessing to the caster for 3 turns.",
+      "target": "team",
+      "effects": [
+        {
+          "kind": "revive",
+          "target": "team",
+          "fraction": 0.3
+        },
+        {
+          "kind": "cleanse",
+          "target": "team",
+          "count": "all",
+          "onlyInitiallyLiving": true
+        },
+        {
+          "kind": "heal",
+          "target": "team",
+          "ratio": 0.3,
+          "basis": "casterHp",
+          "enhance": "healing",
+          "onlyInitiallyLiving": true
+        }
+      ],
+      "sourceText": "Skill3\natt_rate: n/a\n!pow: n/a\nHeal strength: 30% self max Health\n"
+    }
+  },
+  "c1090": {
+    "S3": {
+      "description": "By infusing vitality, dispels all debuffs from all allies and grants immunity for 2 turns before recovering Health proportional to the target\u2019s max Health.",
+      "target": "team",
+      "effects": [
+        {
+          "kind": "cleanse",
+          "target": "team",
+          "count": "all"
+        },
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_debuf_impossible",
+          "turns": 2
+        },
+        {
+          "kind": "heal",
+          "target": "team",
+          "ratio": 0.15,
+          "basis": "targetHp",
+          "enhance": "healing"
+        }
+      ],
+      "sourceText": "Skill3\nHeal strength: 15% Target Max Health, 25% soulburn\n"
+    }
+  },
+  "c1102": {
+    "S3": {
+      "description": "With the grace of Rekos, recovers the Health of all allies and grants a barrier and revive for 2 turns. Amount recovered and barrier strength increase proportional to the caster\u2019s max Health.",
+      "target": "team",
+      "effects": [
+        {
+          "kind": "heal",
+          "target": "team",
+          "ratio": 0.25,
+          "basis": "casterHp",
+          "enhance": "healing"
+        },
+        {
+          "kind": "barrier",
+          "target": "team",
+          "ratio": 0.15,
+          "basis": "casterHp",
+          "turns": 2,
+          "enhance": "barrier"
+        },
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_bless",
+          "turns": 2
+        }
+      ],
+      "sourceText": "Skill3\nHeal strength: 25% self max Health \nBarrier strength: 15% self Max Health"
+    }
+  },
+  "c1074": {
+    "S2": {
+      "description": "As preparation for a duel, dispels two debuffs from the caster and grants perception for 3 turns, before recovering 15% Health. Grants an extra turn.",
+      "target": "self",
+      "effects": [
+        {
+          "kind": "cleanse",
+          "target": "caster",
+          "count": 2
+        },
+        {
+          "kind": "buff",
+          "target": "caster",
+          "id": "stic_detection_keep",
+          "turns": 3
+        },
+        {
+          "kind": "heal",
+          "target": "caster",
+          "ratio": 0.15,
+          "basis": "casterHp",
+          "enhance": "healing"
+        }
+      ],
+      "extraTurn": true
+    }
+  },
+  "c1119": {
+    "S2": {
+      "description": "Dispels two debuffs from an ally before increasing Combat Readiness of the ally by {{variable}}. Grants increased Attack and increased Hit Chance to the caster for 3 turns. Grants an extra turn.",
+      "target": "ally",
+      "effects": [
+        {
+          "kind": "cleanse",
+          "target": "selected",
+          "count": 2
+        },
+        {
+          "kind": "readiness",
+          "target": "selected",
+          "amount": {"variable":0}
+        },
+        {
+          "kind": "buff",
+          "target": "caster",
+          "id": "stic_att_up",
+          "turns": 3
+        },
+        {
+          "kind": "buff",
+          "target": "caster",
+          "id": "stic_increase_hit",
+          "turns": 3
+        }
+      ],
+      "extraTurn": true
+    }
+  },
+  "c1162": {
+    "S3": {
+      "description": "Stops fighting and takes a break, dispelling all debuffs from all allies and granting continuous healing for 2 turns before increasing Combat Readiness by {{variable}}.",
+      "target": "team",
+      "effects": [
+        {
+          "kind": "cleanse",
+          "target": "team",
+          "count": "all"
+        },
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_heal",
+          "turns": 2
+        },
+        {
+          "kind": "readiness",
+          "target": "team",
+          "amount": {"variable":0}
+        }
+      ]
+    }
+  },
+  "c1177": {
+    "S3": {
+      "description": "By kindling the light of hope, grants invincibility to all allies for 1 turn and increased Attack for 2 turns.",
+      "target": "team",
+      "effects": [
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_invincible",
+          "turns": 1
+        },
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_att_up",
+          "turns": 2
+        }
+      ],
+      "allowMissingNonAttackTag": true
+    }
+  },
+  "c5082": {
+    "S3": {
+      "description": "With quality customer service, dispels two debuffs from all allies and grants increased Defense for 2 turns and an ice cream.",
+      "target": "team",
+      "effects": [
+        {
+          "kind": "cleanse",
+          "target": "team",
+          "count": 2
+        },
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_def_up",
+          "turns": 2
+        },
+        {
+          "kind": "buff",
+          "target": "team",
+          "id": "stic_icecream_keep",
+          "turns": 2
+        }
+      ]
+    }
+  }
+,
   "c2103": {
   "S3": {
     "description": "Opens the gate of the spirits to revive all dead allies. Dispels all debuffs from all allies before granting immortality for 1 turn, and grants possession to the caster for 3 turns.",

@@ -1,4 +1,4 @@
-import { effectiveStats } from "./buffs.js";
+import { effectiveStats, hasBuff } from "./buffs.js";
 const canonical = (element) =>
   ({ water: "ice", earth: "wind" })[element] || element;
 export function elementRelation(attacker, defender) {
@@ -22,14 +22,14 @@ export function hitChances(attacker, defender, data = {}) {
       100,
       Math.max(
         0,
-        (relation === "disadvantage" ? 50 : 0) + d.evasion + a.hitChancePenalty - (data.hitChanceBonus || 0),
+        (relation === "disadvantage" ? 50 : 0) + d.evasion + a.hitChancePenalty - (data.hitChanceBonus || data.earthReview?.hitChanceBonus || 0) - (hasBuff(attacker,"stic_increase_hit") ? 50 : 0),
       ),
     ),
     critical: Math.min(
       100,
       Math.max(
         0,
-        a.chc - d.critResistance + (relation === "advantage" ? 15 : 0) + (data.criticalChanceBonus || 0),
+        a.chc - d.critResistance + (relation === "advantage" ? 15 : 0) + (data.criticalChanceBonus || data.earthReview?.criticalChanceBonus || 0),
       ),
     ),
     crushing: relation === "advantage" ? 50 : 30,

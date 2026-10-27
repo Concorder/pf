@@ -22,7 +22,7 @@ export function baseStats(heroes, name) {
     {};
   return {
     hp: d.hp || 5000,
-    atk: d.atk || 1000,
+    atk: Math.round((d.atk || 1000)*(1+(d.bonusMaxAtkPercent || 0)/100)),
     def: d.def || 500,
     spd: d.spd || 100,
     chc: Math.round((d.chc || 0.15) * 100),

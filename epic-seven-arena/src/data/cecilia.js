@@ -1,3 +1,4 @@
+import {EARTH_SKILL_RULES} from "./earthSkillRules.js";
 import {resolvePassiveWatchers} from "./passiveWatchers.js";
 import {reviewedDamage} from "./reviewedDamage.js";
 import {resolveNonAttackSkill} from "./nonAttackSkills.js";
@@ -178,6 +179,9 @@ export function normalizeSkill(hero, raw, index) {
       resourcePassive.opening.amount = row.slice(0, enhancement.level + 1).reduce((a,v) => a + (v || 0), 0);
     else delete resourcePassive.opening;
   }
+  const candidateEarth=EARTH_SKILL_RULES[hero.id]?.[`S${index+1}`];
+  const earthReview=candidateEarth?.description===description && (!candidateEarth.sourceText || candidateEarth.sourceText===s.multipliers) ? structuredClone(candidateEarth) : null;
+  if(earthReview?.staticPassive?.crDecreaseReductionVariable!==undefined)earthReview.staticPassive.crDecreaseReduction=(s.values?.[earthReview.staticPassive.crDecreaseReductionVariable]||[]).slice(0,enhancement.level+1).reduce((a,v)=>a+(v||0),0)*10;
   const watcherReview = resolvePassiveWatchers(hero,s,index,Math.max(0,Number(s.cooldown || 0)+enhancement.cooldown));
   const result = {
     protectionBypass: reviewedProtection ? {
@@ -190,6 +194,9 @@ export function normalizeSkill(hero, raw, index) {
     sourceReview: sourceCorrection?.note || null,
     resource,
     resourcePassive,
+    earthReview,
+    healingEnhancement: enhancement.entries.filter(e=>e.string==="enh_healing_eff").reduce((sum,e)=>sum+e.value,0),
+    barrierEnhancement: enhancement.entries.filter(e=>e.string==="enh_barrier_strength").reduce((sum,e)=>sum+e.value,0),
     watchers: watcherReview?.watchers || [],
     watcherPending: watcherReview?.pending || [],
     passiveComplete: !!watcherReview?.complete && (!watcherReview.requiresOpening || !!resourcePassive?.opening),
@@ -276,13 +283,15 @@ export function normalizeSkill(hero, raw, index) {
     hitTypes: ["crit", "crushing", "normal", "miss"],
     note: "Normal cast, awakened skill, MAX enhancements; only reviewed secondary effects are automated.",
   };
+  if (result.nonAttack?.allowMissingNonAttackTag) {result.tags=["nonAttack"];result.targetScope=null;}
   result.displayDescription = formatSkillDescription(description, s.values, {
     level: enhancement.level,
     overrides: result.passiveDamageLimit ? {0: `${result.passiveDamageLimit}%`} : {},
   });
   if (passive) {
+    result.passiveComplete ||= !!earthReview?.complete;
     result.damageSupport = "passive";
-    result.supportReason = result.passiveDamageLimit
+    result.supportReason = earthReview?.staticPassive ? `Passive: reviewed stats${earthReview.complete ? " implemented" : "; pending: " + earthReview.pending.join(", ")}` : result.passiveDamageLimit
       ? "Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented"
       : result.openingOffering
       ? "Passive: Offering grant, sharing, one-time survival and bearer-death healing implemented; enemy CR-copy mechanic pending"
@@ -295,7 +304,7 @@ export function normalizeSkill(hero, raw, index) {
       : result.resourcePassive
         ? "Passive: reviewed resource grants/gain blocking implemented; other effects pending"
         : "Passive: triggered effects are not automated";
-  } else if (common.includes("cmn_non_attack_skill")) {
+  } else if (result.nonAttack || common.includes("cmn_non_attack_skill")) {
     result.damageSupport = result.nonAttack ? "nonAttack" : "unsupported";
     result.supportReason = result.nonAttack
       ? `Non-attack cast implemented${result.nonAttack.pending.length ? "; pending: " + result.nonAttack.pending.join(", ") : ""}`
@@ -310,7 +319,7 @@ export function normalizeSkill(hero, raw, index) {
     )
   )
     result.hitTypes = result.hitTypes.filter((x) => x !== "crit");
-  if (!passive && !result.celineS1 && !common.includes("cmn_non_attack_skill") && common.includes("cmn_penetration")) {
+  if (!passive && !result.celineS1 && !result.reviewedPenetration && !common.includes("cmn_non_attack_skill") && common.includes("cmn_penetration")) {
     const clauses = description.match(/[^.!?]*\bpenetrat(?:e[sd]?|ion)\b[^.!?]*/gi) || [];
     const m = clauses.length === 1 && clauses[0].match(/penetrates?[^.]*?(\d+(?:\.\d+)?)%/i);
     // HP/DEF/Speed scaling in a separate sentence does not make a fixed
@@ -329,7 +338,7 @@ export function normalizeSkill(hero, raw, index) {
     ["cmn_def_scaling", "selfDefScaling"],
     ["cmn_target_max_health", "targetHpScaling"],
   ])
-    if (!passive && !common.includes("cmn_non_attack_skill") && common.includes(tag) && !Number.isFinite(result[key])) {
+    if (!passive && !common.includes("cmn_non_attack_skill") && common.includes(tag) && !result.healingOnlyScaling && !Number.isFinite(result.selfMissingHpScaling) && !Number.isFinite(result[key])) {
       result.damageSupport = "unsupported";
       result.supportReason = "Missing numeric scaling coefficient";
     }

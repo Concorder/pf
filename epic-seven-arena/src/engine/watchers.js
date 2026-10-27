@@ -8,6 +8,7 @@ export function watcherMatches(battle,owner,watcher,event) {
   if (relation === "allyExceptSelf" && owner.id === event.actorId) return false;
   if (relation === "self" && owner.id !== event.actorId) return false;
   if (!["enemy","ally","allyExceptSelf","self"].includes(relation)) return false;
+  if(watcher.kindsAny && !watcher.kindsAny.includes(event.kind))return false;
   if ((watcher.tagsAll || []).some(tag => !event.tags?.includes(tag))) return false;
   return true;
 }

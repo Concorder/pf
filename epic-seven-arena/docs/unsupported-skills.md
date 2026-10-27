@@ -2,7 +2,7 @@
 
 Generated from the bundled CeciliaBot snapshot (2026-10-22T22:41:17.340Z) and current normalization rules.
 Scope: **391 heroes**, **1173 skills**.
-Contains **1103 skill entries** across **391 heroes**.
+Contains **1085 skill entries** across **391 heroes**.
 
 Regenerate with `npm run report:skills`. This is an implementation/review queue, not a list of questions you must answer. Checked-off notes should be recorded in the relevant mechanics document or rules before regeneration, which replaces this file.
 
@@ -15,7 +15,7 @@ Regenerate with `npm run report:skills`. This is an implementation/review queue,
 
 See [remaining mechanics](remaining-mechanics.md), [health rules](health-mechanics.md), and [trigger rules](triggers-and-revival.md) for context. Already confirmed injury/Collapse, Venom scaling, damage-limit/share ordering and buff sorting rules are not reopened here.
 
-Ordinary target selection, caster exclusions, buff recipients, durations and explicit trigger conditions are taken from CeciliaBot descriptions. They do not require user clarification. Damage/healing coefficients are checked against e7calc. Ask the user only if source research leaves a genuine contradiction or undocumented interaction unresolved. See [review policy](review-policy.md).
+Ordinary target selection, caster exclusions, buff recipients, durations and explicit trigger conditions are taken from CeciliaBot descriptions. They do not require user clarification. Damage coefficients follow e7calc. Healing/barrier metadata uses reviewed source text and max enhancements, cross-checked against e7calc where it provides those values. Ask the user only if source research leaves a genuine contradiction or undocumented interaction unresolved. See [review policy](review-policy.md).
 
 ## How to read the skill queue
 
@@ -172,27 +172,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### ae-GISELLE (c1138)
 
-- [ ] **S1 — Surging Light** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S1 — Surging Light** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy, and increases Combat Readiness of the ally with the highest Attack except for the caster by 15%. Damage dealt increases proportional to the target's current Health ratio.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1 (1.7 Soulburn)<br>!pow: 1<br>0.2% increased damage per 1% target current Health (Same for Soulburn)<br>
-  - Unparsed formula lines: 0.2% increased damage per 1% target current Health (Same for Soulburn)
+  - Reviewed Earth effects: readiness.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1 (1.7 Soulburn)<br>!pow: 1<br>0.2% increased damage per 1% target current Health (Same for Soulburn)<br>
   - Soulburn (10 souls): Increases damage dealt.
-
-- [ ] **S2 — Linguistic Wisdom** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
-  - Description: Amplifies the effect of Combat Readiness increases the caster receives by 50%. At the start of the turn, has a 100% chance to dispel one debuff.
-  - Source multiplier text (requires review): Skill2<br>
-
-- [ ] **S3 — Frame of Light** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
-  - Description: Attacks the enemy with light, before increasing Attack of the caster and the ally with the highest Attack except for the caster for 2 turns. When the enemy is not an Elite or Boss monster, damage sharing effects are ignored. When the enemy is defeated, grants an extra turn to the caster.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 2<br>!pow: 1<br>
 
 ### ae-KARINA (c1137)
 
@@ -478,19 +465,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: Recovers the caster's Health when using Eradicate. Amount recovered increases proportional to the caster's max Health.
 
 - [ ] **S2 — Noble Blood** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
+  - Current base support: passive. Passive: reviewed stats; pending: Mind’s Eye opening each turn and Trample follow-up
+  - Review/work: Passive: reviewed stats; pending: Mind’s Eye opening each turn and Trample follow-up
+  - Review/work: Mind’s Eye opening each turn and Trample follow-up
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Increases Critical Hit Chance by 20%. At the start of the turn, has a 100% chance to grant Mind's Eye to the caster for 1 turn. After using Eradicate, when the caster is granted Mind's Eye, activates Trample as an extra skill.<br>Trample: Attacks the enemy by striking from above, and increases Combat Readiness of the caster by 15%. Damage dealt increases proportional to the caster's max Health.
+  - Reviewed Earth effects: conditional/passive execution.
   - Source multiplier text (requires review): Skill2 (Trigger Only)<br>att_rate: 0.5<br>!pow: 1<br>11% self max Health (0.11 * Health)<br>
   - Unparsed formula lines: Skill2 (Trigger Only)
   - EE 2: Increase damage dealt by Tramplet by 20%.
 
 - [ ] **S3 — Genesis** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with Dragon's Might, dispelling all buffs, and grants increased Defense to all allies for 2 turns. Increases Combat Readiness of the caster by 50%. Damage dealt increases proportional to the caster's max Health.
+  - Reviewed Earth effects: buff, readiness.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.5<br>!pow: 1<br>15% self max Health (0.15 * Health)<br>
   - EE 3: Decreases Combat Readiness of the target by 20% when using Genesis.
 
@@ -981,18 +970,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: Increases Dagger Throw's chance to inflict --bleeding-- by 20%.
 
 - [ ] **S2 — Wild Instinct** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
+  - Current base support: passive. Passive: reviewed stats implemented
+  - Review/work: Attack +30% and no critical hits are implemented by the reviewed passive stat rule
   - Description: Attack increases by 30%. When attacking, cannot trigger a critical hit. At the end of an enemy's turn, when the target is granted a barrier, increases Combat Readiness of the caster by 10%.
+  - Reviewed Earth effects: conditional/passive execution.
+  - Implemented watchers: arunka-enemy-barrier.
   - Source multiplier text (requires review): Skill2<br>
 
-- [ ] **S3 — A Thrashing In The Prairie** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unverified defense penetration
-  - Review/work: Conditional or unverified defense penetration
+- [ ] **S3 — A Thrashing In The Prairie** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Runs up to the enemy to attack. When the enemy is defeated, inflicts extinction and resets cooldown of this skill. Penetrates the target's Defense by 70% and when the target is granted a barrier, increases damage dealt.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 0.9<br>!pow: 1<br>240% increased damage if enemy has barrier<br>
-  - Unparsed formula lines: 240% increased damage if enemy has barrier
+  - Reviewed Earth effects: conditional/passive execution.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill3<br>att_rate: 0.9<br>!pow: 1<br>240% increased damage if enemy has barrier<br>
   - EE 3: Increases Combat Readiness of the caster by 30% when usrng A Thrashing In The Prairie.
 
 ### Assassin Cartuja (c2013)
@@ -1253,23 +1244,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Baiken (c1093)
 
-- [ ] **S1 — Tatami Gaeshi** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
-  - Description: Attacks the enemy repeatedly, with a 70% chance each to inflict two --bleeding effects-- for 2 turns. A critical hit will reduce the caster's skill cooldowns by 1 turn.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>2 separate chances to apply a bleed at said %<br>
-  - Unparsed formula lines: 2 separate chances to apply a bleed at said %
-
-- [ ] **S2 — Tsurane Sanzu-watashi** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
-  - Description: Attacks the enemy with expert swordsmanship and has a 80% chance each to inflict three --bleeding-- effects for 2 turns. One bleeding effect ignores Effect Resistance. A critical hit will grant an extra turn.
-  - Source multiplier text (requires review): Skill2<br>att_rate: 1.2<br>!pow: 1<br>3 separate chances to apply a bleed at said % (one ignores resistances)<br>
-  - Unparsed formula lines: 3 separate chances to apply a bleed at said % (one ignores resistances)
-
 - [ ] **S3 — Garyo Tensei** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
@@ -1280,12 +1254,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Soulburn (10 souls): Increases damage dealt.
 
 ### Basar (c1053)
-
-- [ ] **S2 — Hurricane** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Unmapped/conditional debuff grants
-  - Description: Attacks all enemies by releasing a hot sand hurricane, with a 75% chance each to inflict --decreased Hit Chance-- and --decreased Attack-- for 2 turns.
-  - Supported damage formula (reference only): Skill2<br>att_rate: 0.9<br>!pow: 1<br>
 
 - [ ] **S3 — Sandstorm** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -1406,28 +1374,27 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy with a fan. Damage dealt increases proportional to the target's max Health. When Focus is 5 or more, consumes all Focus and activates Razorwind Fan.
+  - Reviewed Earth effects: conditional/passive execution.
   - Resource: focus; base gain 1; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.95<br>4% target max Health<br>
   - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Butterfly Fan** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks all enemies by waving a fan, before granting immunity to the caster for 1 turn.
+  - Reviewed Earth effects: buff.
   - Resource: focus; base gain 1; required/spent 0.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.2<br>!pow: 0.95<br>
   - EE 1: Dispels one buff each from all enemies when using Butterfly Fan.
 
-- [ ] **S3 — Razorwind Fan** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
+- [ ] **S3 — Razorwind Fan** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies by creating a powerful gust of wind, with a 100% chance to --decrease Defense-- for 2 turns. Increases damage dealt when Razorwind Fan is triggered by Windbreak Fan.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
   - Resource: focus; base gain 3; required/spent 0.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 1.05 (1.25 if tirggered by S1)<br>!pow: 1<br>
-  - Unparsed formula lines: att_rate: 1.05 (1.25 if tirggered by S1)
+  - Supported damage formula (reference only): Skill3<br>att_rate: 1.05 (1.25 if tirggered by S1)<br>!pow: 1<br>
   - EE 3: Decreases Combat Readiness of all enemies by 15% when using Razorwrnd Fan.
 
 ### Benevolent Romann (c2043)
@@ -2509,6 +2476,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: supported. Damage coefficients parsed
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy, increasing Combat Readiness of the caster and a random ally except for the caster by 15%.
+  - Reviewed Earth effects: readiness.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
   - EE 1: Increases Combat Readiness of the ally with the highest Attack Instead of a random ally when using Supporting Fire.
 
@@ -2795,35 +2763,26 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Destina (c2022)
 
-- [ ] **S1 — Key to an Oath** — Skill execution unsupported
-  - Current base support: unsupported. Missing numeric scaling coefficient
-  - Review/work: Missing numeric scaling coefficient
+- [ ] **S1 — Key to an Oath** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a staff, before recovering Health of the ally with the lowest Health proportional to the caster’s max Health.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Heal strength: 8% self max Health<br>Heal strength: 35% self max Health (Soulburn)
-  - Unparsed formula lines: Heal strength: 8% self max Health; Heal strength: 35% self max Health (Soulburn)
+  - Reviewed Earth effects: heal.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>Heal strength: 8% self max Health<br>Heal strength: 35% self max Health (Soulburn)
   - Soulburn (20 souls): After attacking, greatly heals all allies. Does not trigger a Dual Attack.
   - EE 1: Dispels one debuff from the ally with the lowest Health when using Key to an Oath.
 
-- [ ] **S2 — Regen** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
+- [ ] **S2 — Regen** — Non-attack cast supported; remaining effects listed below
+  - Current base support: nonAttack. Non-attack cast implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Blesses an ally, dispelling two debuffs and recovering Health proportional to the caster’s max Health before increasing Combat Readiness by 30%.
-  - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 16% self max Health<br>
+  - Non-attack source note (no damage formula): Skill2<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 16% self max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 16% self max Health
   - EE 2: Has a 30% chance to reset skill cooldown of Regen when using Regen.
   - EE 3: Increases Combat Readiness of the target by an additional 20% when using Regen.
-
-- [ ] **S3 — Destina's Grace** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Description: Through the benediction of a Spirit Lord, revives all dead allies to 30% Health. For allies that are not dead, dispels all debuffs before recovering Health proportional to the caster's max Health. At the start of the first battle, grants Spirit's Blessing to the caster for 3 turns.
-  - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 30% self max Health<br>
-  - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 30% self max Health
 
 ### Diene (c1076)
 
@@ -3561,8 +3520,8 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Magic Arrow** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a magic arrow, and increases Speed for 1 turn.
+  - Reviewed Earth effects: buff.
   - Resource: fightingSpirit; base gain 25; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.2 (1.9 Soulburn)<br>!pow: 1<br>
   - Soulburn (10 souls): Increases damage dealt.
@@ -3574,15 +3533,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Implemented resource passive portions: battle-start grant. Other passive effects still require separate handlers.
   - Source multiplier text (requires review): Skill2<br>att_rate: 0.7<br>!pow: 1<br>
-
-- [ ] **S3 — Strike of Fate** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Description: After granting increased Attack (Greater) of the caster for 3 turns, attacks the enemy with an arrow of resolution, and increases Combat Readiness of all allies by 30%. When the enemy's max Health is greater than the caster's max Health, damage dealt increases proportionally, up to 70%.
-  - Resource: fightingSpirit; base gain 0; required/spent 75.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 1.3<br>!pow: 1<br>Damage increase (max 70%): DIFFERENCE_IN_MAX_HP * 0.00005<br>14000 (14k) health diff for 70% damage increase
-  - Unparsed formula lines: Damage increase (max 70%): DIFFERENCE_IN_MAX_HP * 0.00005; 14000 (14k) health diff for 70% damage increase
 
 ### Fern (c1173)
 
@@ -3766,14 +3716,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Description: At the start of battle, grants 40% resource increase to all allies. During battle, when Soul is 4 or higher, grants Defensive Magic. After being attacked, increases Combat Readiness of all allies by 10%
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-
-- [ ] **S3 — Judradjim** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Description: After granting increased Attack to the caster for 3 turns, attacks all enemies with lightning magic, dispelling all buffs. Increases Combat Readiness of the caster by 50%. Penetrates the target's Defense by 50%.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 0.95<br>!pow: 1<br>50% Penetration<br>
-  - Unparsed formula lines: 50% Penetration
 
 ### Fumyr (c1147)
 
@@ -5069,7 +5011,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 ### Kise (c1006)
 
 - [ ] **S1 — Full Moon Scythe** — Base damage supported; secondary effects pending
-  - Current base support: supported. Reviewed e7calc conditional damage
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a scythe. When the target has a buff, increases damage dealt by 70%.
   - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
@@ -5275,9 +5217,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Fires at all enemies to attack, and increases Combat Readiness of all allies by 25%, before granting a barrier (proportional to Attack) to the caster for 2 turns. When Fighting Spirit is full, consumes all Fighting Spirit to penetrate the target's Defense by 50%. This skill cannot trigger a counterattack.
+  - Reviewed Earth effects: readiness, barrier.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.9<br>!pow: 1<br>Barrier strength: 80% caster's Attack<br>
   - Unparsed formula lines: Barrier strength: 80% caster's Attack
@@ -5508,9 +5450,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy mercilessly, with a 100% chance to dispel all buffs. A critical hit will grant an extra turn.
+  - Reviewed Earth effects: conditional/passive execution.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.2<br>!pow: 1<br>20% increased damage if target has no buffs<br>
   - Unparsed formula lines: 20% increased damage if target has no buffs
   - Soulburn (10 souls): Ignores Effect Resistance.
@@ -5767,16 +5709,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with light, decreasing buff durations by 1 turn before a 100% chance to --stun-- for 1 turn. Grants invincibility to the caster for 1 turn and increases Combat Readiness by 50%.
+  - Reviewed Earth effects: buff, readiness.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.65<br>!pow: 1.05<br>
   - Soulburn (20 souls): Ignores Effect Resistance.
   - EE 1: Increases Attack of the caster for 2 turns when using Moonlight Blow.
   - EE 2: --Decreases Defense-- for 2 turns when using Moonlight Blow.
-
-- [ ] **S3 — Call of the Full Moon** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unverified defense penetration
-  - Review/work: Conditional or unverified defense penetration
-  - Description: Attacks all enemies with Nocturne magic, and when an enemy is defeated, extends the caster's buff durations by 1 turn. Penetrates the target's Defense by 30%. When the caster is invincible, penetrates the target's Defense by an additional 30%.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 0.9<br>!pow: 0.95<br>
 
 ### Luluca (c1082)
 
@@ -6349,7 +6286,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Punishment** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Unmapped/conditional debuff grants
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks all enemies by calling upon a trained monster, with a 50% chance each to inflict two --bleeding-- effects for 2 turns and a 80% chance to inflict --stun-- for 1 turn.
@@ -6359,10 +6295,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Grand Finale** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Drives monsters forward to attack all enemies and dispels two buffs. Grants increased Attack to all allies for 3 turns, and increases Combat Readiness of the caster by 30% per critical hit.
+  - Reviewed Earth effects: buff, readiness.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 0.95<br>
   - EE 2: Grants enhanced Dual Attack to the ally with the highest Attack after using Grand Finale.
   - EE 3: --Silences-- the enemy with the highest Combat Readiness for 1 turn after using Grand Finale.
@@ -6574,30 +6510,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with overflowing energy, and increases Combat Readiness of the ally with the highest Combat Readiness except the caster by 15%
+  - Reviewed Earth effects: readiness.
   - Resource: focus; base gain 1; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
   - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies.
   - EE 1: Increases Combat Readiness by an additional 5% when using Order's In, Just Wait!
 
 - [ ] **S2 — One Luluca's Special!** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
+  - Current base support: passive. Passive: reviewed condition watcher implemented; Full-Focus Special Delivery additional attack pending
+  - Review/work: Passive: reviewed condition watcher implemented; Full-Focus Special Delivery additional attack pending
+  - Review/work: Full-Focus Special Delivery additional attack
   - Review/work: Unmapped/conditional debuff grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: After an enemy uses a non-attack skill, gains 2 Focus and increases Combat Readiness of the caster by 25%. Can only be activated once every 2 turns. After using a skill, when Focus is full, consumes all Focus and activates Luluca's Special Delivery.<br>Luluca's Special Delivery: Attacks all enemies who are interrupting her delivery, dispelling two buffs and an 85% chance to inflict --silence-- for 1 turn and a 100% chance to --decrease Hit Chance-- for 2 turns, before decreasing skill cooldowns of the caster by 1 turn.
+  - Implemented watchers: ocean-luluca-enemy-non-attack.
   - Resource: focus; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill2 (Proc)<br>att_rate: 1<br>!pow: 1<br>
   - Unparsed formula lines: Skill2 (Proc)
   - EE 2: Increasees Combat Readiness of the caster by an additional 15% after an enemy uses a non-attack skill.
-
-- [ ] **S3 — This One's On Me** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Description: With quality customer service, dispels two debuffs from all allies and grants increased Defense for 2 turns and an ice cream.
-  - Resource: focus; base gain 3; required/spent 0.
-  - Source multiplier text (requires review): No info
-  - Unparsed formula lines: No info
 
 ### Operator Sigret (c2072)
 
@@ -6673,10 +6603,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Storm Bullet** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Grants the caster increased Attack for 2 turns, before firing a strong blast of wind at all enemies. Damage dealt increases proportional to the caster's Speed. This skill cannot trigger a counterattack.
+  - Reviewed Earth effects: buff.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.8<br>!pow: 1<br>0.1125% self Speed (0.001125 * Speed)<br>
   - Soulburn (20 souls): Grants an extra turn.
   - EE 1: Dispels two debuffs from the caster before the skill effect when using Storm Bullet.
@@ -6956,19 +6886,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
   - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack.
 
-- [ ] **S2 — What Are You Looking At?** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
-  - Description: Increases Attack by 30%. Reduces the effect of decreased Combat Readiness debuffs inflicted on the caster by 100%.
-  - Source multiplier text (requires review): Skill2<br>
-
-- [ ] **S3 — El Fura** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Description: Attacks the enemy with a gust of wind, --decreasing Defense-- for 2 turns, and grants increased Attack (Greater) to the caster for 2 turns.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1<br>
-
 ### Ran (c1118)
 
 - [ ] **S2 — Mental Focus** — Skill execution unsupported
@@ -7054,14 +6971,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: Barrier strength: 10-15% Target Max Health
   - EE 2: Increases Light of Rebirth's amount recovered by 15%.
 
-- [ ] **S3 — Invigorate** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
+- [ ] **S3 — Invigorate** — Non-attack cast supported; remaining effects listed below
+  - Current base support: nonAttack. Non-attack cast implemented
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: By infusing vitality, dispels all debuffs from all allies and grants immunity for 2 turns before recovering Health proportional to the target’s max Health.
-  - Source multiplier text (requires review): Skill3<br>Heal strength: 15% Target Max Health, 25% soulburn<br>
+  - Non-attack source note (no damage formula): Skill3<br>Heal strength: 15% Target Max Health, 25% soulburn<br>
   - Unparsed formula lines: Heal strength: 15% Target Max Health, 25% soulburn
   - Soulburn (10 souls): Increases the amount recovered.
   - EE 3: Increases Defense of the caster for 2 turns when using Invigorate.
@@ -7480,30 +7395,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Roana (c1102)
 
-- [ ] **S1 — Soul Purification** — Skill execution unsupported
-  - Current base support: unsupported. Missing numeric scaling coefficient
-  - Review/work: Missing numeric scaling coefficient
+- [ ] **S1 — Soul Purification** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn enhanced execution (currently preview only)
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a noble power, and grants a barrier (proportional to the caster’s max Health) to the ally with the lowest Health for 2 turns.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Barrier strength: 10-12.5% self Max Health<br>
-  - Unparsed formula lines: Barrier strength: 10-12.5% self Max Health
+  - Reviewed Earth effects: barrier.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>Barrier strength: 10-12.5% self Max Health<br>
   - Soulburn (20 souls): Grants a barrier to all allies for 2 turns after attacking.
-
-- [ ] **S2 — Vigilant Eye** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
-  - Description: When an ally is attacked by an extra attack, counterattack, or Dual Attack, recovers Health of all allies proportional to the caster’s max Health and the number of attacked allies, and increases Combat Readiness of each by 5% per attacked ally.
-  - Source multiplier text (requires review): Skill2<br>Heal strength: 5-7.75% self max Health <br>maybe per unit hit, too lazy to figure out
-  - Unparsed formula lines: Heal strength: 5-7.75% self max Health ; maybe per unit hit, too lazy to figure out
-
-- [ ] **S3 — Noble Rekos** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Description: With the grace of Rekos, recovers the Health of all allies and grants a barrier and revive for 2 turns. Amount recovered and barrier strength increase proportional to the caster’s max Health.
-  - Source multiplier text (requires review): Skill3<br>Heal strength: 25% self max Health <br>Barrier strength: 15% self Max Health
-  - Unparsed formula lines: Heal strength: 25% self max Health ; Barrier strength: 15% self Max Health
 
 ### Robin (c1169)
 
@@ -7759,14 +7658,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: Skill2(Proc)
   - EE 1: Increases Combat Readiness increase effect of Guidance of Nature by an additional 10%.
 
-- [ ] **S3 — Blossoming Hope** — Skill execution unsupported
-  - Current base support: unsupported. Unverified target count
-  - Review/work: Unverified target count
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
+- [ ] **S3 — Blossoming Hope** — Non-attack cast supported; remaining effects listed below
+  - Current base support: nonAttack. Non-attack cast implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: By kindling the light of hope, grants invincibility to all allies for 1 turn and increased Attack for 2 turns.
   - Resource: focus; base gain 3; required/spent 0.
-  - Source multiplier text (requires review): No info
+  - Non-attack source note (no damage formula): No info
   - Unparsed formula lines: No info
   - EE 3: When using Blossoming Hope, the duration of increased Attack in increased to 3 turns.
 
@@ -7948,10 +7845,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: Recovers Health of the caster after using Spear of Vengeance. Amount recovered increases proportional to the caster's Attack.
 
 - [ ] **S2 — Indomitable Spirit** — Passive partially implemented or pending
-  - Current base support: passive. Passive: triggered effects are not automated
-  - Review/work: Passive: triggered effects are not automated
+  - Current base support: passive. Passive: reviewed stats; pending: Non-critical-hit retaliation and Grace of the Battlefield
+  - Review/work: Passive: reviewed stats; pending: Non-critical-hit retaliation and Grace of the Battlefield
+  - Review/work: Non-critical-hit retaliation and Grace of the Battlefield
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Increases Attack by 30% and Critical Hit Resistance by 50%. When attacking, cannot trigger a critical hit or a heavy blow. When attacked, if the caster suffers a non-critical hit, inflicts damage on the attacker proportional to the caster's Attack, before activating Grace of the Battlefield.<br>Grace of the Battlefield: Grants a barrier (proportional to the caster’s Attack) to all allies for 2 turns, and grants increased Speed of the caster for 2 turns.
+  - Reviewed Earth effects: conditional/passive execution.
   - Source multiplier text (requires review): Skill2<br>Barrier Strength: 25% of Self Attack<br>
   - Unparsed formula lines: Barrier Strength: 25% of Self Attack
   - EE 2: Increases Grace of the Battlefield's barrier strength by 20%.
@@ -9502,30 +9401,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br>
   - Soulburn (10 souls): Increases effect chance to 100% and --decreases Attack-- of the target for 2 turns.
 
-- [ ] **S2 — Duel Accepted** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
-  - Description: As preparation for a duel, dispels two debuffs from the caster and grants perception for 3 turns, before recovering 15% Health. Grants an extra turn.
-  - Resource: focus; base gain 3; required/spent 0.
-  - Source multiplier text (requires review): Skill2<br>Heal strength: 15% self max Health<br>
-  - Unparsed formula lines: Heal strength: 15% self max Health
-
-- [ ] **S3 — Butterfly Cut** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Description: Attacks the enemy by piercing them with a sword before consuming all Focus. Damage dealt increases proportional to the amount of Focus consumed, and when consumed Focus is 5, resets the cooldown of Butterfly Cut. When Butterfly Cut is not on cooldown, increases Evasion by 35%, and when evading, counterattacks with Graceful Cut.
-  - Resource: focus; base gain 0; required/spent 0.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 1.5<br>!pow: 0.9<br>15% increased damage per Focus<br>
-  - Unparsed formula lines: 15% increased damage per Focus
-
 ### Vivian (c1088)
 
 - [ ] **S1 — Vitality Drain** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Smashes the enemy with a rock, increasing the caster's Combat Readiness by 15%. A critical hit will increase the caster's Combat Readiness by an additional 10%.
+  - Reviewed Earth effects: readiness.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.2<br>!pow: 1<br>
   - EE 1: A critical hit with Vitality Drain will increase the caster's Combat Readiness by an additional 5%.
 
@@ -9801,14 +9683,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: Additional damage from Special Friendship is dealt regardless of the bearer's turn.
   - EE 2: When using Help!, additional damage increases to 20% of max Health.
 
-- [ ] **S3 — Snack Time!** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
+- [ ] **S3 — Snack Time!** — Non-attack cast supported; remaining effects listed below
+  - Current base support: nonAttack. Non-attack cast implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Stops fighting and takes a break, dispelling all debuffs from all allies and granting continuous healing for 2 turns before increasing Combat Readiness by 20%.
   - Resource: fightingSpirit; base gain 20; required/spent 0.
-  - Source multiplier text (requires review): Skill3<br>Special Friendship: 8% of the attacker's max Health as additional damage on critical hit<br>
+  - Non-attack source note (no damage formula): Skill3<br>Special Friendship: 8% of the attacker's max Health as additional damage on critical hit<br>
   - Unparsed formula lines: Special Friendship: 8% of the attacker's max Health as additional damage on critical hit
   - EE 3: When using Snack Time!, grants a barrier (proportional to the caster's max Health) to all allies for 2 turns.
 
@@ -9831,15 +9711,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Soulburn (20 souls): Ignores Effect Resistance.
   - EE 3: Increases Dragon's Roar's chance to --silence-- by 15%.
 
-- [ ] **S3 — Dragon Charge** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
-  - Description: After granting increased Attack to the caster for 2 turns, attacks the enemy with a massive blade. When the enemy is defeated, grants an extra turn. When the target has a debuff, increases damage dealt. When this skill is not on cooldown, after an ally except for the caster uses a skill, if the enemy has a debuff, increases Combat Readiness of the caster by 20%.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 2<br>!pow: 0.95<br>50% increased damage if target is debuffed<br>
-  - Unparsed formula lines: 50% increased damage if target is debuffed
-
 ### Yulha (c1131)
 
 - [ ] **S2 — Malicious Smile** — Passive partially implemented or pending
@@ -9853,14 +9724,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: With Murderous Intent's effect, increases Combat Readiness by an additional 10%.
   - EE 2: With Malicious Smile's effect, increases damage reflected by 20%.
 
-- [ ] **S3 — Symphony of Agony** — Skill execution unsupported
-  - Current base support: unsupported. Missing numeric scaling coefficient
-  - Review/work: Missing numeric scaling coefficient
+- [ ] **S3 — Symphony of Agony** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by unraveling Sphere of Sadism, and when the enemy is defeated, recovers Health of the caster proportional to max Health. When the target is not an Elite or Boss monster, ignores damage share. Penetrates the target's Defense, but cannot trigger a critical hit or a heavy blow. Damage dealt increases proportional to the caster's lost Health.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 0.5<br>!pow: 1<br>0.31 (0.41 with soulburn) flat per 1 hp missing<br>Heal strength: 40% Self Max HP
-  - Unparsed formula lines: 0.31 (0.41 with soulburn) flat per 1 hp missing; Heal strength: 40% Self Max HP
+  - Reviewed Earth effects: heal.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill3<br>att_rate: 0.5<br>!pow: 1<br>0.31 (0.41 with soulburn) flat per 1 hp missing<br>Heal strength: 40% Self Max HP
   - Soulburn (10 souls): Increases damage dealt.
   - EE 3: Resets skill cooldown when defeating an enemy with Symphony of Agony.
 
@@ -9898,26 +9769,18 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 ### Zahhak (c1119)
 
 - [ ] **S1 — Vulnerability Exposed** — Base damage supported; secondary effects pending
-  - Current base support: supported. Reviewed e7calc conditional damage
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy with a longsword. Increases Hit Chance and Critical Hit Chance of this skill by 50%. When the target has a buff, increases damage dealt.
   - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.1(1.8 soulburn)<br>!pow: 1<br>30% increased damage if target is buffed<br>
   - Soulburn (10 souls): Increases damage dealt.
 
-- [ ] **S2 — Elaborate Plan** — Skill execution unsupported
-  - Current base support: unsupported. Non-damaging skill: effect support pending
-  - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
-  - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
-  - Description: Dispels two debuffs from an ally before increasing Combat Readiness of the ally by 30%. Grants increased Attack and increased Hit Chance to the caster for 3 turns. Grants an extra turn.
-  - Source multiplier text (requires review): Skill2<br>
-
 - [ ] **S3 — Execute** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy, inflicting up to 35% injuries, before granting invincibility to the caster for 1 turn. Increases Critical Hit Chance and Hit Chance of this skill by 50%.
+  - Reviewed Earth effects: buff.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.9<br>!pow: 1<br>
   - EE 2: Inflicts resource reduction on the target by 60% before the skill's effect when using Execute.
 

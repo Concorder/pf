@@ -106,7 +106,7 @@ function HeroUnit({ side, slot }) {
                 <span
                   key={b.instance || `${b.id}-${index}`}
                   className={`buff-badge ${BUFFS[b.id]?.unique ? "unique-effect-badge" : BUFFS[b.id]?.debuff ? "debuff-badge" : BUFFS[b.id]?.undispellable ? "undispellable-buff-badge" : ""} ${isEffectSuppressed(unit, b) ? "buff-suppressed" : ""}`}
-                  title={`${BUFFS[b.id]?.name} · ${b.expiresAtGlobal !== undefined ? `${effectRemaining(l.battle, b)} global turns` : b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}${isEffectSuppressed(unit, b) ? " · suppressed by Block" : ""}`}
+                  title={`${BUFFS[b.id]?.name} · ${b.expiresAtGlobal !== undefined ? `${effectRemaining(l.battle, b)} global turns` : b.turns === null ? "permanent" : `${b.turns} turns`} · ${BUFFS[b.id]?.description}${b.barrier !== undefined ? ` · ${b.barrier.toLocaleString()} shield HP` : ""}${isEffectSuppressed(unit, b) ? " · suppressed by Block" : ""}`}
                 >
                   <img
                     src={asset(`data/buff-icons/${b.id}.png`)}
@@ -126,6 +126,7 @@ function HeroUnit({ side, slot }) {
                   style={{ width: `${(unit.currentHp / maxHp(unit)) * 100}%` }}
                 />
               </div>
+              {(unit.buffs || []).some(b=>b.id==="stic_protect"&&b.barrier>0&&hasBuff(unit,b.id)) && <div className="unit-barrier" role="meter" aria-label={`Barrier for ${unit.name}`} aria-valuemin={0} aria-valuemax={Math.max(maxHp(unit),...unit.buffs.filter(b=>b.id==="stic_protect").map(b=>b.barrier||0))} aria-valuenow={unit.buffs.find(b=>b.id==="stic_protect")?.barrier || 0}><span style={{width:`${Math.min(100,(unit.buffs.find(b=>b.id==="stic_protect")?.barrier || 0)/maxHp(unit)*100)}%`}} /></div>}
               <UnitResource unit={unit} compact />
               <div className="unit-cr">
                 <span
@@ -471,6 +472,7 @@ function Skills() {
                   {data.equipmentEffect.reason}
                 </p>
               )}
+              {data?.earthReview && <p>Reviewed Earth mechanics: {[...(data.earthReview.beforeEffects || []),...(data.earthReview.combatEffects || [])].map(e=>e.kind).filter((v,i,a)=>a.indexOf(v)===i).join(", ") || (data.earthReview.staticPassive ? "passive stats" : "conditional execution")}{data.earthReview.pending?.length ? `; pending: ${data.earthReview.pending.join(", ")}` : ""}.</p>}
               {data?.celineS1 && <p>{data.celineNimble ? "Nimble Sword: Attack Up before damage, 50% Defense penetration, 25% lifesteal; cannot trigger a Dual Attack." : "Mighty Strike: a buff enables Nimble Sword; assisting Dual Attacks always use Mighty Strike."}</p>}
               {data?.damageSource && <p>Damage formula: <a href={data.damageSource.url} target="_blank" rel="noreferrer">e7calc</a> · reviewed formula</p>}
               {data?.sourceReview && <p>{data.sourceReview}</p>}

@@ -2,7 +2,8 @@ import {NON_ATTACK_RULES} from "./nonAttackRules.js";
 export function resolveNonAttackSkill(hero, skill, index) {
   const reviewed = NON_ATTACK_RULES[hero.id]?.[`S${index+1}`];
   if (!reviewed || skill.passive || reviewed.description !== String(skill.description || "").replace(/[*+_]/g,"")) return null;
-  if (!(skill.common || []).some(c => c._id === "cmn_non_attack_skill")) return null;
+  if (!(skill.common || []).some(c => c._id === "cmn_non_attack_skill") && !reviewed.allowMissingNonAttackTag) return null;
+  if (reviewed.sourceText && reviewed.sourceText !== skill.multipliers) return null;
   const refs = (skill.buff || []).map(b => b._id);
   const result = structuredClone(reviewed);
   for (const effect of result.effects) {

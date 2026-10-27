@@ -22,7 +22,7 @@ Primary damage, secondary damage and debuffs resolve before death handlers and t
 
 The root turn remains active during its reaction window. Duration ticking captures the effects present at action start; new or refreshed effects from a counter retain their full duration. A revival during the actor’s turn does not consume the newly granted EE buff as part of the old turn.
 
-The queue is bounded to 32 entries. Secondary attacks **do not automatically enqueue further reaction attacks**. This is a conservative sandbox rule, not a claim that every in-game reaction chain behaves that way. Broader extra-attack/dual/counter chains need explicit reviewed rules. Additional-attack requests are supported by the gate/API; automatic mappings for other heroes’ additional skills remain pending.
+The queue is bounded to 32 entries. Secondary attacks **do not automatically enqueue further reaction attacks**. Bellona’s explicitly reviewed full-Focus S1→S3 follow-up is an exception: it can append its named additional skill, including after a Dual Attack S1, within the same bounded queue. This is a conservative sandbox rule, not a claim that every in-game reaction chain behaves that way. Broader extra-attack/dual/counter chains need explicit reviewed rules. Additional-attack requests are supported by the gate/API; automatic mappings for other heroes’ additional skills remain pending.
 
 ## Revival state
 

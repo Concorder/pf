@@ -1,5 +1,18 @@
 // Reviewed Combat Readiness grants and setbacks; source prose is a guard, never executable.
 export const SKILL_CR_RULES = {
+
+  "c1053": {
+    "S3": {
+      "description": "Attacks all enemies with sand magic, dispelling all buffs and making them --unable to be buffed-- for 2 turns, before decreasing Combat Readiness by 30%.",
+      "effects": [
+        {
+          "target": "enemies",
+          "amount": -30
+        }
+      ]
+    }
+  }
+,
   c1043: {
     S3: {
       description:

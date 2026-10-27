@@ -1,3 +1,4 @@
+import {applySkillEffects} from "./skillEffects.js";
 import {dispatchWatchers,tickWatcherCooldowns} from "./watchers.js";
 import {WATCHER_HANDLERS} from "./watcherHandlers.js";
 import {validNonAttackTarget,applyNonAttackSkill} from "./nonAttack.js";
@@ -9,7 +10,7 @@ import { rollEffect } from "./effects.js";
 import { currentCR, setCR } from "./combatReadiness.js";
 import { activationBlockReason, dispatchTrigger } from "./triggers.js";
 import { reviveUnit } from "./revival.js";
-import { maxHp } from "./health.js";
+import { maxHp, inflictInjury } from "./health.js";
 import { rollHit } from "./hits.js";
 import { equippedSkill, equippedEE } from "./progression.js";
 import { isCermiaSelfSkill } from "./mechanics.js";
@@ -29,6 +30,7 @@ import {
   applySkillBuffs,
   grantBuff,
   dispelBuffs,
+  decreaseBuffDurations,
   detonateUnitEffects,
   hasBuff,
   healUnit,
@@ -49,7 +51,11 @@ function flushSkillWatchers(battle,budget) {
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
 export const skillData = (heroes, u, s, kind = "active") => {
-  const data=equippedSkill(heroes[u.name],u,s);
+  let data=equippedSkill(heroes[u.name],u,s);
+  if(data?.additionalRate && kind==="additional")data={...data,rate:data.additionalRate};
+  if(data?.consumesAllFocus) data={...data,focusAtCast:resourceValue(u),damageMultiplier:1+resourceValue(u)*data.focusMultiplier};
+  const activePassives=!hasBuff(u,"stic_dizzy") ? u.reviewedPassives || [] : [];
+  if (data && activePassives.some(p=>p.staticPassive?.cannotCrit)) return {...data,hitTypes:data.hitTypes.filter(h=>h!=="crit")};
   if (!data?.celineS1) return data;
   const nimble=kind!=="dual" && (u.buffs || []).some(b=>BUFFS[b.id]?.effectType==="buff" && (b.turns===null || b.turns>0));
   return {...data,name:nimble?"Nimble Sword":data.name,celineNimble:nimble,
@@ -227,6 +233,8 @@ function nextTurn(battle, forcedId = null, random = Math.random, heroes = {}) {
   for (const s of SKILLS)
     next.cooldowns[s] = Math.max(0, next.cooldowns[s] - 1);
   tickWatcherCooldowns(next);
+  for(const data of Object.values(heroes[next.name]?.skills||{}))if(data.passive&&data.earthReview?.turnStartEffects)
+    dispatchTrigger(battle,next,{kind:"passive",run:()=>applySkillEffects(heroes,battle,next,data,data.earthReview.turnStartEffects,next.id,{random})});
   startTurnEffects(battle, next, random);
   for (const rule of next.resourcePassives || []) if (rule.turnStart?.type === next.resourceType)
     dispatchTrigger(battle, next, {kind: "passive", run: () => grantUnitResource(battle, next, rule.turnStart.amount)});
@@ -238,6 +246,7 @@ export const clampSouls = (value) =>
 export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
+    u.reviewedPassives=clone(Object.values(heroes[u.name]?.skills||{}).filter(s=>s.passive&&s.earthReview).map(s=>s.earthReview));
     u.watchers = clone(Object.values(heroes[u.name]?.skills || {}).flatMap(s => s.watchers || []));
     u.watcherCooldowns = {};
     u.resourcePassives = Object.values(heroes[u.name]?.skills || {}).filter(s => s.passive && s.resourcePassive).map(s => s.resourcePassive);
@@ -259,6 +268,7 @@ export function createBattle(teams, souls, heroes = {}) {
     u.attribute = heroes[u.name]?.attribute || u.attribute;
     u.role = heroes[u.name]?.role || u.role;
     u.hecateRestrictions = !!heroes[u.name]?.skills?.S2?.hecateRestrictions;
+    u.violetReadyPassive=!!heroes[u.name]?.skills?.S3?.consumesAllFocus;
     u.passiveDamageLimit = heroes[u.name]?.skills?.S2?.passiveDamageLimit || 0;
   }
   const battle = {
@@ -317,6 +327,8 @@ export function createBattle(teams, souls, heroes = {}) {
       return granted;
     }});
   }
+  for(const u of units)for(const data of Object.values(heroes[u.name]?.skills||{}))
+    applySkillEffects(heroes,battle,u,data,data.earthReview?.openingEffects,u.id);
   nextTurn(battle, null, Math.random, heroes);
   return battle;
 }
@@ -337,7 +349,8 @@ export function damage(attacker, defender, d, hit) {
   const scaling =
     a.hp * (d.selfHpScaling || 0) +
     a.def * (d.selfDefScaling || 0) +
-    t.hp * (d.targetHpScaling || 0);
+    t.hp * (d.targetHpScaling || 0) +
+    Math.max(0,a.hp-(attacker.currentHp ?? a.hp))*(d.selfMissingHpScaling || 0);
   const debuffCount = (defender.buffs || []).filter(
     (b) => BUFFS[b.id]?.debuff && (b.turns === null || b.turns > 0),
   ).length;
@@ -345,14 +358,14 @@ export function damage(attacker, defender, d, hit) {
     0,
     Math.min(
       1,
-      (d.penetration || 0) + (d.penetrationPerDebuff || 0) * debuffCount,
+      (d.penetration || 0) + (d.casterBuffPenetration && hasBuff(attacker,d.casterBuffPenetration.id) ? d.casterBuffPenetration.bonus : 0) + (d.penetrationPerDebuff || 0) * debuffCount,
     ),
   );
   const targetStatus = d.damageCondition?.targetStatus;
   const hasConditionalStatus = (defender.buffs || []).some(effect => {
     const definition = BUFFS[effect.id];
     return definition && !definition.unique && (effect.turns === null || effect.turns > 0) &&
-      (targetStatus === "buff" ? !definition.debuff : targetStatus === "debuff" ? !!definition.debuff : false);
+      (targetStatus === "buff" ? !definition.debuff : targetStatus === "debuff" ? !!definition.debuff : targetStatus === "barrier" ? effect.id==="stic_protect" : false);
   });
   const conditionalDamage = hasConditionalStatus ? d.damageCondition.multiplier : 1;
   const lightBonus =
@@ -375,7 +388,9 @@ export function damage(attacker, defender, d, hit) {
         d.pow *
         hitMultiplier *
         lightBonus *
-        conditionalDamage *
+        conditionalDamage * (d.damageMultiplier || 1) *
+        (1+(d.targetCurrentHpDamage || 0)*Math.max(0,Math.min(1,(defender.currentHp ?? t.hp)/t.hp))) *
+        (1+(d.hpDifferenceDamage ? Math.min(d.hpDifferenceDamage.cap,Math.max(0,t.hp-a.hp)*d.hpDifferenceDamage.ratio) : 0)) *
         receivedDamageMultiplier(defender) *
         (1 + (d.enhancementDamage || 0) + (d.eeDamage || 0))) /
         (1 + (t.def * (1 - penetration)) / 300),
@@ -403,8 +418,10 @@ function applySkillDispel(battle, actor, target, data, hit, random, stage) {
     },
     random,
   );
-  if (result.landed)
-    dispelBuffs(battle, target, data.automaticDispel.count ?? Infinity, `${actor.name} dispel`);
+  if (result.landed) {
+    if(data.automaticDispel.durationDecrease)decreaseBuffDurations(battle,target,data.automaticDispel.durationDecrease);
+    else dispelBuffs(battle, target, data.automaticDispel.count ?? Infinity, `${actor.name} dispel`);
+  }
   else log(battle, `${target.name}: buff dispel ${result.reason}.`, actor.name);
 }
 function performSkillAttack(
@@ -426,6 +443,8 @@ function performSkillAttack(
       .filter((t) => hasBuff(t, "stic_curse2"))
       .map((t) => t.id);
   if (!spendSkillResource(u, d)) return {data: d, hits, results};
+  if(d.consumesAllFocus)u.resourceValue=0;
+  applySkillEffects(heroes,battle,u,d,d.earthReview?.beforeEffects,targetId,{random});
   if (d.celineNimble) grantBuff(battle,u,"stic_att_up",1,"Nimble Sword",{casterId:u.id});
   for (const t of targets) {
     if (options.automaticDispels !== false)
@@ -444,7 +463,8 @@ function performSkillAttack(
     const outcome = hit === "auto" ? rollHit(u, t, d, random) : hit;
     const protection = planProtectedDamage(battle, t, damage(u, t, d, outcome), { attacker: u, skill: d });
     const amount = protection.targetDamage;
-    sufferDamage(battle, t, amount, { hit: outcome });
+    const healthLost=sufferDamage(battle, t, amount, { hit: outcome });
+    if(d.earthReview?.injury && outcome!=="miss")inflictInjury(t,healthLost,{maxFractionPerHit:d.earthReview.injury});
     if (protection.transferred > 0) {
       sufferDamage(battle, protection.recipient, protection.transferred, { kind: "shared" });
       log(battle,
@@ -530,9 +550,14 @@ function performSkillAttack(
         }
     }
 
+  applySkillEffects(heroes,battle,u,d,d.earthReview?.combatEffects,targetId,{random,hits});
+  if(d.earthReview?.cooldownResetOnKill&&hits.some(h=>h.defeated))u.cooldowns[skill]=0;
   applySkillResourceGain(battle, u, d, hits);
-  const skillUse = recordSkillUse(battle, u, skill, d, {kind: options.actionKind || "active", targetId});
-  return { data: d, hits, results, skillUse };
+  const resolvedExtra=(d.earthReview?.extraTurnOnKill&&hits.some(h=>h.defeated)) || (d.earthReview?.extraTurnOnCritical&&hits.some(h=>h.outcome==="crit"));
+  const eventData=d.earthReview?.extraTurnOnKill||d.earthReview?.extraTurnOnCritical ? {...d,tags:[...d.tags.filter(t=>t!=="extraTurn"),...(resolvedExtra?["extraTurn"]:[])]} : d;
+  const skillUse = recordSkillUse(battle, u, skill, eventData, {kind: options.actionKind || "active", targetId,hits});
+  const followUps=d.earthReview?.focusFollowUp&&resourceValue(u)>=5 ? [{kind:"additional",actorId:u.id,targetId,skill:d.earthReview.focusFollowUp,consumeFocus:true,source:"skill",label:"Bellona · full Focus"}] : [];
+  return { data: d, hits, results, skillUse, followUps };
 }
 
 export function executeAttack(
@@ -570,6 +595,7 @@ export function executeAttack(
     u = activeUnit(battle),
     actorDeathSerial = u.deaths || 0,
     tickableBuffs = new Set((u.buffs || []).map(buffTickKey));
+  let attackExtraTurn=false;
   const watcherBudget={remaining:32};
   battle.lastWatchedSkillUseSerial ??= previous.skillUseSerial || 0;
   setCR(battle, u, 0, effectiveStats(u).spd);
@@ -609,6 +635,7 @@ export function executeAttack(
       data: d,
       hits,
       results,
+      followUps,
     } = performSkillAttack(
       heroes,
       battle,
@@ -622,7 +649,8 @@ export function executeAttack(
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
     );
-    u.cooldowns[skill] = u.skills[skill].cd + 1;
+    u.cooldowns[skill] = (d.consumesAllFocus && d.focusAtCast>=5) || (d.earthReview?.cooldownResetOnKill && hits.some(h=>h.defeated)) ? 0 : u.skills[skill].cd + 1;
+    attackExtraTurn=(d.earthReview?.extraTurnOnKill&&hits.some(h=>h.defeated)) || (d.earthReview?.extraTurnOnCritical&&hits.some(h=>h.outcome==="crit"));
     log(
       battle,
       `${u.name} uses ${d.celineNimble ? "Nimble Sword" : skill}. ${results.join(" / ")}`,
@@ -631,7 +659,7 @@ export function executeAttack(
     resolveDeaths(heroes, battle);
     flushSkillWatchers(battle,watcherBudget);
     if (options.automaticReactions !== false) {
-      const queue = naturalDual ? [naturalDual] : [];
+      const queue = [...(followUps || []),...(naturalDual ? [naturalDual] : [])];
       if (d.triggersDualAttack) {
         queue.push({
           kind: "dual",
@@ -647,15 +675,16 @@ export function executeAttack(
         for (const hitResult of hits.filter((h) => !h.defeated)) {
           const defender = battle.units.find((t) => t.id === hitResult.id);
           const possessionCounter=hitResult.outcome === "crit" && hasBuff(defender,"stic_possession_keep");
-          if ((defender.counterChance || 0) > 0 || possessionCounter)
+          const violetCounter=defender.violetReadyPassive && !defender.cooldowns.S3 && hitResult.outcome==="miss" && !hasBuff(defender,"stic_dizzy");
+          if ((defender.counterChance || 0) > 0 || possessionCounter || violetCounter)
             queue.push({
               kind: "counter",
               actorId: defender.id,
               targetId: u.id,
               skill: "S1",
-              source: possessionCounter ? "buff" : "counterStat",
-              chance: possessionCounter ? 100 : defender.counterChance,
-              label: possessionCounter ? "Possession · suffered critical hit" : "configured counter chance",
+              source: possessionCounter ? "buff" : violetCounter ? "passive" : "counterStat",
+              chance: possessionCounter || violetCounter ? 100 : defender.counterChance,
+              label: possessionCounter ? "Possession · suffered critical hit" : violetCounter ? "Violet · evaded with Butterfly Cut ready" : "configured counter chance",
             });
         }
       resolveReactionQueue(heroes, battle, queue, random, {...options,watcherBudget});
@@ -673,7 +702,7 @@ export function executeAttack(
   if (selfSkill && u.currentHp > 0) {
     setCR(battle, u, 100, effectiveStats(u).spd);
     nextTurn(battle, u.id, random, heroes);
-  } else if (supportAction?.extraTurn && u.currentHp > 0) {
+  } else if ((supportAction?.extraTurn || attackExtraTurn) && u.currentHp > 0) {
     setCR(battle,u,100,effectiveStats(u).spd);
     nextTurn(battle,u.id,random,heroes);
   } else {
@@ -712,6 +741,10 @@ export function resolveDeaths(
       }});
     clearSourceDeathEffects(battle, unit.id);
     if (unit.currentHp > 0) continue;
+    if(event.reviveBuff) {
+      unit.buffs=(unit.buffs||[]).filter(b=>b.id!=="stic_bless");
+      if(reviveUnit(battle,unit,{fraction:.3,source:"Revive buff"}))continue;
+    }
     const data = heroes[unit.name]?.skills?.S2;
     if (!data?.passiveRevival || !data.passive || unit.cooldowns.S2 > 0)
       continue;
@@ -760,8 +793,9 @@ export function resolveDeaths(
   }
 }
 function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
-  // Secondary attacks never recursively enqueue attacks; keep a hard cap for future dispatchers.
-  for (const request of queue.slice(0, 32)) {
+  // Only reviewed follow-ups can append attacks; counters and natural Dual Attacks do not recurse.
+  for (let index=0;index<queue.length&&index<32;index++) {
+    const request=queue[index];
     if (request.kind === "dual" && request.callerId && !battle.units.some(u => u.id === request.callerId && u.currentHp > 0)) continue;
     const actor = ["highestAttack", "random"].includes(request.selection)
         ? (request.selection === "random"
@@ -804,7 +838,8 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
       random() * 100 >= Math.max(0, Math.min(100, request.chance))
     )
       continue;
-    const { results } = performSkillAttack(
+    if(request.consumeFocus){if(resourceValue(actor)<5)continue;actor.resourceValue=0;}
+    const { results,followUps } = performSkillAttack(
       heroes,
       battle,
       actor,
@@ -819,6 +854,7 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
       `${actor.name} ${request.kind}: ${results.join(" / ")}`,
       request.label || request.source || "Reaction",
     );
+    queue.push(...(followUps || []));
     resolveDeaths(heroes, battle);
     flushSkillWatchers(battle,options.watcherBudget || {remaining:32});
   }
