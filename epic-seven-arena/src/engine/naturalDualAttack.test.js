@@ -15,14 +15,14 @@ const fixture=(name="Ras")=>{
 };
 const rng=(...values)=>()=>values.length?values.shift():.999;
 const duals=b=>(b.skillUseEvents||[]).filter(e=>e.tags.includes("dual-attack"));
-test("assisting hero chance defaults to 5%, clamps to 20%, and old builds remain valid",()=>{
- assert.equal(dualAttackChance({}),5);assert.equal(dualAttackChance({dualAttackChance:0}),5);
+test("assisting hero chance defaults to 3%, clamps to 20%, and old builds remain valid",()=>{
+ assert.equal(dualAttackChance({}),3);assert.equal(dualAttackChance({dualAttackChance:0}),3);
  assert.equal(dualAttackChance({dualAttackChance:99}),20);
  const teams=defaultTeams(heroes);for(const t of Object.values(teams))for(const u of t.filter(Boolean))delete u.dualAttackChance;
  assert.equal(validTeams(teams,heroes),true);teams.left[0].dualAttackChance=21;assert.equal(validTeams(teams,heroes),false);
 });
-test("each eligible ally rolls its own 5%/20% chance; the caller's chance is irrelevant",()=>{
- for(const [chance,roll,expected] of [[5,.05,1],[5,.050001,0],[20,.2,1],[20,.200001,0]]){
+test("each eligible ally rolls its own 3%/20% chance; the caller's chance is irrelevant",()=>{
+ for(const [chance,roll,expected] of [[3,.03,1],[3,.030001,0],[20,.2,1],[20,.200001,0]]){
   const b=fixture();activeUnit(b).dualAttackChance=20;get(b,"left-1").dualAttackChance=chance;
   const next=executeAttack(heroes,b,"S1","right-0","normal",rng(roll,.999));
   assert.equal(duals(next).length,expected,`${chance}, ${roll}`);
@@ -48,9 +48,9 @@ test("only successful allies participate; multiple successes have an unbiased ti
   assert.equal(rolls,2);
  }
 });
-test("independent 5%/9% ally rolls give 13.55% total; two 5% allies give 9.75%",()=>{
+test("independent 3%/7% ally rolls give 9.79% total; two 3% allies give 5.91%",()=>{
  const b=fixture();
- for(const [secondChance,expected] of [[9,1355],[5,975]]){
+ for(const [secondChance,expected] of [[7,979],[3,591]]){
   get(b,"left-2").dualAttackChance=secondChance;let successes=0;
   // Exhaust all equally likely percent-bin pairs, avoiding probability boundaries.
   for(let a=0;a<100;a++)for(let c=0;c<100;c++){

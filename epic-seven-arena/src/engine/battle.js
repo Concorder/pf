@@ -87,10 +87,10 @@ export function selectRandomDualAlly(
     : null;
 }
 // Final configured build chance includes gear/artifact/buff contributions once.
-// Old saved builds inherit the user-confirmed 5% base.
+// Old saved builds inherit the user-confirmed post-patch 3% base.
 export function dualAttackChance(unit) {
-  const value = Number(unit?.dualAttackChance ?? 5);
-  return Math.min(20, Math.max(5, Number.isFinite(value) ? value : 5));
+  const value = Number(unit?.dualAttackChance ?? 3);
+  return Math.min(20, Math.max(3, Number.isFinite(value) ? value : 3));
 }
 export function selectNaturalDualAlly(heroes, battle, caller, random = Math.random) {
   // Each eligible assisting hero rolls once against its own final chance.

@@ -91,7 +91,7 @@ test("Curse causes 60% secondary damage without recursive triggers; damage wakes
     target = b.units.find((u) => u.id === "right-0"),
     bearer = b.units.find((u) => u.id === "right-2");
   const amount = damage(actor, target, heroes[actor.name].skills.S1, "normal");
-  const next = executeAttack(heroes, b, "S1", "right-0", "normal");
+  const next = executeAttack(heroes, b, "S1", "right-0", "normal",()=>.999,{automaticDualAttacks:false});
   assert.equal(
     next.units.find((u) => u.id === bearer.id).currentHp,
     bearer.currentHp - amount - Math.floor(amount * 0.6),

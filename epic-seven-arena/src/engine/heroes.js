@@ -84,7 +84,7 @@ export function makeHero(heroes, name, preset = "damage") {
     resourceOpeningOverride: false,
     resourceGainMultiplier: 1,
     counterChance: 0,
-    dualAttackChance: 5,
+    dualAttackChance: 3,
     damageReduction: 0,
     damageLimit: 0,
     damageShare: 0,
@@ -142,9 +142,9 @@ export function validTeams(teams, heroes) {
               Number.isFinite(h.resourceGainMultiplier ?? 1) &&
               (h.resourceGainMultiplier ?? 1) >= 0 &&
               (h.resourceGainMultiplier ?? 1) <= 2 &&
-              Number.isFinite(h.dualAttackChance ?? 5) &&
-              (h.dualAttackChance ?? 5) >= 5 &&
-              (h.dualAttackChance ?? 5) <= 20 &&
+              Number.isFinite(h.dualAttackChance ?? 3) &&
+              (h.dualAttackChance ?? 3) >= 3 &&
+              (h.dualAttackChance ?? 3) <= 20 &&
               Number.isFinite(h.counterChance ?? 0) &&
               (h.counterChance ?? 0) >= 0 &&
               (h.counterChance ?? 0) <= 100 &&

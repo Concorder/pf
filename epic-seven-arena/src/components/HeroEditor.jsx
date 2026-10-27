@@ -300,12 +300,12 @@ export default function HeroEditor() {
         </fieldset>
         <label>
           Dual Attack chance % (final total)
-          <input id="dualAttackChance" type="number" min="5" max="20" step="any" required
-            value={draft.dualAttackChance ?? 5}
+          <input id="dualAttackChance" type="number" min="3" max="20" step="any" required
+            value={draft.dualAttackChance ?? 3}
             onChange={e => setDraft(d => ({...d, dualAttackChance: Number(e.target.value)}))} />
         </label>
         <p className="fine">
-          Defaults to 5%; capped at 20%. Include applicable gear, artifact and buff bonuses
+          Defaults to 3%; capped at 20%. Include applicable gear, artifact and buff bonuses
           in this total. When an ally uses S1, each eligible teammate rolls their own chance
           to assist. Multiple successes are resolved randomly. Guaranteed Dual Attacks bypass these rolls.
         </p>

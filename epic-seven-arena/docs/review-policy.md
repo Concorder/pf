@@ -22,3 +22,8 @@ Missing cast support, missing effect handlers, ordinary ally/team targeting, ord
 Research sources first. Ask only about a specific conflict or undocumented interaction that still changes the result—for example, whether Laceration reacts to distinct additional-damage events, or the priority of simultaneous passive reactions when sources do not specify it. Source/version contradictions are first a research problem, not an invitation to ask the user to restate an entire skill. Previously deferred/unusable-hero work remains deferred.
 
 No new user answer is currently required for ordinary skill targeting. Partial execution support must stay explicit; knowing the targets is not a reason to silently omit the remaining effects.
+
+
+## Patch/version checks
+
+Read the current awakened/max-enhanced skill description first. If it does not resolve the mechanic, research current internet sources and check their patch/version dates before applying them. Older guides and cached API data can describe pre-patch rules. User-confirmed current rules take precedence: the natural Dual Attack base is **3%**, replacing the former 5%; eligible assisting allies still roll independently. Explicit saved build chances are retained; missing values use 3%.
