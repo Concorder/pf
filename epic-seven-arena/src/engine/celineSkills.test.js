@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {createCatalog} from '../data/cecilia.js';
 import {defaultTeams,makeHero} from './heroes.js';
-import {createBattle,executeAttack,executeReaction,skillData,damage,canUse} from './battle.js';
-import {grantBuff,hasBuff,effectiveStats,dispelBuffs} from './buffs.js';
+import {createBattle,executeAttack,executeReaction,skillData,damage,canUse,resolveDeaths} from './battle.js';
+import {grantBuff,hasBuff,effectiveStats,dispelBuffs,sufferDamage} from './buffs.js';
 const read=n=>JSON.parse(fs.readFileSync(new URL(`../../public/data/${n}.json`,import.meta.url)));
 const heroes=createCatalog(read('heroes'),read('cecilia').heroes);
 const get=(b,id)=>b.units.find(u=>u.id===id);
@@ -61,4 +61,29 @@ test('Celine reviewed formulas and S3 handlers disable on changed source descrip
  h.skills[0].description+=' Changed';h.skills[2].awakened.description+=' Changed';
  const changed=createCatalog(read('heroes'),snapshot.heroes);
  assert.equal(changed['Spirit Eye Celine'].skills.S1.damageSupport,'unsupported');assert.equal(changed['Spirit Eye Celine'].skills.S3.nonAttack,null);
+});
+
+test('S3 revives at exactly 1 HP before cleanse and team Immortality, preserving injury',()=>{
+ const b=fixture(),ally=get(b,'left-1');ally.injuryFraction=.5;sufferDamage(b,ally,1000000);resolveDeaths(heroes,b);
+ const n=executeAttack(heroes,b,'S3',null,'normal',()=>.999,opts),revived=get(n,ally.id);
+ assert.equal(revived.currentHp,1);assert.equal(revived.injuryFraction,.5);assert.ok(hasBuff(revived,'stic_immortality'));
+ assert.equal(n.souls.left,8);assert.equal(ally.currentHp,0);
+ for(const block of ['extinct','hecate']){
+  const x=fixture(),a=get(x,'left-1');sufferDamage(x,a,1000000);if(block==='extinct')a.extinct=true;else get(x,'right-0').hecateRestrictions=true;
+  const next=executeAttack(heroes,x,'S3',null,'normal',()=>.999,opts);assert.equal(get(next,a.id).currentHp,0,block);
+ }
+});
+test('Sixth Sense grants 5 souls and reduces cooldowns once per hero death, regardless of team',()=>{
+ for(const id of ['left-1','right-0']){
+  const b=fixture(),u=get(b,'left-0');u.cooldowns.S3=4;b.souls.left=96;
+  sufferDamage(b,get(b,id),1000000);resolveDeaths(heroes,b);assert.equal(u.cooldowns.S3,3);assert.equal(b.souls.left,99);
+  resolveDeaths(heroes,b);assert.equal(u.cooldowns.S3,3);
+ }
+});
+test('Sixth Sense does not activate under Seal, for a non-hero death, or for a defeated owner',()=>{
+ for(const mode of ['sealed','nonhero','dead']){
+  const b=fixture(),u=get(b,'left-0'),victim=get(b,'left-1');u.cooldowns.S3=4;
+  if(mode==='sealed')grantBuff(b,u,'stic_dizzy',2,'test');if(mode==='nonhero')victim.isHero=false;if(mode==='dead')u.currentHp=0;
+  sufferDamage(b,victim,1000000);resolveDeaths(heroes,b);assert.equal(u.cooldowns.S3,4,mode);assert.equal(b.souls.left,0,mode);
+ }
 });

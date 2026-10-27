@@ -691,6 +691,17 @@ export function resolveDeaths(
     const event = battle.deathEvents.shift(),
       unit = battle.units.find((u) => u.id === event.unitId);
     if (!unit || unit.deaths !== event.serial) continue;
+    if (unit.isHero !== false) {
+      // One resolution per queued death serial, including deaths followed by revival.
+      for (const owner of battle.units) {
+        if (!heroes[owner.name]?.skills?.S2?.deathCooldownSouls) continue;
+        dispatchTrigger(battle,owner,{kind:"passive",run:()=>{
+          for (const skill of SKILLS) owner.cooldowns[skill]=Math.max(0,owner.cooldowns[skill]-1);
+          battle.souls[owner.side]=clampSouls(battle.souls[owner.side]+5);
+          log(battle,`${owner.name}: hero death reduces cooldowns by 1 and grants 5 souls.`,"Sixth Sense");
+        }});
+      }
+    }
     const offering = (unit.buffs || []).find(b => b.id === "stic_sacrifice_aura");
     const offeringCaster = offering && battle.units.find(u => u.id === offering.casterId);
     if (offeringCaster && heroes[offeringCaster.name]?.skills?.S2?.openingOffering)

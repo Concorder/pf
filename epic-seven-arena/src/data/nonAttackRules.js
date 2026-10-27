@@ -5,6 +5,7 @@ export const NON_ATTACK_RULES = {
     "description": "Opens the gate of the spirits to revive all dead allies. Dispels all debuffs from all allies before granting immortality for 1 turn, and grants possession to the caster for 3 turns.",
     "target": "team",
     "effects": [
+      {"kind":"revive","target":"team","hp":1},
       {
         "kind": "cleanse",
         "target": "team",
@@ -23,9 +24,7 @@ export const NON_ATTACK_RULES = {
         "turns": 3
       }
     ],
-    "pending": [
-      "Revival HP percentage awaiting verification; dead allies are not revived yet"
-    ]
+    "pending": []
   }
 },
   "c1030": {

@@ -225,6 +225,7 @@ export function normalizeSkill(hero, raw, index) {
       description === PROTECTION_PASSIVE_DESCRIPTIONS.c6005 &&
       (s.buff || []).some(b => b._id === "stic_sacrifice_aura"),
     // User-reviewed 50% cap; the cached numeric enhancement rows are inconsistent.
+    deathCooldownSouls: hero.id === "c2103" && index === 1 && passive && description === PROTECTION_PASSIVE_DESCRIPTIONS.c2103,
     passiveDamageLimit: hero.id === "c2103" && index === 1 && passive &&
       description === PROTECTION_PASSIVE_DESCRIPTIONS.c2103 && common.includes("cmn_damage_taken_cap") ? 50 : null,
     hecateRestrictions: hero.id === "c1178" && index === 1 && passive &&
@@ -282,7 +283,7 @@ export function normalizeSkill(hero, raw, index) {
   if (passive) {
     result.damageSupport = "passive";
     result.supportReason = result.passiveDamageLimit
-      ? "Passive: 50% effective-max-HP attack limit implemented before sharing; death-trigger cooldown/souls pending"
+      ? "Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented"
       : result.openingOffering
       ? "Passive: Offering grant, sharing, one-time survival and bearer-death healing implemented; enemy CR-copy mechanic pending"
       : result.hecateRestrictions

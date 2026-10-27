@@ -2,7 +2,7 @@
 
 Generated from the bundled CeciliaBot snapshot (2026-10-22T22:41:17.340Z) and current normalization rules.
 Scope: **213 heroes**, **639 skills** (rarity 5 only; includes Moonlight and limited units).
-Contains **597 skill entries** across **213 heroes**.
+Contains **596 skill entries** across **213 heroes**.
 
 Regenerate with `npm run report:skills:nat5`. This is an implementation/review queue, not a list of questions you must answer. Checked-off notes should be recorded in the relevant mechanics document or rules before regeneration, which replaces this file.
 
@@ -4785,20 +4785,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Sixth Sense** — Passive partially implemented or pending
-  - Current base support: passive. Passive: 50% effective-max-HP attack limit implemented before sharing; death-trigger cooldown/souls pending
-  - Review/work: Passive: 50% effective-max-HP attack limit implemented before sharing; death-trigger cooldown/souls pending
+  - Current base support: passive. Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented
+  - Review/work: Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: When attacked, damage suffered in one attack does not exceed 50% of max Health. When someone dies, decreases skill cooldowns by 1 turn and gains 5 Soul. Effects upon death are only activated upon a Hero's death.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
   - EE 1: When the casters uses Soulburn for the first time, increases damage dealt by 50% and does not cost any Soul.
-
-- [ ] **S3 — Spirit Gate: Burning Possession** — Non-attack cast supported; remaining effects listed below
-  - Current base support: nonAttack. Non-attack cast implemented; pending: Revival HP percentage awaiting verification; dead allies are not revived yet
-  - Review/work: Revival HP percentage awaiting verification; dead allies are not revived yet
-  - Description: Opens the gate of the spirits to revive all dead allies. Dispels all debuffs from all allies before granting immortality for 1 turn, and grants possession to the caster for 3 turns.
-  - Non-attack source note (no damage formula): Skill3<br>Possession: increases attack by 25%<br>
-  - Unparsed formula lines: Possession: increases attack by 25%
 
 ### Stark (c1174)
 
