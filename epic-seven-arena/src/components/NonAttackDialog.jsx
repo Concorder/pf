@@ -5,7 +5,7 @@ import {useLab} from "../context.js";
 import {skillData} from "../engine/battle.js";
 import {nonAttackRecipients} from "../engine/nonAttack.js";
 export default function NonAttackDialog() {
-  const l = useLab(), data = skillData(l.heroes,l.active,l.pending.skill);
+  const l = useLab(), data = skillData(l.heroes,l.active,l.pending.skill,"active",{soulburn:l.soulburnSelection?.skill===l.pending.skill});
   const recipients = nonAttackRecipients(l.battle,l.active,data.nonAttack,l.pending.targetId);
   return <Modal id="nonAttackDialog" aria-labelledby="nonAttackTitle" onDismiss={() => l.setPending(null)}>
     <div className="dialog-heading">

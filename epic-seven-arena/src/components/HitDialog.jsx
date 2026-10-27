@@ -15,7 +15,7 @@ export default function HitDialog() {
     p = l.pending,
     u = l.active,
     target = l.units.find((t) => t.id === p.targetId),
-    d = skillData(l.heroes, u, p.skill),
+    d = skillData(l.heroes, u, p.skill,"active",{soulburn:l.soulburnSelection?.skill===p.skill}),
     targets = affectedTargets(l.battle, u, target, d),
     [automaticDebuffs, setAutomaticDebuffs] = useState(true),
     [automaticReadiness, setAutomaticReadiness] = useState(true),
@@ -31,7 +31,7 @@ export default function HitDialog() {
           <span className="eyebrow" id="hitActor">
             {u.name} · {p.skill}
           </span>
-          <h2 id="hitTitle">Resolve the attack</h2>
+          <h2 id="hitTitle">{d.soulburnActive ? `Soulburn · ${d.name}` : "Resolve the attack"}</h2>
         </div>
         <button
           type="button"
@@ -54,6 +54,7 @@ export default function HitDialog() {
           </p>
         </div>
       </div>
+      {d.soulburnActive && <p className="fine" id="soulburnCastDescription">Soulburn ({d.soulburn.cost} souls): {d.soulburn.description}</p>}
       <p id="hitAffected" className="fine">
         {targets.length > 1
           ? `This skill hits ${targets.length} enemies: ${targets.map((t) => t.name).join(", ")}. Automatic mode rolls separately for each target. Manual overrides apply to all targets.`

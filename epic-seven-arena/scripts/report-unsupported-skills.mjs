@@ -20,7 +20,7 @@ for (const [name, hero] of scopedHeroes.sort(([a],[b]) => a.localeCompare(b))) {
     if (s.watcherPending?.length) gaps.push(...s.watcherPending);
     if (s.sourceReview) gaps.push(s.sourceReview);
     if (s.debuffsPending) gaps.push("Unmapped/conditional debuff grants");
-    if (s.soulburn) gaps.push("Soulburn enhanced execution (currently preview only)");
+    if (s.soulburn && !s.soulburn.supported) gaps.push(`Soulburn pending: ${s.soulburn.reason}`);
     // These are audit prompts, not a claim that every referenced effect is absent.
     if (!s.passive && !special && !s.nonAttack && !s.celineS1 && ![...(s.earthReview?.beforeEffects || []),...(s.earthReview?.combatEffects || [])].some(e=>["buff","barrier"].includes(e.kind)) && s.buffRefs?.length) gaps.push("Audit buff recipients, conditions and durations against implemented grants");
     if (!s.passive && s.tags?.includes("extraTurn") && !special && !s.nonAttack && !s.earthReview?.extraTurnOnKill && !s.earthReview?.extraTurnOnCritical) gaps.push("Review source-specific extra-turn execution/conditions (tag is capability metadata)");
@@ -79,7 +79,7 @@ for (const {name, hero, key, s, gaps, ee, special} of entries) {
   if (s.resourcePassive) out.push(`  - Implemented resource passive portions: ${[s.resourcePassive.opening && "battle-start grant",s.resourcePassive.turnStart && "turn-start grant",s.resourcePassive.enemyGainMultiplier && "enemy gain blocking"].filter(Boolean).join(", ")}. Other passive effects still require separate handlers.`);
   if (s.sourceText) out.push(`  - ${s.nonAttack ? "Non-attack source note (no damage formula)" : s.damageSupport === "supported" ? "Supported damage formula (reference only)" : "Source multiplier text (requires review)"}: ${escape(s.sourceText)}`);
   if (s.unparsed?.length) out.push(`  - Unparsed formula lines: ${s.unparsed.map(escape).join("; ")}`);
-  if (s.soulburn) out.push(`  - Soulburn (${s.soulburn.cost} souls): ${escape(s.soulburn.description)}`);
+  if (s.soulburn) out.push(`  - Soulburn (${s.soulburn.cost} souls): ${escape(s.soulburn.description)} — ${s.soulburn.supported ? "enhanced cast implemented" : escape(s.soulburn.reason)}.`);
   for (const option of ee) out.push(`  - EE ${option.index + 1}: ${escape(option.displayDescription || option.description)}`);
   out.push("");
 }

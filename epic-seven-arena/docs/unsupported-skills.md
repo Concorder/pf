@@ -2,7 +2,7 @@
 
 Generated from the bundled CeciliaBot snapshot (2026-10-22T22:41:17.340Z) and current normalization rules.
 Scope: **391 heroes**, **1173 skills**.
-Contains **1085 skill entries** across **391 heroes**.
+Contains **1052 skill entries** across **389 heroes**.
 
 Regenerate with `npm run report:skills`. This is an implementation/review queue, not a list of questions you must answer. Checked-off notes should be recorded in the relevant mechanics document or rules before regeneration, which replaces this file.
 
@@ -34,10 +34,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Ambush** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Root attack classification corrected; the conditional Might effect remains pending.
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with bloodied wings, and increases Combat Readiness of the caster by 15%. When used on the caster's turn, has a 35% chance to activate Might as an extra effect. Damage dealt increases proportional to the caster's max Health.<br>Might: Increases Combat Readiness of all allies by 15%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.8<br>!pow: 0.9<br>Max Health scaling 12% (0.12 * self Max Health)<br>
-  - Soulburn (10 souls): Increase chance to activate Might to 100%.
+  - Soulburn (10 souls): Increase chance to activate Might to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Blood Banquet** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -59,12 +59,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks all enemies with a dragon's breath, with a 60% chance to inflict --decreased Attack-- for 1 turn. Damage dealt increases proportional to the caster's Defense. When the caster is inflicted with --trauma--, activates Unbridled Outburst instead of Dragon's Breath.<br>Unbridled Outburst: Attacks the enemy with a massive blade. Penetrates the target's Defense.
   - Resource: fightingSpirit; base gain 20; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 1<br>90% self Defense (0.9 * Defense) <br><br><br>Skill1(Soulburn)<br>att_rate: 0.9<br>!pow: 1<br>110% self Defense (1.1 * Defense) <br><br><br>Skill1(Proc)<br>att_rate: 0.8<br>!pow: 1<br>Penetration: 70%<br><br><br>Skill1(Proc Soulburn)<br>att_rate: 1.25<br>!pow: 1<br>Penetration: 70%<br>
   - Unparsed formula lines: Skill1(Soulburn); att_rate: 0.9; !pow: 1; 110% self Defense (1.1 * Defense) ; Skill1(Proc); att_rate: 0.8; !pow: 1; Penetration: 70%; Skill1(Proc Soulburn); att_rate: 1.25; !pow: 1; Penetration: 70%
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Inner Abyss** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -104,12 +104,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Curing Prayer** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: With the power of healing, dispels one debuff from all allies before recovering Health proportional to the caster’s max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 30% self max Health (50% soulburn)<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 30% self max Health (50% soulburn)
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Increases Effect Resistance of the caster for 2 turns when using Curing Prayer.
 
 ### Adin (c3143)
@@ -125,11 +125,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Lightning Bolt** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy repeatedly, granting increased Attack and Weakness Shared to the caster for 2 turns. A critical hit has a 100% chance to --decrease Defense-- for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1.05<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Adlay (c3043)
 
@@ -146,21 +145,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
 
-- [ ] **S3 — Mana Seal** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Deals huge damage to all enemies with a sealing spell, with a 85% chance to dispel one buff, before a 85% chance to increase skill cooldowns by 1 turn.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
-
 ### Adventurer Ras (c5001)
-
-- [ ] **S2 — Command Strike** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy repeatedly, before triggering a Dual Attack from the ally with the highest Attack.
-  - Supported damage formula (reference only): Skill2<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
 
 - [ ] **S3 — Purifying Flame** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -170,25 +155,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.9<br>!pow: 1<br>12% self max Health (0.12 * Health)<br>Heal strength: 30% self max Health
   - Unparsed formula lines: Heal strength: 30% self max Health
 
-### ae-GISELLE (c1138)
-
-- [ ] **S1 — Surging Light** — Base damage supported; secondary effects pending
-  - Current base support: supported. Reviewed e7calc damage formula
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy, and increases Combat Readiness of the ally with the highest Attack except for the caster by 15%. Damage dealt increases proportional to the target's current Health ratio.
-  - Reviewed Earth effects: readiness.
-  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1 (1.7 Soulburn)<br>!pow: 1<br>0.2% increased damage per 1% target current Health (Same for Soulburn)<br>
-  - Soulburn (10 souls): Increases damage dealt.
-
 ### ae-KARINA (c1137)
-
-- [ ] **S1 — Exposed!** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy by punching them, with a 75% chance to --decrease Defense-- for 1 turn. Damage dealt increases proportional to the caster's Defense.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 0.5<br>!pow: 1<br>100% self Defense (1.00 * Defense)<br>
-  - Soulburn (10 souls): Increase effect chance to 100% and --decrease Defense-- of the target for 2 turns.
 
 - [ ] **S2 — Rocket Punch** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -211,10 +178,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — SSAMBEAR** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with SSAMBEAR, with a 40% chance to --stun-- for 1 turn. After attacking, when the target is --stunned--, increases Combat Readiness of the caster by 20%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Butterfly Effect** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -230,13 +197,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: Shield inversion
 
 ### ae-WINTER (c1139)
-
-- [ ] **S1 — Rapid Cut** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a sword and has a 40% chance to --stun-- for 1 turn. 
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increase effect chance to 100%.
 
 - [ ] **S2 — Next Level** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -273,21 +233,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — In the Palm of My Hand** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy, --decreasing Defense-- for 2 turns, and increases Combat Readiness of all allies by 20%. A successful attack always results in a critical hit.
   - Resource: focus; base gain 0; required/spent 0.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Ainos (c3105)
 
 - [ ] **S1 — Silent Fire** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Silently shoots the enemy, with a 75% chance to --decrease Defense-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and --decreases Defense-- of the target for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100% and --decreases Defense-- of the target for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Maneuver Support** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -308,10 +267,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Silent Fire** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Silently shoots the enemy, with a 75% chance to --decrease Defense-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and --decreases Defense-- of the target for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100% and --decreases Defense-- of the target for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Maneuver Support** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -346,20 +305,19 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Unverified target count
   - Review/work: Unverified target count
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Punches the enemy, with a 100% chance to --stun-- for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5 (1.8 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Ainz Ooal Gown (c1155)
 
 - [ ] **S1 — Lightning of Judgment** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with lightning, with a 25% chance to --stun-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 0.95<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S2 — Overlord of Death** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -387,11 +345,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Guard** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: With water energy, recovers Health of an ally proportional to the target’s max Health and dispels two debuffs, before increasing Combat Readiness of the caster by 20%.
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 19% target's max Health (29% with soulburn)<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 19% target's max Health (29% with soulburn)
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Spirit's Call** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -407,11 +365,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a blaze, with a 100% chance to inflict --burn-- for 1 turn. At the end of the turn, detonates burn effects inflicted on the target.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.2<br>!pow: 1<br>Detonation multiplier: 1.3<br>
   - Unparsed formula lines: Detonation multiplier: 1.3
-  - Soulburn (20 souls): Extends duration of --burn-- by 3 turns, and ignores Effect Resistance. This attack does not trigger a Dual Attack.
+  - Soulburn (20 souls): Extends duration of --burn-- by 3 turns, and ignores Effect Resistance. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Final Radiance** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -424,11 +382,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy, dispelling all buffs before inflicting --decreased Defense-- for 2 turns and a 100% chance each to inflict two --burn-- effects for 2 turns. At the end of the turn, detonates burn effects inflicted on the target.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.2<br>!pow: 1.1<br>Detonation multiplier: 1.3<br>
   - Unparsed formula lines: Detonation multiplier: 1.3
-  - Soulburn (20 souls): Ignore Effect Resistance.
+  - Soulburn (20 souls): Ignore Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Albedo (c1156)
 
@@ -448,20 +406,18 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Rage of Nazarick** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Fiercely attacks the wicked enemy, with a 100% chance each to dispel all buffs from the target, make them --unable to be buffed--, and --decrease Defense-- for 2 turns. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.7<br>!pow: 1.05<br>Max Health scaling 25% (0.25 * self Max Health)<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 ### Alencia (c1100)
 
 - [ ] **S1 — Eradicate** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy by battering them, with a 75% chance to --decrease Defense-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5<br>!pow: 1<br>8% self max Health (0.08 * Health)<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and ignores Effect Resistance.
+  - Soulburn (10 souls): Increases effect chance to 100% and ignores Effect Resistance. — enhanced cast implemented.
   - EE 1: Recovers the caster's Health when using Eradicate. Amount recovered increases proportional to the caster's max Health.
 
 - [ ] **S2 — Noble Blood** — Passive partially implemented or pending
@@ -496,10 +452,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Unverified target count
   - Review/work: Unverified target count
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a cold blade, with a 100% chance to inflict two --poison-- effects for 2 turns, and increases the caster's Combat Readiness by 30%.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Crushing Blow** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -529,11 +485,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy's vital points, with a 100% chance to --stun-- and --decrease Speed-- for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Ambitious Tywin (c2042)
 
@@ -552,21 +508,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Flash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with an instant swordstorm, with a 80% chance each to --stun-- for 1 turn and --decrease Defense-- for 2 turns. When the caster is enraged, ignores Effect Resistance. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.5<br>!pow: 1<br>12% self max Health (0.12 * Health)<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 ### Amid (c1143)
 
 - [ ] **S1 — Zephyr** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with a fan, and increases Combat Readiness of the caster by 15%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies.
+  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: When using Zephyr, increases Combat Readiness by an additional 5%.
   - EE 2: When using Zephyr, the same effect applies to the ally with the highest Combat Readiness except for the caster.
 
@@ -606,21 +561,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Avenger's Sword** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Slash the enemy consecutively to attack. Cannot trigger a critical hit. Penetrates the target's Defense by 30%, and when the caster's Health is 30% or less, penetrates by 70%. When the caster is immortal, grants an extra turn.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.1 (1.5 Soulburn)<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Angel of Light Angelica (c6062)
 
 - [ ] **S1 — Ritualistic Touch** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with fragments of a shimmering star, with a 75% chance to --silence-- for 1 turn. When the target is --silenced-- after attacking, decreases Combat Readiness of the target by 25%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Guardian of Light** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -653,12 +608,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Earnest Prayer** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Dispels two debuffs from an ally before recovering Health proportional to the target's max Health and grants immunity for 2 turns. Decreases skill cooldown of the caster by 1 turn.
   - Source multiplier text (requires review): Skill3<br>Heal strength: 35% target max Health<br>
   - Unparsed formula lines: Heal strength: 35% target max Health
-  - Soulburn (20 souls): Effect is granted to all allies.
+  - Soulburn (20 souls): Effect is granted to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Angelica (c1062)
 
@@ -680,14 +635,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Guide of the Goddess** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Recovers Health of all allies and grants immunity and a barrier for 2 turns. Amount recovered and barrier strength increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 15% self max Health<br>Barrier strength: 15% self max Health
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 15% self max Health; Barrier strength: 15% self max Health
-  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 2 turns.
+  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Increases Guide of the Goddess' amount recovered by 15%.
   - EE 3: Dispels one debuff from all allies after using Guide of the Goddess.
 
@@ -696,12 +651,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Spectral Axe** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with an axe, inflicting up to 10% injuries before absorbing some of the damage dealt as Health. Damage dealt increases proportional to the caster's max Health.
   - Resource: fightingSpirit; base gain 20; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1 (2 soulburn)<br>!pow: 0.95<br>12% self max Health (24% soulburn)<br>30% of damage gained as life
   - Unparsed formula lines: 30% of damage gained as life
-  - Soulburn (20 souls): Greatly increases damage dealt. Does not trigger a Dual Attack.
+  - Soulburn (20 souls): Greatly increases damage dealt. Does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — War God's Might** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -729,11 +684,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by whipping up the sand and has a 35% chance to inflict --stun-- for 1 turn, before recovering Health of all allies proportional to the caster’s max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 0.95<br>Heal strength: 11% caster's max Health<br>
   - Unparsed formula lines: Heal strength: 11% caster's max Health
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Coastal Discipline** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -771,13 +726,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Fire Pillar** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a massive fire pillar, with a 100% chance each to inflict two --burn-- effects for 2 turns and a 70% chance to inflict --stun-- for 1 turn. Grants a barrier (proportional to the caster’s Attack) to the caster for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1<br>!pow: 1<br>Barrier strength: 120% self Attack<br>Detonation multi: 1
   - Unparsed formula lines: Barrier strength: 120% self Attack; Detonation multi: 1
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Increase Fire Pillar's chance to --stun-- by 10%.
 
 ### Arbiter Vildred (c2007)
@@ -793,23 +748,15 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Dark Blade** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After increasing Attack of the caster for 2 turns, attacks all enemies before inflicting --decreased Hit Chance-- for 2 turns, and when an enemy is defeated, resets cooldown. When Focus is full, consumes it all, increasing damage dealt.
   - Resource: focus; base gain 1; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.15 (1.4 soulburn)<br>!pow: 0.85<br><br><br>Skill3 (Full Focus)<br>att_rate: 1.4 (1.6 soulburn0<br>!pow: 0.85<br>
   - Unparsed formula lines: Skill3 (Full Focus); att_rate: 1.4 (1.6 soulburn0; !pow: 0.85
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Archdemon's Shadow (c5004)
-
-- [ ] **S1 — Touch of Chaos** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Has a 100% chance to --seal-- the enemy for 2 turns, before attacking with lightning.
-  - Resource: focus; base gain 1; required/spent 0.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
 
 - [ ] **S2 — Twisted Power** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -833,12 +780,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Confirms the target, with a 100% chance each to dispel two buffs from the enemy and inflict --target-- for 2 turns, before granting increased Attack and immunity to the caster for 2 turns. After using this skill, when the enemy is inflicted with --target--, grants an extra turn to the caster.
   - Source multiplier text (requires review): Skill2<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Eliminating the Target.** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
@@ -861,21 +808,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Argent Flash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with a water scooter, and increases Combat Readiness of the ally in the back row by 50%. Grants vigor to the caster for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.1 (1.35 Soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Aria (c1129)
-
-- [ ] **S1 — Shadow Call** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks two enemies with shadows, with a 50% chance to --decrease Hit Chance-- for 1 turn. When it is not the caster's turn, increases effect chance by 20%. Damage dealt increases proportional to the caster's Defense.
-  - Resource: focus; base gain 1; required/spent 0.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 1<br>85% self Defense (0.85 * Defense) <br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Guide of Darkness** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -919,13 +857,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Shield Wall** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: With the Shield of Light, dispels one debuff from all allies, and grants increased Defense to the caster for 2 turns, and grants a barrier (proportional to the caster's Defense) to all allies for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Barrier strength: 60% self Defense<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Barrier strength: 60% self Defense
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Increases's Shield Wall's barrier strength by 50%.
 
 ### Arowell (c3004)
@@ -933,11 +871,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Shield Thrust** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword and shield, with a 75% chance each to dispel one buff twice. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 0.95<br>5% self max Health (0.02 * Health)<br>
   - Unparsed formula lines: 5% self max Health (0.02 * Health)
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Escort** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -961,12 +899,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Throws daggers at the enemy, with a 50% chance each to inflict two --bleeding-- effects for 2 turns. A successful attack has a 50% chance to activate Expose as an extra attack. Expose can only be activated once per turn, during the caster's turn.<br>Expose: Attacks the enemy, and recovers Health of the caster. Amount recovered increases proportional to the caster's Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br><br><br>Skill1Proc<br>att_rate: 1.3<br>!pow: 1.3<br>Heal Strength: 25% Self Attack<br>
   - Unparsed formula lines: Skill1Proc; att_rate: 1.3; !pow: 1.3; Heal Strength: 25% Self Attack
-  - Soulburn (10 souls): Has a 100% chance to activate Expose.
+  - Soulburn (10 souls): Has a 100% chance to activate Expose. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Dagger Throw's chance to inflict --bleeding-- by 20%.
 
 - [ ] **S2 — Wild Instinct** — Passive partially implemented or pending
@@ -1008,10 +946,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Sudden Assault** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy by quickly dashing towards them, inflicting --decreased Defense-- for 2 turns and --stun-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 0.95<br>15% self max Health (0.15 * Health)<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Assassin Cidd (c2014)
 
@@ -1036,13 +973,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with a powerful ground pound, inflicting --silence-- for 1 turn and decreasing Combat Readiness by 50%, before granting increased Evasion to the caster for 2 turns. Damage dealt increases proportional to the caster and enemy's Speed. Inflicts 20 Soul Removal on the enemy.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5 (2 soulburn)<br>!pow: 0.95<br>0.10% self Speed (0.001 * Speed)<br>0.30% target Speed (0.003 * Speed)
   - Unparsed formula lines: 0.30% target Speed (0.003 * Speed)
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Dispels one buff from the enemy when using Execution. (This effect is applied before inflicting --silence--.)
 
 ### Assassin Coli (c2033)
@@ -1067,11 +1004,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Murder** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by moving silently, inflicting --stun-- for 1 turn. When the enemy is defeated, inflicts --silence-- on all enemies for 1 turn. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5 (3 soulburn)<br>!pow: 0.8<br>0.1125% self Speed (0.001125 * Speed)<br>
-  - Soulburn (20 souls): Increases damage dealt.
+  - Soulburn (20 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 3: Grants the caster immunity for 2 turns after using Murder.
 
 ### Astromancer Elena (c2091)
@@ -1087,11 +1023,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — S3** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with the energy of the enraged star, decreasing buff durations by 1 turn before making them --unhealable-- and --restricting-- for 2 turns. Grants Star's Blessing to the caster for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.1<br>!pow: 0.9<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Aubade Ludwig (c5069)
 
@@ -1115,12 +1050,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Dispels two buffs from all enemies, and has a 85% chance each to inflict --block-- for 2 turns and --silence-- for 1 turn on all enemies. Grants dawn and a barrier (proportional to max Health) to the caster for 3 turns.
   - Source multiplier text (requires review): Skill3<br>Barrier strength: 25% (32% with soulburn) of the caster's max Health<br>
   - Unparsed formula lines: Barrier strength: 25% (32% with soulburn) of the caster's max Health
-  - Soulburn (10 souls): Increases barrier strength.
+  - Soulburn (10 souls): Increases barrier strength. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Aube (c5190)
 
@@ -1136,12 +1071,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Fixes all enemies in a frame, dispelling two buffs before a 100% chance each to inflict --immobilize-- and --restrict-- for 2 turns. Concealment will remain throughout the battle. 
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Ignore Effect Resistance.
+  - Soulburn (10 souls): Ignore Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Auxiliary Lots (c2031)
 
@@ -1156,10 +1091,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Desolation** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with powerful magic, with a 80% chance to --decrease Defense-- for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 ### Azalea (c3031)
 
@@ -1173,10 +1107,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Challenging Blow** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy, with a 100% chance each of --provoking-- and making them --unhealable-- for 2 turns.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.5<br>!pow: 1.05<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 - [ ] **S3 — Sweep** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -1196,11 +1129,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Dark Cloud** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks all enemies by summoning a cloud of darkness. Damage dealt increases proportional to the number of debuffs inflicted on the target. When an enemy is defeated, resets cooldown of Last Requiem.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.1 (1.35 soulburn)<br>!pow: 0.9<br>15% increased damage per debuff on target<br>
   - Unparsed formula lines: 15% increased damage per debuff on target
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Last Requiem** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -1231,14 +1164,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with a huge explosion, --provoking-- for 1 turn. Increases Defense of the caster for 2 turns, and grants a barrier to all allies for 2 turns. Damage dealt and barrier strength increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.3<br>!pow: 1<br>16% self max Health (0.16 * Health)<br>Barrier Strength: 15% of Self Max HP
   - Unparsed formula lines: Barrier Strength: 15% of Self Max HP
-  - Soulburn (10 souls): --Provokes-- for 2 turns.
+  - Soulburn (10 souls): --Provokes-- for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 2: Increases Is This It?! Nyahaha!'s barrier strength by 30%.
   - EE 3: Decreases buff durations of the target by 1 turn when using Is This It?! Nyahaha!. (This effect is applied before inflicting --provoke--)
 
@@ -1247,21 +1180,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Garyo Tensei** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Delivers a deadly blow and detonates any --bleeding-- effects inflicted on the target at the end of the turn. A critical hit will increase Combat Readiness of all allies by 25%.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.6(1.85 soulburn)<br>!pow: 1<br>after initial damage, explosion damage is total remaining bleed damage<br>30% increased damage on bleed portion<br><br>explosion cannot get bonus from critical hit damage<br>Detonation multi: 1.3
   - Unparsed formula lines: after initial damage, explosion damage is total remaining bleed damage; 30% increased damage on bleed portion; explosion cannot get bonus from critical hit damage; Detonation multi: 1.3
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Basar (c1053)
 
 - [ ] **S3 — Sandstorm** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with sand magic, dispelling all buffs and making them --unable to be buffed-- for 2 turns, before decreasing Combat Readiness by 30%.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.9<br>!pow: 0.9<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Bask (c3006)
 
@@ -1270,13 +1202,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Unmapped/conditional debuff grants
   - Description: Slashes with a sword, with a 75% chance to --decrease Attack-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 0.9<br>7% self max Health (0.07 * Health)<br>
-
-- [ ] **S2 — Shield Blow** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks with a shield, with a 100% chance to dispel all buffs. Damage dealt increases proportional to the caster's max Health.
-  - Supported damage formula (reference only): Skill2<br>att_rate: 0.8<br>!pow: 1<br>12% self max Health (0.12 * Health)<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
 
 - [ ] **S3 — Will of Protection** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -1292,11 +1217,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Hits the enemy in the face. When used against an enemy inflicted with --decreased Attack--, activates Rock Smash as an extra attack.<br>Rock Smash: Attacks all enemies. This attack receives effects that are applied to the basic skill. 
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.8<br>!pow: 0.95<br>Rock Smash is 0.5 att_rate, 0.95 pow!<br>
   - Unparsed formula lines: Rock Smash is 0.5 att_rate, 0.95 pow!
-  - Soulburn (20 souls): Activates Rock Smash even when used against enemy without --decreased Attack--.
+  - Soulburn (20 souls): Activates Rock Smash even when used against enemy without --decreased Attack--. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Justified Provoke** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -1334,12 +1259,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: With light, dispels two buffs from all enemies and inflicts --cannot buff-- and --burn-- for 2 turns, before increasing Combat Readiness of the caster by 50%. Increases Combat Readiness of all allies except for the caster by 20%.
   - Source multiplier text (requires review): Skill3<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Increases Attack of the caster for 2 turns when using Symphony of Radiance.
   - EE 3: Inflicts an additional --burn--effect on all enemies for 2 turn when using Symphony of Radiance.
 
@@ -1349,11 +1274,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks all enemies with an energy ray and has a 65% chance to dispel one buff. When used on the caster's turn, has a 35% chance to activate Incursion as an extra attack. Damage dealt increases proportional to the caster's max Health.<br>Incursion: Attacks all enemies and inflicts --decreased Speed-- and --decreased Hit Chance-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.6<br>!pow: 1.05<br>9% self max Health (0.09 * Health)<br><br><br>Skill1Proc<br>att_rate: 0.6<br>!pow: 1.3<br>4.5% self max Health (0.045 * Health)<br>
   - Unparsed formula lines: Skill1Proc; att_rate: 0.6; !pow: 1.3; 4.5% self max Health (0.045 * Health)
-  - Soulburn (10 souls): Increases chance of activating Incursion to 100%.
+  - Soulburn (10 souls): Increases chance of activating Incursion to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Shackles of Suppression** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -1369,15 +1294,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.6<br>!pow: 1.3<br>12% self max Health (0.12 * Health)<br>
 
 ### Bellona (c1071)
-
-- [ ] **S1 — Windbreak Fan** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a fan. Damage dealt increases proportional to the target's max Health. When Focus is 5 or more, consumes all Focus and activates Razorwind Fan.
-  - Reviewed Earth effects: conditional/passive execution.
-  - Resource: focus; base gain 1; required/spent 0.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.95<br>4% target max Health<br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Butterfly Fan** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -1420,12 +1336,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with condensed mana, dispelling two buffs before a 75% chance to --decrease Defense-- and --silence-- for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.9<br>!pow: 1.1<br>silences first then dispells<br>
   - Unparsed formula lines: silences first then dispells
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Increases all of Mana Fundamentals' effect chances by 5%.
 
 ### Benimaru (c1146)
@@ -1433,12 +1349,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Move Out of the Way** — Skill execution unsupported
   - Current base support: unsupported. Unverified target count
   - Review/work: Unverified target count
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Cuts the enemy to attack. When the caster is granted Multilayer Barrier, increases damage dealt.
   - Resource: fightingSpirit; base gain 25; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1 (1.7 Soulburn)<br>!pow: 1<br>30% Damage increase if caster has Multilayer Barrier<br>
   - Unparsed formula lines: 30% Damage increase if caster has Multilayer Barrier
-  - Soulburn (10 souls): Increases damage dealt
+  - Soulburn (10 souls): Increases damage dealt — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Universal Perception** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -1461,10 +1377,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Data Collection** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, and recovers Health of the ally with the lowest Health. When all allies are Earth elemental, recovers Health of all allies instead. Amount recovered increases proportional to the caster's Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Tool Utilization** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -1505,12 +1421,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Dispels all buffs from the enemy, before a 100% chance each to inflict --bind-- and --block-- for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Grants stealth to the caster for 2 turns when using Nothing Personal, Kid.
 
 ### Blaze Dingo (c2021)
@@ -1537,13 +1453,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Sacred Power** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: With a sacred power, recovers Health of the target and the caster proportional to the caster’s Attack and grants invincibility for 1 turn and increased Attack for 2 turns.
   - Source multiplier text (requires review): Skill3<br>Heal strength: 200% self Attack<br>
   - Unparsed formula lines: Heal strength: 200% self Attack
-  - Soulburn (20 souls): Extends the duration of Sacred Power granted to the caster by 1 turn and grants an extra turn.
+  - Soulburn (20 souls): Extends the duration of Sacred Power granted to the caster by 1 turn and grants an extra turn. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Grants the caster increased Attack (Greater) for 2 turns when using Sacred Power.
 
 ### Blood Blade Karin (c2011)
@@ -1566,13 +1482,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Blade Art: Dragon** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Sacrifices 20% of the caster’s current Health to attack all enemies, and grants increased Attack to the caster for 2 turns. When the target is defeated, grants an extra turn. This skill cannot trigger a counterattack.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.2 (1.45 soulburn)<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 2: Grants increased Attack (Greater) instead of increased Attack when using Blade Art: Dragon.
 
 ### Blood Moon Haste (c2039)
@@ -1580,11 +1495,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Blood Scythe** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks by swinging a scythe, dispelling one buff. Damage dealt increases proportional to the caster's max Health. When dispelling the target's buff, activates Bloody Retribution as an extra attack.<br>Bloody Retribution: Attacks the enemy with a scythe, and recovers Health of all allies. Damage dealt and amount recovered increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.3<br>!pow: 1<br><br><br>Skill1(Proc)<br>att_rate: 0.3<br>!pow: 1<br>Max Health Scaling: 10% self max Health (0.1 * Health)<br>Heal strength: 10% Target max Health 
   - Unparsed formula lines: Skill1(Proc); att_rate: 0.3; !pow: 1; Heal strength: 10% Target max Health 
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Grudge** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -1603,11 +1518,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Twirling Thorns** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a sword, with a 40% chance to --stun-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5<br>!pow: 1<br>Max Health scaling 12% (0.12 * self Max Health)<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — enhanced cast implemented.
   - EE 1: Removes 3 Soul from the enemy when using Twirling Thorns.
 
 - [ ] **S2 — Seductive Scent** — Passive partially implemented or pending
@@ -1647,22 +1561,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Full Bombardment!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Boosts firepower to attack all enemies, with a 100% chance to dispel one buff, before increasing Speed of all allies for 2 turns and increasing Attack of the caster for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — enhanced cast implemented.
   - EE 3: Makes the target --unhealable-- for 2 turns when using Full Bombardment!.
 
 ### Boss Arunka (c2124)
 
 - [ ] **S1 — Road Sign Smash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a road sign and has a 75% chance to inflict --decreased Defense-- for 1 turn. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.6<br>!pow: 1<br>100% self Defense scaling (1 * Defense) <br>
-  - Soulburn (10 souls): Triggers a Dual Attack from the ally with the highest Attack.
+  - Soulburn (10 souls): Triggers a Dual Attack from the ally with the highest Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Vanguard of the Silent Expanse** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -1700,12 +1613,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks all enemies with a cursed thornbush, dispelling all buffs, with a 75% chance to --decrease Defense-- for 2 turns and a 100% chance to make them --unable to be buffed-- for 2 turns. A successful attack deals additional damage proportional to the caster's Attack.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.95<br>!pow: 1.1<br>30% of atk - guessing it's ignores 70% def<br>
   - Unparsed formula lines: 30% of atk - guessing it's ignores 70% def
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: Increases Cursed Thorn's --decrease Defense-- effect chance by 10%.
 
 ### Brieg (c1145)
@@ -1713,14 +1626,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Spirit Lord's Protection** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Grants a barrier to all allies for 3 turns, and perception to the caster for 3 turns. Grants an extra turn to the caster. Barrier strength increases proportional to the caster's max Health.
   - Resource: fightingSpirit; base gain 50; required/spent 0.
   - Source multiplier text (requires review): Skill2<br>Barrier Strength: 18.5% of self max Health (0.185 * self Max Health) (24% with Soulburn)<br>
   - Unparsed formula lines: Barrier Strength: 18.5% of self max Health (0.185 * self Max Health) (24% with Soulburn)
-  - Soulburn (10 souls): Increases barrier strength.
+  - Soulburn (10 souls): Increases barrier strength. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Limitless Sword Arts** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -1741,21 +1654,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Hack** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Strikes indiscriminately at the enemy, dealing damage proportional to the caster's lost Health, and recovering Health proportional to the damage dealt.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5(2.2 soulburn)<br>!pow: 0.85<br>0.5% increased damage per 1% self Health missing<br>
   - Unparsed formula lines: 0.5% increased damage per 1% self Health missing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Byblis (c1154)
 
 - [ ] **S1 — Floral Arrangement** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a magical flower, with a 75% chance to --silence-- for 1 turn. After attacking, if the target is inflicted with --silence--, decreases Combat Readiness of the target by 20%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Gardener's Secret** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -1786,22 +1699,22 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Sura: Reave the Skies** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a rage-filled strike. When the enemy is defeated, inflicts extinction. When the target is a Hero, ignores damage reduction and damage sharing effects. When the target is of the Light element, increases damage dealt.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.8 (2.3 Soulburn)<br>!pow: 0.95<br>100% (120% soulburn) increased damage vs. Light enemies<br>
   - Unparsed formula lines: 100% (120% soulburn) increased damage vs. Light enemies
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Camilla (c3124)
 
 - [ ] **S1 — Flashing Blade** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy, with a 50% chance to --decrease Defense-- for 2 turns. When the caster is granted increased Attack, triggers a Dual Attack from the ally with the highest Attack.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Tactical Maneuver** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -1829,11 +1742,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Cheer** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Encourages all allies, decreasing skill cooldown by 1 turn and increasing Speed for 2 turns.
   - Source multiplier text (requires review): Skill2<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Supreme Spear** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -1862,12 +1775,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Daze** — Skill execution unsupported
   - Current base support: unsupported. Unverified target count
   - Review/work: Unverified target count
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy, dispelling all buffs, and increasing Attack and Defense of the caster for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Carrot (c3051)
 
@@ -1890,10 +1803,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Blaze Explosion** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with a powerful fire, dispelling two buffs before a 70% chance to --burn-- for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 ### Cartuja (c1013)
 
@@ -1914,12 +1826,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with wild energy, with a 100% chance to --decrease Attack-- for 2 turns. Recovers 50% of the caster's max Health before granting them increased Defense for 2 turns. Damage dealt increases proportional to the caster's max Health, with additional damage increase when the caster's Health is 75% or less.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.6 (1.0 under 75% hp) <br>!pow: 1<br>5% self max Health (8% soulburn) (6.25% < 75% hp)<br>(10% <75% hp and soulburn)<br><br>att_rate: (+0.2 soulburn)<br>
   - Unparsed formula lines: att_rate: 0.6 (1.0 under 75% hp) ; 5% self max Health (8% soulburn) (6.25% < 75% hp); (10% <75% hp and soulburn); att_rate: (+0.2 soulburn)
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Cecilia (c1002)
 
@@ -1934,12 +1846,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Steel Cloudburst** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a magical spear, with a 100% chance to --decrease Attack-- for 2 turns, before dispelling one buff. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.4<br>!pow: 1<br>6% self max Health (0.06 * Health)<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
   - EE 2: --Decreases Speed-- of all enemies for 2 turns when using Steel Cloudburst.
   - EE 3: Makes all enemies --unhealable-- for 2 turns when using Steel Cloudburst.
 
@@ -1956,13 +1867,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Unmapped/conditional debuff grants
   - Description: Attacks the enemy, before a 75% chance to --decrease Hit Chance-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-
-- [ ] **S2 — Volley** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Shoots a volley of arrows at all enemies, with an 85% chance to decrease Combat Readiness by 20%. When the caster's Health is 80% or more, cooldown does not occur.
-  - Supported damage formula (reference only): Skill2<br>att_rate: 1 (1.25 soulburn)<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Increases damage dealt.
 
 - [ ] **S3 — Defcon** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -1982,10 +1886,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Dimensional Rupture** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks all enemies with a massive light sphere, and absorbs some of the damage dealt as Health. Damage dealt increases proportional to the enemy's max Health.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.9<br>!pow: 0.9<br>4% target max Health<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Finale** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -2014,22 +1918,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Thunderclap** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy repeatedly, and absorbs some of the damage dealt as Health. Grants increased Evasion and a barrier (proportional to Attack) to the caster for 2 turns. When the enemy is not an Elite or Boss monster, ignores damage sharing.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.8(2.5 soulburn)<br>!pow: 1<br>Heals for 20% of damage done<br>Heal Strength: 50% Self Attack
   - Unparsed formula lines: Heals for 20% of damage done; Heal Strength: 50% Self Attack
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Cerise (c1081)
 
 - [ ] **S2 — Luminous Explosion** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Explodes a magical sphere, inflicting --stun-- for 1 turn and --cannot buff-- for 2 turns. Increases Combat Readiness of the caster by 50%.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 - [ ] **S3 — Frost Storm** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -2055,11 +1958,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — All-In!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with a blazing inferno. Penetrates the target's Defense by 50%.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.15(1.65 soulburn)<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 3: When an enemy is defeated by All-in!, decrease skill cooldown of Hot Streak! by 2 turns.
 
 ### Challenger Dominiel (c2037)
@@ -2067,12 +1969,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Electrocute** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with electricity. A critical hit will increase damage dealt.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1 (2.5 soulburn)<br>!pow: 0.9 (1 soulburn)<br>20% increased damage on Critical Hit<br>
   - Unparsed formula lines: 20% increased damage on Critical Hit
-  - Soulburn (20 souls): Increases damage dealt.
+  - Soulburn (20 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: When an enemy is defeated with Electrocute, has a 25% chance to --stun-- all remaining enemies for 1 turn.
 
 - [ ] **S2 — Electric Charge** — Passive partially implemented or pending
@@ -2113,11 +2015,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Cataclysm** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies by slamming rocks and has a 75% chance each to inflict --decreased Defense-- and --decreased Attack-- for 2 turns. Grants increased Defense to the caster for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Chaos Inquisitor (c4001)
 
@@ -2131,11 +2032,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Preach** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy in the name of Chaos, with a 50% chance to activate Heavy Strike when the enemy is buffed. Damage dealt increases proportional to the caster's lost Health. Recovers Health proportional to damage dealt.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5(2.2 soulburn)<br>!pow: 0.85<br>0.5% increased damage per 1% self Health missing<br>
   - Unparsed formula lines: 0.5% increased damage per 1% self Health missing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Chaos Sect Axe (c4025)
 
@@ -2156,11 +2057,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Vigorous Strike** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, dispelling all buffs before a 75% chance to increase skill cooldowns by 2 turns. When the enemy is defeated, resets cooldown of this skill. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Charles (c1027)
 
@@ -2181,13 +2082,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Faithful Strike** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies by discharging a sword blast, and grants increased Attack and increased Defense to all allies for 2 turns. Grants counterattack to the caster for 2 turns. When there are three or fewer enemies, damage dealt increases as enemies become fewer.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.2<br>!pow: 1<br>26.7% more dmg vs 1 target, 53.4% more dmg vs 2 targets, 80.1% more dmg vs 3 targets<br>
   - Unparsed formula lines: 26.7% more dmg vs 1 target, 53.4% more dmg vs 2 targets, 80.1% more dmg vs 3 targets
-  - Soulburn (10 souls): Cooldown of this skill is decreased by 2 turns.
+  - Soulburn (10 souls): Cooldown of this skill is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Dispels all debuffs from the caster before the skill effect when using Faithful Strike.
 
 ### Charlotte (c1009)
@@ -2217,12 +2118,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Cuts all enemies while spinning, making them --unhealable-- for 2 turns. Penetrates Defense of the target with the highest Defense. A successful attack always results in a critical hit.
   - Resource: fightingSpirit; base gain 0; required/spent 100.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.85<br>!pow: 1<br>
-  - Soulburn (10 souls): Acquires 100 Fighting Spirit after using this skill.
+  - Soulburn (10 souls): Acquires 100 Fighting Spirit after using this skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Dispels two debuffs from the caster before the skill effect when using Vortex.
 
 ### Chloe (c1049)
@@ -2247,13 +2148,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Soars into the air and attacks the enemy, --stunning-- for 1 turn. When the enemy is inflicted with --magic nail--, ignores Effect Resistance.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.8(3.3 soulburn)<br>!pow: 0.8<br>When the enemy is inflicted with magic nail, ignores Effect Resistance.<br>
   - Unparsed formula lines: When the enemy is inflicted with magic nail, ignores Effect Resistance.
-  - Soulburn (20 souls): Increases damage dealt.
+  - Soulburn (20 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: Increases Combat Readiness of the caster by 15% when using Heavy Strike.
   - EE 3: Has a 85% chance to --decrease Defense-- for 2 turns when using Hyper Strike. When the target is inflicted with --magic nail--, ignores Effect Resistance.
 
@@ -2261,12 +2162,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Chop** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a spear, before increasing Combat Readiness of the caster by 20%. A critical hit will double the amount of Focus gained. Damage dealt increases proportional to the caster's max Health.
   - Resource: focus; base gain 1; required/spent 0; critical-hit gain ×2.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5<br>!pow: 1<br>10% self max Health (0.10 * Health)<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 1: A critical hit with Chop has a 40% chance to activate Fwoooosh!.
 
 - [ ] **S2 — Fwoooosh!** — Skill execution unsupported
@@ -2303,12 +2203,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Hymn of Courage** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Increases Attack of all allies for 2 turns. Increases Defense of the caster for 2 turns and recovers Health. Amount recovered increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill3<br>Heal strength: 15% self max Health<br>
   - Unparsed formula lines: Heal strength: 15% self max Health
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Church of Ilryos Axe (c3025)
 
@@ -2330,11 +2230,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Plagued Strike** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, dispelling all buffs. When the enemy is defeated, resets cooldown of this skill. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Cidd (c1014)
 
@@ -2357,13 +2257,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Hack** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by slashing at them with daggers, and when the target is defeated, grants an extra turn. When the caster is granted increased Speed, attacks using an elemental advantage. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.6 (2.2 soulburn)<br>!pow: 1<br>0.21% self Speed (0.0021 * Speed)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 2: Decreases Combat Readiness of the target by 30% when using Hack.
   - EE 3: Grants advantageous element effect to Hack, regardless of whether the caster is granted increased Speed.
 
@@ -2390,11 +2289,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks all enemies by spinning before inflicting two --bleeding-- effects for 2 turns and a 70% chance to inflict --decreased Defense-- for 2 turns. When an enemy is defeated, resets skill cooldowns. When the caster is granted rage, increases damage dealt.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.85 (1.1 soulburn)<br>!pow: 1<br>20% increased damage when Enraged<br><br><br>
   - Unparsed formula lines: 20% increased damage when Enraged
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Claudia (c3156)
 
@@ -2402,11 +2301,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword, and has a 50% chance to --decrease Hit Chance-- for 2 turns.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br><br><br>Skill1(Proc)<br>att_rate: 1<br>!pow: 1.3<br>Barrier strength: 20% caster's max Health<br>
   - Unparsed formula lines: Skill1(Proc); att_rate: 1; !pow: 1.3; Barrier strength: 20% caster's max Health
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Slayer's Determination** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -2441,20 +2340,19 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Descent** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies after descending, increasing Attack of all allies for 2 turns before increasing Combat Readiness by 20%. Increases Evasion of the caster for 3 turns. This skill cannot trigger a counterattack.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1 (1.25 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Coli (c1033)
 
 - [ ] **S1 — Ambush** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Ambushes the enemy, with a 75% chance to steal one buff.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.8<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and steals two buffs.
+  - Soulburn (10 souls): Increases effect chance to 100% and steals two buffs. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Accurate Strike** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -2493,12 +2391,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Volley Fire!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Shoots out all wings to attack all enemies, with a 100% chance each to --decrease Speed-- for 2 turns and put them to --sleep-- for 1 turn, before granting immunity to all allies for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.1<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
   - EE 3: Decreases buff durations of the target by 1 turn when using Volley Fire!. (This <br>effect is applied before inflicting decreased Speed.)
 
 ### Commander Lorina (c4035)
@@ -2509,13 +2406,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Description: Increases Effect Resistance by 50%. Increases Attack by 15% each time the caster attacks an enemy. Effect can only stack up to 5 times.
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-
-- [ ] **S3 — Spiral Breakthrough** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy by piercing them with a spear, decreasing Combat Readiness by 15%. Damage dealt increases proportional to the target's max Health.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 0.95<br>3% target max Health<br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 ### Commander Pavel (c2080)
 
@@ -2531,13 +2421,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Die, You Fly** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a pistol. When the target is not an Elite or Boss monster, ignores damage share. When the caster's Attack is greater than the target's Attack, penetrates Defense proportionally, up to 70%.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.85 (1.2 Soulburn)<br>!pow: 1<br>Penetration up to 70% = DIFFERENCE_IN_ATK * 0.000117<br>maybe 5983 atk over to have max pen?
   - Unparsed formula lines: Penetration up to 70% = DIFFERENCE_IN_ATK * 0.000117; maybe 5983 atk over to have max pen?
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: When defeating an enemy with Die, You Fly, inflicts extinction on the enemy.
 
 ### Conqueror Lilias (c2089)
@@ -2546,12 +2436,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Distracts the enemy, with a 100% chance to inflict --redirected provoke-- and --decreased Defense-- for 1 turn. Grants a barrier (proportional to the target’s max Health) to the caster and the ally except for the caster with the highest max Health for 2 turns.
   - Source multiplier text (requires review): Skill2<br>Barrier Strength: 25% of Target Max Health<br>
   - Unparsed formula lines: Barrier Strength: 25% of Target Max Health
-  - Soulburn (10 souls): Extends duration of debuffs inflicted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of debuffs inflicted by this skill by 1 turn. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — For Honor!** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -2583,23 +2473,23 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Fury's Advent** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: By discharging Fighting Spirit, grants indomitable for 3 turns and recovers Health proportional to max Health before granting an extra turn. At the start of the first battle, gains 50 Fighting Spirit. When attacked, gains 10 Fighting Spirit.
   - Resource: fightingSpirit; base gain 0; required/spent 100.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 50% self max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 50% self max Health
-  - Soulburn (20 souls): Amount of Health recovered is doubled.
+  - Soulburn (20 souls): Amount of Health recovered is doubled. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Crescent Moon Rin (c2054)
 
 - [ ] **S1 — Heckle** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a ring, with a 40% chance to --stun-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Eyecatcher** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -2634,14 +2524,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Shield of Holy Spirit** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Covers all allies with an aura of holy spirit, granting immunity for 2 turns and invincibility for 1 turn.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>EE Heal: 20% caster's max Health <br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; EE Heal: 20% caster's max Health 
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Extends duration of immunity granted by Shield of Holy Spirit by 1 turn.
   - EE 3: Recovers Health of all allies proportional to the caster's max Health when using Shield of Holy Spirit.
 
@@ -2663,10 +2553,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Breakthrough** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with a swordstorm, decreasing their Combat Readiness by 50%, before a 75% chance to --provoke-- for 1 turn. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.5(0.75 soulburn)<br>!pow: 0.95<br>60% self Defense (0.6 * Defense)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Dark Corvus (c2012)
 
@@ -2687,21 +2576,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Devil's Descent** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a lethal hit, and absorbs some of the damage as Health, and when the enemy is defeated, inflicts extinction. When the target is a Hero, ignores damage sharing. Penetrates Defense, and cannot trigger a critical hit or a heavy blow. Damage dealt increases proportional to the caster's max Health. Begins the first battle with full skill cooldown count.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0<br>!pow: 0.95<br>31% self max Health (37.5% soulburn)<br>50% of damage gained as life, penetrates defense
   - Unparsed formula lines: 50% of damage gained as life, penetrates defense
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Death Dealer Ray (c2090)
 
 - [ ] **S1 — Clinical Trial** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by throwing an experimental drug at them and has a 75% chance to put them to --sleep-- for 1 turn. A successful attack deals additional damage equivalent to 40% of injuries inflicted on the target. This skill does not trigger a Dual Attack.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Anatomical Mutation** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -2723,11 +2612,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Desert Wind** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with wind and has a 35% chance to inflict --stun-- for 1 turn, before recovering Health of all allies proportional to the target’s max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1.2<br>!pow: 1<br>Heal Strength: 9% of Target max Health (18% SB)<br>
   - Unparsed formula lines: Heal Strength: 9% of Target max Health (18% SB)
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Desert Cycle** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -2747,11 +2636,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Slice to Pieces** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with scissors, with a 75% chance to --decrease Defense-- for 1 turn. Damage dealt increases proportional to the caster's Defense.
   - Resource: fightingSpirit; base gain 25; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.6<br>!pow: 1<br>100% self Defense (1 * Defense)<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and decreases Defense for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100% and decreases Defense for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Model Disqualification** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -2765,13 +2654,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Key to an Oath** — Base damage supported; secondary effects pending
   - Current base support: supported. Reviewed e7calc damage formula
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a staff, before recovering Health of the ally with the lowest Health proportional to the caster’s max Health.
   - Reviewed Earth effects: heal.
   - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>Heal strength: 8% self max Health<br>Heal strength: 35% self max Health (Soulburn)
-  - Soulburn (20 souls): After attacking, greatly heals all allies. Does not trigger a Dual Attack.
+  - Soulburn (20 souls): After attacking, greatly heals all allies. Does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Dispels one debuff from the ally with the lowest Health when using Key to an Oath.
 
 - [ ] **S2 — Regen** — Non-attack cast supported; remaining effects listed below
@@ -2801,13 +2690,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Saint's Prayer** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Through a miracle of the Goddess, dispels all debuffs from all allies before granting increased Defense and increased Penetration Resistance for 3 turns, and increases Combat Readiness of the caster by 50%.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>EE Heal strength: 30% target's max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; EE Heal strength: 30% target's max Health
-  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns.
+  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Recovers Health of all allies proportional to the target’s max Health when using Saint's Prayer.
 
 ### Dingo (c1021)
@@ -2816,11 +2705,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a cleaver, with a 50% chance to inflict --bleeding-- for 2 turns. Has a 30% chance to activate Quick Grill as an extra attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Heal strength: 20% of damage done<br>
   - Unparsed formula lines: Heal strength: 20% of damage done
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Quick Grill** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -2856,13 +2745,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Purge** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 1: Damage bonus implemented; additional effect pending
   - Description: Attacks the enemy with a merciless iron fist, granting a barrier to all allies for 2 turns before increasing Defense penetration of this skill by 35%. Penetration increase can stack up to 2 times. A successful attack always results in a critical hit. Damage dealt and barrier strength increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1 (1.24 Soulburn)<br>!pow: 1<br>Max Health scaling 17% (22.5% Soulburn) caster's max Health<br>Barrier strength: 15% caster's max Health
   - Unparsed formula lines: Barrier strength: 15% caster's max Health
-  - Soulburn (10 souls): Increases damage dealt and decreases cooldown of this skill by 1 turn.
+  - Soulburn (10 souls): Increases damage dealt and decreases cooldown of this skill by 1 turn. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases damage dealt by Purge by 10%, and removes 20 Soul from the enemy.
 
 ### Dizzy (c1094)
@@ -2871,11 +2760,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Unleashes a giant explosion to attack all enemies. The attack misses, but inflicts --decreased Speed--, --decreased Attack--, and --decreased Hit Chance-- on all enemies for 2 turns regardless of whether the attack hits.
   - Source multiplier text (requires review): Skill3<br>att_rate: 2.5<br>!pow: 1<br>always 'misses' (0.75 modifier, no crit chance)<br>
   - Unparsed formula lines: always 'misses' (0.75 modifier, no crit chance)
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Doll Maker Pearlhorizon (c4073)
 
@@ -2899,21 +2788,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy and --stuns-- them for 1 turn. When the enemy is --asleep--, --decrease Defense-- for 2 turns and deals additional damage equivalent to 30% of the target's max Health.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Dominiel (c1037)
 
 - [ ] **S1 — Hail** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by hurling ice fragments, with a 40% chance to inflict --stun-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance by 60%.
+  - Soulburn (10 souls): Increases effect chance by 60%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Nixied's Grace** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -2942,12 +2831,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Celebration of Light** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Recites the Celebration of Light, recovering the Health of all allies and granting continuous healing and increased Defense for 2 turns. Amount recovered is proportional to the target's max Health.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Light Curtain** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -2974,21 +2863,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Overcoming Hardship** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by piercing them, and increases Combat Readiness of the caster and the ally in the back row by 30%. Penetrates Defense, but cannot trigger a critical hit or a heavy blow. Damage dealt increases proportional to the caster's max Health. When the caster is granted Oath of Punishment, attacks all enemies.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.3<br>!pow: 0.9<br>Max Health scaling 11% (0.11 * self Max Health)<br>Penetration 100%
   - Unparsed formula lines: Penetration 100%
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Dragon King Sharun (c2132)
 
 - [ ] **S1 — Turtle Flipping** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, with a 40% chance to --stun-- for 1 turn. After attacking, when the target is --stunned--, increases Combat Readiness of the ally with the highest Attack except for the caster by 20%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Lullaby for Waves** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3008,10 +2897,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Come Here** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Strongly knees the enemy to attack, with a 75% chance each to --provoke-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.2<br>!pow: 1<br>5% self max Health (0.05 * Health)<br>
-  - Soulburn (20 souls): Attacks all enemies.
+  - Soulburn (20 souls): Attacks all enemies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — I Protect** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3031,11 +2920,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Cold Snap** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with an explosion of ice, dispelling two buffs before decreasing Combat Readiness by a random amount between 15% and 40%. Grants the caster skill nullifier once.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S3 — Absolute Zero** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -3064,20 +2952,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — I'll Show You Our Difference!** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy together with Alphonse, and increase Combat Readiness by 50%. When the enemy is not an Elite or Boss monster, damage sharing effects are ignored. Damage dealt increases proprotional to the caster's max Health. Damage dealt increases every time this skill is used and can stack up to 3 times.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.2<br>!pow: 1<br>25% self max Health (0.25* Health)<br>20% increased damage per usage
   - Unparsed formula lines: 20% increased damage per usage
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Elena (c1091)
 
 - [ ] **S1 — Starlight's Will** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks with the power of the stars, dispelling one debuff each from two allies.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Dispels all debuffs from all allies.
+  - Soulburn (20 souls): Dispels all debuffs from all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Guardian's Authority** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3119,10 +3007,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Cloak and Trigger** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Inflicts resource reduction on the target by 60%, before attacking the enemy with a pistol, dispelling two buffs before inflicting --target-- and --decreased Defense-- for 2 turns and decreasing Combat Readiness by 50%. Increases Combat Readiness of the caster by 50%.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.2<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Elphelt (c1105)
 
@@ -3138,11 +3025,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Magnum Wedding** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Dispels two buffs from the enemy before shooting a bullet of love, with a 100% chance each to inflict --sleep-- and --decreased Defense-- for 2 turns. Grants an extra turn.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.1<br>!pow: 1.1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Elson (c3054)
 
@@ -3162,21 +3048,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Light's Protection** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Recovers Health and increases Attack and Defense of all allies for 2 turns with strengthening magic. Amount recovered is proportional to the target's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 10% target max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 10% target max Health
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Elvira (c1148)
-
-- [ ] **S1 — Hit and Run** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Swiftly attacks the enemy and has a 75% chance to --provoke-- for 1 turn. When the caster is immortal, increases effect chance by 25%.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Blood Mana** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -3207,11 +3086,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Spirit's Blessing** — Non-attack cast supported; remaining effects listed below
   - Current base support: nonAttack. Non-attack cast implemented
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Grants a blessing to an ally except for the caster, dispelling two debuffs and increasing Attack for 2 turns before increasing Combat Readiness by 50%. Increases Combat Readiness of the caster by 25%.
   - Non-attack source note (no damage formula): Skill2<br>Soulburn: 20% self max Health (0.2 * Health)<br>
   - Unparsed formula lines: Soulburn: 20% self max Health (0.2 * Health)
-  - Soulburn (10 souls): Recovers Health of an ally proportional to the caster’s max Health.
+  - Soulburn (10 souls): Recovers Health of an ally proportional to the caster’s max Health. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Divine Protection of the Great Spirit** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -3226,11 +3105,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Sword of Punishment** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword, absorbing some of the damage dealt as Health, and inflicts up to 10% injuries. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Max Health scaling 10% (0.10 * self Max Health) or 17% with Soulburn<br>Heals for 35% of the damage dealt
   - Unparsed formula lines: Max Health scaling 10% (0.10 * self Max Health) or 17% with Soulburn; Heals for 35% of the damage dealt
-  - Soulburn (10 souls): Increases damage dealt and a successful attack deals additional damage equivalent to 50% of injuries inflicted on the target. This attack does not trigger a Dual Attack.
+  - Soulburn (10 souls): Increases damage dealt and a successful attack deals additional damage equivalent to 50% of injuries inflicted on the target. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Dragon's Pride** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3264,24 +3143,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Prepare Judgement** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Corrects stance, increasing Attack and Critical Hit Chance of the caster for 2 turns and Combat Readiness by 50%.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Ervalen (c1108)
 
 - [ ] **S2 — Sword of Hatred** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy repeatedly, and grants immunity to the caster for 1 turn. When the enemy's max Health is greater than the caster's max Health, increases Combat Readiness of the caster proportionally, up to 30%.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.4 (2.0 soulburn)<br>!pow: 1<br>0.49% combat readiness per 1% self health under enemy current health<br>
   - Unparsed formula lines: 0.49% combat readiness per 1% self health under enemy current health
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Heir to the Throne** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -3315,30 +3194,28 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Dazzling Strike** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a shield, inflicting up to 20% injuries, and recovering Health of the caster. Penetrates the target's Defense by 50%. A successful attack always results in a critical hit. Amount recovered and damage dealt increase proportional to the caster's max Health.
   - Resource: fightingSpirit; base gain 50; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.5<br>!pow: 1<br>Health scaling: 14% caster's max Health<br>Heal strength: 20% caster's max Health
   - Unparsed formula lines: Heal strength: 20% caster's max Health
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Eternal Wanderer Ludwig (c2069)
 
 - [ ] **S1 — How Trivial** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with mana, before increasing Attack of the caster for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 1 turn and grants an extra turn.
+  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 1 turn and grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S2 — Let's Have Some Fun** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with powerful mana, before granting increased Hit Chance for 2 turns and skill nullifier once to the caster.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.6<br>!pow: 1<br>
-  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 1 turn and grants an extra turn.
+  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 1 turn and grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S3 — Can You Handle This?** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
@@ -3348,13 +3225,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: 30% Pen for each soulburn (60% max Penetration)
 
 ### Eye of the Abyss Fumyr (c5147)
-
-- [ ] **S1 — Elemental Magic** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with elemental magic, with a 40% chance to inflict --stun-- for 1 turn.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
 
 - [ ] **S2 — Blue Despair** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -3378,11 +3248,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword, with a 75% chance to --decrease Attack-- for 1 turn. A successful attack deals 1,000 fixed damage for each debuff inflicted on the target at the end of the turn.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Fixed damage 1k per debuff<br>
   - Unparsed formula lines: Fixed damage 1k per debuff
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Slayer's Bond** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3403,11 +3273,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — One Pair** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a mystical power, with a 75% chance each to inflict --redirected provoke-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 1: Increases One Pair's chance to --redirected provoke-- by 25%.
 
 - [ ] **S2 — Wild Card** — Passive partially implemented or pending
@@ -3441,11 +3310,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Hysteria** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy indiscriminately, fully increasing skill cooldowns. Grants skill nullifier once to all allies, and increases Combat Readiness of all allies by 25%. Grants stealth to the caster for 3 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.4<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Falconer Kluri (c4003)
 
@@ -3460,20 +3328,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Fluri flies towards the enemy, with a 75% chance to dispel all buffs, before a 100% chance to --provoke-- and --decrease Defense-- the enemy for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Fallen Cecilia (c2002)
-
-- [ ] **S1 — Mistake** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a spear of revenge and has a 100% chance to --provoke-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 1<br>7% self max Health<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
 
 - [ ] **S2 — Strong Instinct** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3493,12 +3354,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Intense Welcome** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After consuming 15% of the caster's current Health and inflicting injuries proportional to the consumption on the caster, attacks the enemy, recovering Health of all allies. When it is the caster's turn, if the caster is enraged, activates Embrace as an extra attack. Amount recovered increases proportional to the caster's max Health and Attack.<br>Embrace: Attacks the enemy, and grants immunity to the caster for 1 turn. Damage dealt increases proportional to the caster's injuries.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1.5<br>!pow: 1<br>Heal strength: 3% caster's max Health, 30% caster's Attack<br>Soulburn Heal strength: 8% caster's max Health, 75% caster's Attack<br><br>Skill1(Proc)<br>att_rate: 0.7<br>!pow: 1<br>Injury scaling rate: 1<br>
   - Unparsed formula lines: Heal strength: 3% caster's max Health, 30% caster's Attack; Soulburn Heal strength: 8% caster's max Health, 75% caster's Attack; Skill1(Proc); att_rate: 0.7; !pow: 1; Injury scaling rate: 1
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Love=Pain** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3517,15 +3378,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Fenris (c1158)
 
-- [ ] **S1 — Magic Arrow** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a magic arrow, and increases Speed for 1 turn.
-  - Reviewed Earth effects: buff.
-  - Resource: fightingSpirit; base gain 25; required/spent 0.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1.2 (1.9 Soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
-
 - [ ] **S2 — Unwavering Will** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
   - Review/work: Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -3538,12 +3390,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — The Spell to Kill Demons** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After granting increased Attack to the caster for 1 turn, attacks the enemy with magic. When Focus is 3 or higher, decreases skill cooldowns by 1 turn. Damage dealt increases proportional to the caster's Speed.
   - Resource: focus; base gain 0; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.9<br>!pow: 0.9<br>0.075% self Speed (0.00075 * Speed)<br>
-  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack or counterattack.
+  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack or counterattack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Exceptional Magical Talent** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -3582,20 +3434,19 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Let Me Give It a Try** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies by collecting bubbles, dispelling two buffs before a 85% chance to inflict --decreased Defense-- for 2 turns and a 100% inflict --silence-- for 1 turn.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance
+  - Soulburn (20 souls): Ignores Effect Resistance — enhanced cast implemented.
 
 ### Fighter Maya (c2032)
 
 - [ ] **S1 — Strike of Provocation** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks with a blunt weapon, with a 75% chance to --provoke-- for 1 turn. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5<br>!pow: 1<br>75% self Defense (0.75 * Defense)<br>
-  - Soulburn (10 souls): --Provoke-- chance increases to 100%.
+  - Soulburn (10 souls): --Provoke-- chance increases to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Reclaim** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3630,11 +3481,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Drives a hard bargain against all enemies, increasing skill cooldown of all enemies by 1 turn and inflicting --decreasing Defense-- for 2 turns before decreasing Combat Readiness by 15%.
   - Source multiplier text (requires review): Skill3<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Decreases Combat Readiness by an additional 5% when using Advantageous Deal.
 
 ### Free Spirit Tieria (c3026)
@@ -3664,24 +3515,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Dashes towards the enemy to attack, and --decreases Defense-- for 2 turns. A critical hit will grant immunity to the caster for 2 turns. Damage dealt increases proportional to the target's max Health. 
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.6(2.3 soulburn)<br>!pow: 0.9<br>4% enemy max Health (0.04 * Health)<br>
   - Unparsed formula lines: 4% enemy max Health (0.04 * Health)
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Frida (c1163)
 
 - [ ] **S1 — Tube Throw** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy by throwing a tube, and increases Combat Readiness of the ally with the highest Combat Readiness except for the caster by 15%.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Barrier strength: 20% caster's max Health<br>
   - Unparsed formula lines: Barrier strength: 20% caster's max Health
-  - Soulburn (20 souls): Uses Aqua Ride instead of Tube Throw.<br>Aqua Ride: Dispels one debuff from all allies and grants a barrier (proportional to the caster's max Health)  for 2 turns.
+  - Soulburn (20 souls): Uses Aqua Ride instead of Tube Throw.<br>Aqua Ride: Dispels one debuff from all allies and grants a barrier (proportional to the caster's max Health)  for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Invitation to a Fantasy** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3703,12 +3554,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Ordinary Offensive Magic** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with magic, and grants immunity to the caster for 1 turn. When it is the caster's turn, activates Vollzanbel as an extra attack.<br>Vollznabell (gain 1 Soul): Attacks all enemies with flame magic. Damage dealt increases proportional to the amount of the enemy's lost Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1 (1.7 soulburn)<br>!pow: 0.95<br><br><br>Skill1 (Proc)<br>att_rate: 1<br>!pow: 1<br>Lost Health scaling: 0.35% increased damage per 1% target Health missing<br>
   - Unparsed formula lines: Skill1 (Proc); att_rate: 1; !pow: 1; Lost Health scaling: 0.35% increased damage per 1% target Health missing
-  - Soulburn (10 souls): Increases damage dealt of Ordinary Offensive Magic.
+  - Soulburn (10 souls): Increases damage dealt of Ordinary Offensive Magic. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — The Highest Form of Magic** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3740,12 +3591,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Sensory Dissection** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with an illusion, dispelling two buffs before increasing skill cooldowns by 1 turn and decreasing Combat Readiness by 40%. Inflicts 2,000 additional damage for each Focus.
   - Resource: focus; base gain 0; required/spent 0.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 3: Unaffected by elemental disadvantage when using Sensory Dissection.
 
 ### Furious (c1087)
@@ -3766,12 +3616,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Fatal Bullet** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with a fatal shot, with a 100% chance to --decrease Defense-- for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.65(1.95 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 2: --Restricts-- the target for 2 turns when using Fatal Bullet.
   - EE 3: Has a 75% chance to --decrease Hit Chance-- of the target for 2 turns when using Fatal Bullet.
 
@@ -3797,22 +3646,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Command to Charge** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies by giving the order to charge, and has a 100% chance to inflict --stun-- for 1 turn, before granting increased Attack to all allies for 2 turns. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.8<br>!pow: 1<br>8% self max Health (0.08 * Health)<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 ### Genesis Ras (c2001)
 
 - [ ] **S2 — Chains of Binding** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: After inflicting --seal-- and --collapse-- on the enemy for 2 turns, attacks the enemy. A critical hit will grant an extra turn. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.9<br>!pow: 1<br>Health scaling: 7% caster's max Health<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 - [ ] **S3 — Goddess's Judgement** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
@@ -3832,11 +3679,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Precise Attack** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Fires a missile at the enemy, and when the enemy is defeated, inflicts extinction and grants torrent to the caster. Increases Hit Chance of this skill by 50%.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.5(2.2 soulburn)<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 - [ ] **S3 — Focused Fire** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -3857,21 +3703,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Soul Destruction** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks all enemies with magic, with a 100% chance to transfer all debuffs inflicted on the caster, and dispels all debuffs from the caster.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.7(0.95 soulburn)<br>!pow: 1<br>^ in game tooltip scaling is wrong, not me
   - Unparsed formula lines: ^ in game tooltip scaling is wrong, not me
-  - Soulburn (20 souls): Increases damage dealt.
+  - Soulburn (20 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Godmother (c3101)
 
 - [ ] **S1 — Gunshot** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Shoots the enemy with a pistol, with a 50% chance to --target-- them for 2 turns.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Rocket Launcher** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -3891,10 +3737,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Vertical Cut** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Cuts the enemy, with a 100% chance to --restrict-- for 1 turn. Has a 100% chance to --restrict-- for 2 turns when the target is a Light elemental enemy.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.1 (1.8 Soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 - [ ] **S2 — Motivation** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -3937,12 +3782,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Scorching Flare** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After granting vigor to the caster for 3 turns, attacks all enemies by surrounding the area in flames, and absorbs some of the damage dealt as Health. Increases Combat Readiness of the caster by 50%. Cannot trigger a critical hit, and penetrates the target's Defense. Damage dealt increases proportional to the caster's Defense.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.3 (0.6 Soulburn)<br>!pow: 1<br>50% self Defense (0.5 * Defense) -> Soulburn 145% self Defense (1.45 * Defense)<br>Heal strength: 30% of the damage dealt
   - Unparsed formula lines: 50% self Defense (0.5 * Defense) -> Soulburn 145% self Defense (1.45 * Defense); Heal strength: 30% of the damage dealt
-  - Soulburn (10 souls): Increases damage dealt and attacks a single target.
+  - Soulburn (10 souls): Increases damage dealt and attacks a single target. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Guider Aither (c2018)
 
@@ -3964,13 +3809,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Wave of Force** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Delivers a blow to the enemy with spirit power and dispels all buffs, before increasing Attack of the ally with the highest Attack for 2 turns and increasing Combat Readiness by 50%.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
   - EE 2: --Stuns-- the enemy for 1 turn when using Wave of Force.
   - EE 3: Increases Attack of all allies for 2 turns when using Wave of Force.
 
@@ -3993,11 +3837,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks with an axe, --stunning-- for 1 turn and --decreasing Defense-- for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 2.2(2.9 soulburn) was 1.7(2.4 soulburn)<br>!pow: 0.95<br>30% increased damage if target is bleeding<br>
   - Unparsed formula lines: att_rate: 2.2(2.9 soulburn) was 1.7(2.4 soulburn); 30% increased damage if target is bleeding
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Harsetti (c1153)
 
@@ -4005,12 +3849,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, with a 75% chance to --decrease Defense-- for 1 turn. When it is the caster's turn, uses En Passant as an extra attack. Damage dealt increases proportional to the caster's max Health.<br>En Passant: Attacks all enemies, with a 60% chance to --decrease Attack-- for 1 turn. Damage dealt increases proportional to the caster's max Health.
   - Resource: focus; base gain 1; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.6<br>!pow: 1<br>Max Health scaling 8% (0.08 * self Max Health)<br><br><br>Skill1(Proc)<br>att_rate: 0.5<br>!pow: 1<br>Max Health scaling 11% (0.11 * self Max Health)<br>
   - Unparsed formula lines: Skill1(Proc); att_rate: 0.5; !pow: 1; Max Health scaling 11% (0.11 * self Max Health)
-  - Soulburn (10 souls): Effect Chance of Gambit increases to 100%, and --decreases Defense-- for 2 turns.
+  - Soulburn (10 souls): Effect Chance of Gambit increases to 100%, and --decreases Defense-- for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — The Law of Skuggiheim** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4052,24 +3896,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Anchor Shot** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with an anchor, absorbing some of the damage dealt as Health, and granting morale to all allies for 2 turns. When the target is granted a barrier, penetrates the target's Defense by 70%. Damage dealt increases proportional to the caster's Max Health. Damage dealt increases every time this skill is used, stacking up to 5 times.
   - Resource: focus; base gain 2; required/spent 0.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases Hit Chance by 100% when using this skill.
+  - Soulburn (10 souls): Increases Hit Chance by 100% when using this skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Hasol (c3135)
 
 - [ ] **S1 — Swift Cut** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy, before recovering Health of the caster. Additionally inflicts 500 fixed damage regardless of whether the attack hits. Damage dealt and amount recovered increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 1<br>5% self max Health (0.05 * Health)<br>Heal Strength: 10% self max hp
   - Unparsed formula lines: Heal Strength: 10% self max hp
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Blade of Vengeance** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4099,11 +3943,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Blood Rend** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a scythe, inflicting --unhealable-- and --vampiric touch-- for 2 turns, and recovers Health of all allies proportional to damage dealt.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.5 (2 soulburn)<br>!pow: 1<br>27% of damage as healing<br>
   - Unparsed formula lines: 27% of damage as healing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Vampiric Seal** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -4120,10 +3964,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Knee Smash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Smashes the enemy with their knee, with a 80% chance to --decrease Hit Chance-- for 1 turn. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.95<br>!pow: 0.95<br>0.075% self Speed (0.00075 * Speed)<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 - [ ] **S2 — Wind Pressure** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -4157,12 +4000,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Attack Command** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Uses strengthening magic to increase Attack of all allies for 2 turns before recovering Health and dispelling one debuff. Amount recovered is proportional to the caster's Attack and the target's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 30% self Attack + 12% target max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 30% self Attack + 12% target max Health
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Hecate (c1178)
 
@@ -4187,22 +4030,22 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Inescapable Demise** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: After granting increased Attack to the caster for 3 turns, attacks the enemy by releasing the force of the netherworld. When the target is a hero, ignores damage share. Begins the first battle with a full skill cooldown count.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (10 souls): Grants increased Attack (Greater) for 3 turns.
+  - Soulburn (10 souls): Grants increased Attack (Greater) for 3 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Increases Combat Readiness of the casters by 50% when using Inescapable Demise.
 
 ### Helen (c3122)
 
 - [ ] **S1 — Blunt Strike** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy before increasing Combat Readiness of a random ally except for the caster by 15%. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 1<br>80% self Defense (0.8 * Defense)<br>
-  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies.
+  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Wild Swing** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
@@ -4237,12 +4080,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Cry of Victory** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Encourages allies, increasing Attack for 2 turns before increasing Combat Readiness of the caster by 50%.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Hellion Lua (c2126)
 
@@ -4263,12 +4106,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Grants challenge to all allies, before increasing Defense of the caster for 2 turns. Decreases buff durations of all enemies by 1 turn and has a 100% chance to --provoke-- for 1 turn.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Holiday Yufine (c5016)
 
@@ -4286,11 +4129,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Yufine's ☆ Special** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Dispels two debuffs from all allies and attacks all enemies in the middle of a night market. Increased Attack of all allies for 2 turns and Combat Readiness by 25%.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 ### Holy Flame Adin (c4141)
 
@@ -4312,12 +4154,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy repeatedly, --decreasing Speed-- of the target for 2 turns and a 100% chance to --decrease Defense-- of the target for 2 turns. Grants Willful Flame to the caster for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Reistance.
+  - Soulburn (20 souls): Ignores Effect Reistance. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Hurado (c3055)
 
@@ -4334,24 +4176,17 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
 
-- [ ] **S3 — Dark Explosion** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks all enemies with dark magic, with a 100% chance to --dispel-- all buff before --decreasing Combat Readiness-- by 15%.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
-
 ### Hwayoung (c1128)
 
 - [ ] **S1 — Supersonic Kick** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with a kick and deals additional damage proportional to the caster's Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.8<br>!pow: 1<br>Additional damage: 35% of caster's Attack as damage, assumed 70% def pen<br><br><br>Skill1 (Soulburn)<br>att_rate: 1.2<br>!pow: 1<br>Additional damage: 70% of caster's Attack as damage, assumed 70% def pen<br>
   - Unparsed formula lines: Additional damage: 35% of caster's Attack as damage, assumed 70% def pen; Skill1 (Soulburn); att_rate: 1.2; !pow: 1; Additional damage: 70% of caster's Attack as damage, assumed 70% def pen
-  - Soulburn (10 souls): Grants an extra attack with the same skill.
+  - Soulburn (10 souls): Grants an extra attack with the same skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 2: Increases Combat Readiness of the caster by 15% when using Supersonic Kick.
 
 - [ ] **S2 — Prairie Hawk** — Passive partially implemented or pending
@@ -4382,11 +4217,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — High-Density Explosive Cube** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with powerful explosives, with a 100% chance to dispel one buff, before a 75% chance to --decrease hit Chance-- for 2 turns. Grants the caster skill nullifier once.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.9(1.15 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Ilynav (c1113)
 
@@ -4400,12 +4234,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Punish** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy by stabbing them, inflicting up to 20% injuries. A successful attack inflicts additional damage equivalent to 50% of injuries inflicted on the target. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1 (1.4 Soulburn)<br>!pow: 1<br>18% self max Health (0.18* Health) (Soulburn: 28% self Max Health  0.28 * Health)<br>
   - Unparsed formula lines: 18% self max Health (0.18* Health) (Soulburn: 28% self Max Health  0.28 * Health)
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Decrease cooldown of Punish by 1 turn.
 
 - [ ] **S3 — Repel** — Base damage supported; secondary effects pending
@@ -4423,13 +4257,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Swing** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with Ruyi Bang, and grants a barrier to the caster for 1 turn. Barrier strength increases proportional to the caster's Attack. When used on the caster's turn, attacks all enemies. The changed attack does not trigger a Dual Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.85 (1.55 Soulburn)<br>!pow: 1<br>Barrier strength: 30% caster's Attack<br><br><br>Skill1(AoE)<br>att_rate: 0.85 (1.1 Soulburn)<br>!pow: 1<br>Barrier strength: 30% caster's Attack<br>
   - Unparsed formula lines: Barrier strength: 30% caster's Attack; Skill1(AoE); att_rate: 0.85 (1.1 Soulburn); !pow: 1; Barrier strength: 30% caster's Attack
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Swing attacks all enemies, even when counterattacking.
 
 - [ ] **S2 — The Immortal One** — Passive partially implemented or pending
@@ -4473,12 +4307,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with an inferno, dispelling all buffs before a 100% chance each to inflict two --burn-- effects for 2 turns, and at the end of the turn, detonates --burn-- effects. When the caster is granted vigor, ignores Effect Resistance.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.7<br>!pow: 1<br>Detonation multi: 1.3<br>
   - Unparsed formula lines: Detonation multi: 1.3
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Inflicts one additional --burn-- for 2 turns if granted vigor when using Flames of Destruction.
 
 ### Infinite Horizon Achates (c6017)
@@ -4486,10 +4320,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Mysterious Design** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a staff, with a 40% chance to --stun-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Unbridled Potential** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -4532,21 +4366,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Strike of Vengeance** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Attacks the enemy with a sword. Cannot trigger a critical hit. A successful attack deals additional damage proportional to the caster's Attack to all enemies. Penetrates the target’s Defense by 30%, and when the caster’s Health is 30% or less, penetrates by 70%. When the caster is immortal, grants an extra turn.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.1<br>!pow: 0.95<br>Additional damage: 60% caster's Attack (0.6 * Attack)<br><br><br>Skill3(soulburn)<br>att_rate: 1.5<br>!pow: 0.95<br>Additional damage: 80% caster's Attack (0.8 * Attack)<br>
   - Unparsed formula lines: Additional damage: 60% caster's Attack (0.6 * Attack); Skill3(soulburn); att_rate: 1.5; !pow: 0.95; Additional damage: 80% caster's Attack (0.8 * Attack)
-  - Soulburn (10 souls): Increases damage dealt and additional damage.
+  - Soulburn (10 souls): Increases damage dealt and additional damage. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Iseria (c1024)
 
 - [ ] **S1 — Refined Flower** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Throws swords at the enemy, with a 50% chance to --decrease Defense-- for 2 turns.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1 (2 soulburn)<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Increases effect chance by 50% and increases damage dealt. Does not trigger a Dual Attack.
+  - Soulburn (10 souls): Increases effect chance by 50% and increases damage dealt. Does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Full Bloom** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -4559,11 +4393,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Holy Light** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with holy light, and recovers Health of allies proportional to the target's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Heal strength: 7.2% target's max Health (14.4% with soulburn)<br>
   - Unparsed formula lines: Heal strength: 7.2% target's max Health (14.4% with soulburn)
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Light of Repose** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4586,12 +4420,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a servant, with a 40% chance to --stun-- for 1 turn. After attacking on the caster's turn, when the target has a debuff, activates Dust Attack as an extra attack.<br>Dust Attack: Attacks the enemy by throwing them into the air, granting stealth to the caster for 1 turn.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.75<br>!pow: 1<br><br><br>Skill1Proc<br>att_rate: 1.1<br>!pow: 1<br>
   - Unparsed formula lines: Skill1Proc; att_rate: 1.1; !pow: 1
-  - Soulburn (10 souls): Increase effect chance to 100%.
+  - Soulburn (10 souls): Increase effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Trick-or-Treat** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4629,12 +4463,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Shatter** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy, --decreasing Speed-- for 2 turns before increasing Attack of the caster for 2 turns. When the caster is enraged, ignores Effect Resistance.
   - Resource: fightingSpirit; base gain 0; required/spent 100.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5 (2.2 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Jecht (c3053)
 
@@ -4653,11 +4486,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Gale** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with wind magic, granting continuous healing and increased Speed to all allies for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.9<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — enhanced cast implemented.
 
 ### Jena (c3052)
 
@@ -4671,12 +4503,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Casts weakening magic, with a 100% chance each to decrease buff durations of all enemies by 1 turn and inflict --frostbite-- for 2 turns. Grants immunity to all allies for 2 turns.
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Cold Snap** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -4688,11 +4520,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Taste Test** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After granting increased Attack to the caster for 1 turn, attacks the enemy. When the caster is already granted rage, activates Bite as an extra attack. Bite can only be activated once per turn, during the caster's turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Grants increased Attack (Greater) for 1 turn.<br>
+  - Soulburn (10 souls): Grants increased Attack (Greater) for 1 turn.<br> — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Wild Dog Company Captain** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4720,10 +4552,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — End of Evil** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with a scythe, dispelling all buffs before a 100% chance to inflict --decreased Hit Chance-- for 2 turns and a 85% chance to --inflict decreased Defense-- for 2 turns, and increases Combat Readiness of the caster by 25% per target. This skill cannot trigger a counterattack.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 - [ ] **S3 — Wave of Light** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -4750,21 +4581,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Mark of Acceleration** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Increases the Combat Readiness of all allies by 30%, and grants stealth to the caster for 1 turn.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0<br>!pow: 0<br>
-  - Soulburn (10 souls): Grants an extra turn.
+  - Soulburn (10 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Juni (c3151)
 
 - [ ] **S1 — Violent Beating** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a club and has a 75% chance to dispel one buff. When the caster has perception, increases effect chance to 100%.
   - Resource: fightingSpirit; base gain 20; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and dispels two buffs from the target.
+  - Soulburn (10 souls): Increases effect chance to 100% and dispels two buffs from the target. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Wicked Instinct** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -4803,13 +4634,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Feast of Predation** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy by unleashing their power, and grants increased Attack (Greater) to the caster for 2 turns. Damage dealt increases proportional to the number of debuffs inflicted on the target.
   - Resource: fightingSpirit; base gain 50; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.6<br>!pow: 1<br>20% increased damage for each debuff on the target<br>
   - Unparsed formula lines: 20% increased damage for each debuff on the target
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Karin (c1011)
 
@@ -4832,12 +4663,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Blade Art: Thunder** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by slashing at lightning speed. A critical hit will increase damage dealt.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.6 (2.3 soulburn)<br>!pow: 0.85<br>50% increase to crit damage multiplier<br>
   - Unparsed formula lines: 50% increase to crit damage multiplier
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: lnflicts two --bleeding-- effects on the enemy for 2 turns after using Blade Art: Thunder.
 
 ### Kawerik (c1073)
@@ -4845,14 +4676,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Dimensional Corridor** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Attacks the enemy in a dimensional corridor, with a 100% chance each to dispel two buffs before fully increasing skill cooldowns. A critical hit will grant an extra turn.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.4<br>!pow: 1<br>0.30% Target Speed (0.003 * Speed)<br>
   - Unparsed formula lines: 0.30% Target Speed (0.003 * Speed)
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Dimensional Explosion** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -4871,11 +4702,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword, with a 50% chance to inflict --decreased Hit Chance-- for 1 turn, dealing damage proportional to the caster's lost Health. When this skill is used, if it was not triggered by a Dual Attack and the caster has a buff, this skill changes into an attack that targets all enemies. The changed attack does not trigger a Dual Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.9 (1.4 soulburn)<br>!pow: 1<br>0.20% increased damage per 1% self Health missing<br><br><br>Skill1(AoE)<br>att_rate: 0.9 (1.1 soulburn)<br>!pow: 1<br>0.20% increased damage per 1% self Health missing<br>
   - Unparsed formula lines: 0.20% increased damage per 1% self Health missing; Skill1(AoE); att_rate: 0.9 (1.1 soulburn); !pow: 1; 0.20% increased damage per 1% self Health missing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Immortal Will** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4911,13 +4742,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a series of kicks, --decreasing Defense-- for 2 turns before granting the caster increased Speed for 2 turns. When the caster is granted vigor, ignores Effect Resistance. Damage dealt increases proportional to the caster's max Health.
   - Resource: fightingSpirit; base gain 40; required/spent 0.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.2<br>!pow: 1<br>10% self max Health (0.10 * Health)<br>actually goes up to 100% chance, in addition to ignore resistances with Vigor (unlisted)
   - Unparsed formula lines: actually goes up to 100% chance, in addition to ignore resistances with Vigor (unlisted)
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Phoenix Flurry** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -4939,11 +4770,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Casual Introduction** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with a flame guardian, before increasing Attack of all allies for 2 turns. Grants skill nullifier once to Fire elemental allies. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.9<br>!pow: 1<br>0.075% self Speed (0.00075 * Speed)<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S3 — Rough Welcome** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
@@ -4958,10 +4788,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a ball of flame and has a 50% chance to inflict --decreased Defense-- for 2 turns. After attacking, has a 35% chance to activate Burning Vitality.<br>Burning Vitality: Increases Combat Readiness of the caster by 20%.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): 100% chance to decrease Defense.
+  - Soulburn (10 souls): 100% chance to decrease Defense. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Composure** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -4981,10 +4811,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Cleaning Mode** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Fires indiscriminately at all enemies, with a 75% chance to --decrease Hit Chance-- for 1 turn, before triggering counterattacks from the caster for 2 turns. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.4(0.5 soulburn)<br>!pow: 1<br>50% self Defense (60% soulburn)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Kiris (c3063)
 
@@ -4993,13 +4823,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Unmapped/conditional debuff grants
   - Description: Fires a poisoned arrow at the enemy, with a 50% chance to inflict --poison-- for 2 turns.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br>
-
-- [ ] **S2 — Corrosive Volley** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Fires a corrosive volley to all enemies, extending any debuff duration by 1 turn.
-  - Supported damage formula (reference only): Skill2<br>att_rate: 0.7<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
 
 - [ ] **S3 — Preparation** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -5027,13 +4850,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Nocturne** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Leaps towards the enemy to attack and increases skill cooldowns by 1 turn twice. Grants stealth and a barrier (proportional to the caster's Attack) to the caster for 2 turns before increasing Combat Readiness by 50%. Damage dealt increases proportional to the caster's current Health ratio.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1 (1.2 soulburn)<br>!pow: 1<br>0.35% increased damage per 1% current self Health<br>Barrier strength: 65% self Attack (0.65 * Attack)
   - Unparsed formula lines: 0.35% increased damage per 1% current self Health; Barrier strength: 65% self Attack (0.65 * Attack)
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Decreases buff durations of the target by 1 turn when using Nocturne. (This effect is applied before increasrng skill cooldown.)
 
 ### Kitty Clarissa (c2028)
@@ -5049,13 +4872,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a morning star while raging, with a 80% chance to decrease buff duration by 2 turns and make them --unhealable-- for 2 turns. When the caster is granted loveliness, effect chance increases by 20%.
   - Source multiplier text (requires review): Skill2<br>att_rate: 0.8<br>!pow: 0.95<br>requires buff duration down to have something to reduce to give a healing debuff<br>
   - Unparsed formula lines: requires buff duration down to have something to reduce to give a healing debuff
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Has an 80% chance to --restrict-- the target for 2 turns after using Meow I'm Angry!.
   - EE 3: Decreases Combat Readiness of the target by 20% after using Meow l'm Angry!.
 
@@ -5071,10 +4894,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Aitan Beeeam! ☆** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks by firing a heart at the enemy, before dispelling a debuff from an ally. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5<br>!pow: 0.9<br>12% self max Health (0.12 * Health)<br>
-  - Soulburn (10 souls): Dispels a debuff from all allies.
+  - Soulburn (10 souls): Dispels a debuff from all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Crisis Avoidance ♪** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5104,10 +4927,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Has a 100% chance to --provoke-- and --decrease Defense-- the enemy for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Krau (c1070)
 
@@ -5132,12 +4955,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Summon Ziegfried** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by summoning the Guardian Ziegfried, and absorbs some of the damage dealt as Health. Penetrates Defense, but cannot trigger a critical hit or a heavy blow. Damage dealt increases proportional to the caster's lost Health. When this skill is not on cooldown, grants 25% damage share from the damage received by the ally.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.3<br>!pow: 1<br>0.53571 (0.26785 with Soulburn) flat per 1 hp missing<br>Heal strength: 20% of the damage dealt
   - Unparsed formula lines: 0.53571 (0.26785 with Soulburn) flat per 1 hp missing; Heal strength: 20% of the damage dealt
-  - Soulburn (10 souls): Decreases damage dealt and attacks all enemies.
+  - Soulburn (10 souls): Decreases damage dealt and attacks all enemies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Decreases cooldown of Summon Ziegfried by 1 turn. 
 
 ### Lady of the Scales (c6005)
@@ -5145,11 +4968,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Divine Punishment** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with divine lightning and has a 75% chance to inflict --fear-- for 1 turn, before recovering Health of all allies proportional to the target's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Heal strength: 8% of the target's max Health<br>
   - Unparsed formula lines: Heal strength: 8% of the target's max Health
-  - Soulburn (10 souls): Increases effect chance to 100%, and attacks all enemies. This attack does not trigger a Dual Attack.
+  - Soulburn (10 souls): Increases effect chance to 100%, and attacks all enemies. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Scales of Equity** — Passive partially implemented or pending
   - Current base support: passive. Passive: Offering grant, sharing, one-time survival and bearer-death healing implemented; enemy CR-copy mechanic pending
@@ -5186,12 +5009,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — The Spirit of Rock** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Attacks the enemy with a bass. When the enemy is defeated, recovers Health of the caster and grants an extra turn. Penetrates the target's Defense, and cannot trigger a critical hit. Amount recovered and damage dealt increase proportional to the caster's max Health. Begins the first battle with full skill cooldown count, and when this skill is unavailable due to cooldown count, at the start of every turn, decreases all skill cooldowns by 1 turn.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.3<br>!pow: 1<br>Max Health scaling 20% (0.20 * self Max Health) (32% with Soulburn)<br>Heal strength: 30% caster's max Health
   - Unparsed formula lines: Heal strength: 30% caster's max Health
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Landy (c1109)
 
@@ -5216,25 +5039,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Full Burst** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Fires at all enemies to attack, and increases Combat Readiness of all allies by 25%, before granting a barrier (proportional to Attack) to the caster for 2 turns. When Fighting Spirit is full, consumes all Fighting Spirit to penetrate the target's Defense by 50%. This skill cannot trigger a counterattack.
   - Reviewed Earth effects: readiness, barrier.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.9<br>!pow: 1<br>Barrier strength: 80% caster's Attack<br>
   - Unparsed formula lines: Barrier strength: 80% caster's Attack
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: When using Full Burst, if Fighting Spirit is full, penetrates the target's Defense by an additional 10%.
 
 ### Last Piece Karin (c6011)
 
 - [ ] **S1 — Vacuum Strike** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a sword, and increases Combat Readiness of the caster by 15%. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.9 (1.5 Soulburn)<br>!pow: 1<br>0.075% self Speed (0.00075 * Speed)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 1: Increase Combat Readiness of the caster by an additional 15% when defeating an enemy using Vacuum Strike.
 
 - [ ] **S2 — Phantom Strike** — Skill execution unsupported
@@ -5276,12 +5098,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Mobile Weapon Ziegfried** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Summons Ziegfried to attack all enemies, before granting immunity to all allies for 2 turns and decreasing skill cooldowns by 1 turn. Penetrates Defense, but cannot trigger a critical hit or a heavy blow. Damage dealt increases proportional to the caster's max Health and Speed. Damage dealt increases every time this skill is used and can stack up to 3 times.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.3<br>!pow: 1<br>6% self max Health (0.06 * Health)<br>0.1125 % self Speed (0.001125 * Speed)<br>20% increased damage per usage, up to 60%
   - Unparsed formula lines: 0.1125 % self Speed (0.001125 * Speed); 20% increased damage per usage, up to 60%
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Leah (c3163)
 
@@ -5289,11 +5111,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a pistol, decreasing Combat Readiness by 15%. When the caster is granted exploiting weak points, uses Explosive Fire instead of Swift Fire.<br>Explosive Fire: Attacks the enemy, decreasing buff durations by 1 turn and --silencing-- for 1 turn before decreasing Combat Readiness by 30%. Damage dealt increases proportional to the caster's Speed. This attack does not trigger a Dual Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.9<br>!pow: 0.95<br><br><br>Skill1(Proc)<br>att_rate: 1.2<br>!pow: 0.95<br>0.10% self Speed (0.001 * Speed)<br>
   - Unparsed formula lines: Skill1(Proc); att_rate: 1.2; !pow: 0.95
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Power of Harmony** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5322,12 +5144,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Exposed!** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with a powerful storm, decreasing Combat Readiness by 20%, before increasing Attack of the caster for 2 turns. Damage dealt increases proportional to the amount of the enemy's lost Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1 (1.2 soulburn)<br>!pow: 1<br>gains 0.2% damage per 1% enemy Health missing<br>
   - Unparsed formula lines: gains 0.2% damage per 1% enemy Health missing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Leo (c1029)
 
@@ -5340,10 +5162,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Fox Hunt** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks with a slingshot, with a 100% chance to --decrease Defense-- for 2 turns, and a 50% chance to use Sparrow Dive.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.35<br>!pow: 1.05<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 - [ ] **S3 — Flying Racoo** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -5374,11 +5195,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Freeze Over** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a frozen mass, decreasing buff durations by 2 turns before a 100% chance each to inflict --frostbite-- and --restrict-- for 2 turns. Ignores Effect Resistance of any targets with max Health lower than the caster’s max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1.05<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 3: Cannot trigger a counterattack from the enemy when using Freeze Over.
 
 ### Lidica (c1046)
@@ -5396,11 +5216,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Thornbush** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Inflicts resource reduction on all enemies by 60% before attacking, dispelling all buffs and inflicting --bind-- for 2 turns. For every target, increases Combat Readiness of the caster by 25%.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.7<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
   - EE 2: Inflicts --restrict-- on all enemies for 2 turns when using Thornbush.
 
 - [ ] **S3 — Public Execution** — Base damage supported; secondary effects pending
@@ -5417,12 +5236,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Follow Me! Charge!** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Takes the lead to attack the enemy, and triggers a Dual Attack from a random ally. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.8<br>!pow: 0.95<br>12% self max Health<br>Heal Strength EE: 8% self max Health (0.08 * self max Health)
   - Unparsed formula lines: Heal Strength EE: 8% self max Health (0.08 * self max Health)
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: Recovers Health of the caster when using Follow Me! Charge!. Amount recovered increases proportional to the caster's max Health. 
 
 - [ ] **S2 — That's Far Enough!** — Passive partially implemented or pending
@@ -5449,13 +5268,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Snip-Snip** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy mercilessly, with a 100% chance to dispel all buffs. A critical hit will grant an extra turn.
   - Reviewed Earth effects: conditional/passive execution.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.2<br>!pow: 1<br>20% increased damage if target has no buffs<br>
   - Unparsed formula lines: 20% increased damage if target has no buffs
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Dispels two debuffs from the caster before the skill effect when using Snip-Snip.
 
 - [ ] **S3 — Soul Cutter** — Skill execution unsupported
@@ -5471,10 +5290,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Pinpoint Fire** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy and has a 50% chance to --decrease Defense-- for 2 turns.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increase effect chance to 100%.
+  - Soulburn (10 souls): Increase effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Technical Support** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -5494,11 +5313,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Can You Handle The Heat?** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a sword, and grants increased Speed to the caster for 1 turn. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.6 (1 soulburn)<br>!pow: 0.9<br>100% self Defense (1 * Defense)  (160% soulburn)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — It's Far From Over!** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5552,24 +5371,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — The Will of La Mare** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by slamming down with a sword, absorbing some of the damage dealt as Health, and when the enemy is defeated, inflicts extinction. A successful attack always results in a critical hit, and deals additional damage proportional to the caster's Attack to all enemies except for the target. Penetrates the target's Defense by 50%. When the target is of the Dark element, increases damage dealt.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.65<br>!pow: 1<br>30% of damage gained as life<br>35% increased damage vs. Dark enemies<br><br>Splash effect is 120% self Attack, ignores 70% defense<br>
   - Unparsed formula lines: 30% of damage gained as life; 35% increased damage vs. Dark enemies; Splash effect is 120% self Attack, ignores 70% defense
-  - Soulburn (10 souls): Increases Hit Chance by 100% when using this skill.
+  - Soulburn (10 souls): Increases Hit Chance by 100% when using this skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Lone Crescent Bellona (c2071)
 
 - [ ] **S1 — Delicate Crescent** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a fan, absorbing some of the damage dealt as Health, and inflicts up to 10% injuries. A successful attack always results in a critical hit.
   - Resource: fightingSpirit; base gain 20; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1.0 (1.35 soulburn)<br>!pow: 1<br>Lifesteal: 20% of damage dealt<br>
   - Unparsed formula lines: Lifesteal: 20% of damage dealt
-  - Soulburn (10 souls): Increases damage dealt, and injuries can be inflicted up to 20%.
+  - Soulburn (10 souls): Increases damage dealt, and injuries can be inflicted up to 20%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Waxing Crescent** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5596,11 +5415,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attack the enemy, with a 75% chance to --decrease Defense-- for 1 turn. A successful attack deals additional damage proportional to the caster's Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Additional damage: 25% caster's Attack (0.25 * Attack)<br>
   - Unparsed formula lines: Additional damage: 25% caster's Attack (0.25 * Attack)
-  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack.
+  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Time to Rampage** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5626,13 +5445,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Description: Increases Effect Resistance by 50%. Increases Attack by 15% each time the caster attacks an enemy. Effect can only stack up to 5 times.
   - Source multiplier text (requires review): Skill2<br>
 
-- [ ] **S3 — Resolve** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: After leaping into the air, attacks the enemy with a strike from above. Damage dealt increases proportional to the target's max Health.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 0.95<br>3% target max Health<br>
-  - Soulburn (20 souls): Grants an extra turn.
-
 ### Lots (c1031)
 
 - [ ] **S1 — Holy Light** — Base damage supported; secondary effects pending
@@ -5651,12 +5463,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Serenity** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: With strengthening magic, increases Combat Readiness of all allies by 20% before granting continuous healing for 3 turns and recovering Health proportional to the target’s max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 10% target max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 10% target max Health
-  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 2 turns.
+  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Lua (c1126)
 
@@ -5673,24 +5485,17 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Dispels one buff from all enemies before increasing skill cooldowns by 1 turn and inflicting --beguile--. Increases Speed of all allies for 2 turns.
   - Source multiplier text (requires review): Skill3<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: When using Sweet Talk, dispels one additional buff.
   - EE 3: When using Sweet Talk, increases skill cooldowns of enemies inflicted with --sleep-- to max.
 
 ### Lucy (c3113)
-
-- [ ] **S1 — Paper Throw** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Throws paper to attack the enemy, with a 50% chance to --restrict-- for 2 turns.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
 
 - [ ] **S3 — Paper Barrier** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -5705,13 +5510,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Moonlight Blow** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with light, decreasing buff durations by 1 turn before a 100% chance to --stun-- for 1 turn. Grants invincibility to the caster for 1 turn and increases Combat Readiness by 50%.
   - Reviewed Earth effects: buff, readiness.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.65<br>!pow: 1.05<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
   - EE 1: Increases Attack of the caster for 2 turns when using Moonlight Blow.
   - EE 2: --Decreases Defense-- for 2 turns when using Moonlight Blow.
 
@@ -5732,12 +5536,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Rekos's Blessing** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: With the blessing of the stars, grants increased Defense and a barrier (proportional to the caster’s Attack) to all allies for 2 turns.
   - Source multiplier text (requires review): Skill2<br>Barrier Strength: 37.5% self Attack<br>
   - Unparsed formula lines: Barrier Strength: 37.5% self Attack
-  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns.
+  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Wave of Vengeance** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -5754,12 +5558,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Infinity Slash** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Stabs the target a random number of times. Skill cooldown decreases by 1-3 turns and damage dealt increases according to the number of attacks.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 0.95<br>att_rate changes: 1.4 for 2 hits, 2.1 for 3 hits<br>
   - Unparsed formula lines: att_rate changes: 1.4 for 2 hits, 2.1 for 3 hits
-  - Soulburn (10 souls): Increases the number of attacks to max.
+  - Soulburn (10 souls): Increases the number of attacks to max. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Combat Readiness of the caster by 15% after using Infinity Slash.
 
 - [ ] **S2 — Dragon Knight's Will** — Passive partially implemented or pending
@@ -5791,12 +5595,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Celebration of Light** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Recites the Celebration of Light, recovering the Health of all allies and granting continuous healing and increased Defense for 2 turns. Amount recovered is proportional to the target's max Health.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Primal Light** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -5810,10 +5614,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Heavy Strike** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks with a hammer, with a 40% chance to --stun-- for 1 turn, before increasing Combat Readiness of the caster by 15%. After attacking, when the target is inflicted with --stun--, increases Combat Readiness of all allies except for the caster by 15%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S2 — Maid's Cheer** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5835,10 +5638,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Knockout** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy with a flurry of strikes, with a 100% chance to inflict --provoke-- for 1 turn. A successful attack always results in a critical hit.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1 (1.7 soulburn)<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 - [ ] **S2 — Dragon Flame** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5872,12 +5674,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — A Girl in Uniform** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Encourages allies by increasing Attack of the target and all other allies for 2 turns before recovering Health of all allies and dispelling one debuff. When the target is a Fire elemental hero, grants the target increased Attack (Greater) instead. Amount recovered is proportional to the target's max Health and the caster's Attack.
   - Source multiplier text (requires review): Skill3<br>Heal strength: 30% self Attack + 12% target max Health<br>Greater Attack is 75% increased Attack. Doesn't stack.
   - Unparsed formula lines: Heal strength: 30% self Attack + 12% target max Health; Greater Attack is 75% increased Attack. Doesn't stack.
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Maya (c1032)
 
@@ -5890,10 +5692,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Concuss** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks with a shield, with a 100% chance each to --stun-- for 1 turn before decreasing Combat Readiness by 30%. Damage dealt increases proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.8<br>!pow: 1<br>80% self Defense (0.8 * Defense)<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 - [ ] **S3 — Morale Boost** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -5919,10 +5720,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Nature Restoration** — Non-attack cast supported; remaining effects listed below
   - Current base support: nonAttack. Non-attack cast implemented; pending: S3-ready turn-start debuff-duration reduction
   - Review/work: S3-ready turn-start debuff-duration reduction
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: By restoring balance that has been destroyed, dispels all debuffs from all allies and grants increased Attack and immunity for 2 turns. Increases Combat Readiness of the caster by 50%. When this skill is not on cooldown, at the start of the turn, decreases debuff durations of the caster by 1 turn.
   - Non-attack source note (no damage formula): Skill3<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — enhanced cast implemented.
 
 ### Mei Lin (c1191)
 
@@ -5946,10 +5746,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Freeze!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, with a 40% chance to --stun-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Effect chance increases by 60% and a successful attack always results in a critical hit.
+  - Soulburn (10 souls): Effect chance increases by 60% and a successful attack always results in a critical hit. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Agility** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -5979,13 +5779,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: After dispelling all buffs from the target, attacks the enemy by releasing pent-up aggression. Unaffected by elemental disadvantage and grants an extra turn. When the target is not an Elite or Boss monster, regardless of whether the attack hits, inflicts --curse-- for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.2<br>!pow: 1<br>Curse Debuff: 60% of damage<br>
   - Unparsed formula lines: Curse Debuff: 60% of damage
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Increases Attack of the caster for 2 turns when using Blood Bloom.
 
 ### Mercedes (c1005)
@@ -5993,11 +5793,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Blazing Eye of Kal** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Releases the power of the Ancient Book to attack all enemies before increasing Attack of all allies for 2 turns.<br><br>After completing Eureka - 10. East Politia - 10-10. Central Control Room: --Volatility-- will remain throughout the battle.<br>After completing Eureka - 10. East Politia - The Final Destination: --Volatility-- debuff is replaced by Immense Power.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.2<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — enhanced cast implemented.
 
 ### Mercenary Helga (c4023)
 
@@ -6020,23 +5819,23 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Cry of Victory** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Encourages all allies, increasing Attack and Effectiveness for 2 turns before increasing Combat Readiness of the caster by 50%.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Midnight Gala Lilias (c5089)
 
 - [ ] **S1 — Go, Kyla!** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with Kyla, and recovers Health. Amount recovered increases proportional to the caster's Attack. A successful attack always results in a critical hit.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Elaborate Scheme** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6075,14 +5874,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Dragon Dive** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy, recovering Health proportional to damage dealt before increasing Attack of the caster for 1 turn.
   - Resource: focus; base gain 1; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1.1<br>!pow: 1<br>20% Lifesteal<br>
   - Unparsed formula lines: 20% Lifesteal
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: Increase Dragon Dive's amount recovered by 20%.
 
 - [ ] **S2 — Dragon Eye (Milim Eye)** — Passive partially implemented or pending
@@ -6122,10 +5921,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Raid** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Ambushes the target, --silencing-- them for 2 turns. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8 (2.5 soulburn)<br>!pow: 0.85<br>0.15% self Speed (0.0015 * Speed)<br>
-  - Soulburn (10 souls): Increase damage dealt.
+  - Soulburn (10 souls): Increase damage dealt. — enhanced cast implemented.
 
 ### Mistychain (c3072)
 
@@ -6145,12 +5943,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Life Drain** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks by absorbing the enemy's life force. Some of the damage dealt is absorbed to heal all allies. When the enemy is defeated, grants revive for 2 turns to the ally with the lowest Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5(2.2 soulburn)<br>!pow: 1<br>15% of damage gained as life<br>
   - Unparsed formula lines: 15% of damage gained as life
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Monarch of the Sword Iseria (c6024)
 
@@ -6158,11 +5956,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with sword fragments. Penetrates the target's Defense. When triggered as a counterattack, activates Sword of Duty instead.<br>Sword of Duty: After inflicting --fracture-- on the caster, attacks the enemy with the ritual sword, and increases Combat Readiness of the caster and the foremost ally except for the caster by 25%. Inflicts additional damage proportional to the caster's Attack on the target and up to 25% injuries.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.3 (0.5 soulburn)<br>!pow: 1<br><br><br>Skill1 (Proc)<br>att_rate: 0.3<br>!pow: 1<br>Additional damage: 125% caster's Attack and 20% injury<br>
   - Unparsed formula lines: Skill1 (Proc); att_rate: 0.3; !pow: 1; Additional damage: 125% caster's Attack and 20% injury
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Elbris's Successor** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6199,22 +5997,22 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Watery Curtain** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Recover's ally's Health and grants immunity for 2 turns, before increasing the caster's Combat Readiness by 50%. Amount recovered increases proportional to the ally's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 35% target max Health<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 35% target max Health
-  - Soulburn (20 souls): Effect is granted to all allies.
+  - Soulburn (20 souls): Effect is granted to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Moon Bunny Dominiel (c6037)
 
 - [ ] **S1 — Moonlight Wave** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with an ethereal moonlight wave and has a 75% chance to put them to --sleep-- for 1 turn. This skill does not trigger a Dual Attack.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Flow Control** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6235,11 +6033,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Extermination** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy by piercing them, with a 50% chance to --decrease Defense-- for 2 turns. Ignores Effect Resistance of any targets with Max Health lower than the caster’s Max Health. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>10% self max Health (0.1 * Health)<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Extermination's chance to --decrease Defense-- by 10%.
 
 - [ ] **S2 — Absolute Dignity** — Passive partially implemented or pending
@@ -6270,11 +6068,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Enlightened Blow** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks with a fatal blow, with a 100% chance to --decrease Defense-- for 2 turns, before increasing Speed of the caster for 2 turns. Damage dealt increases proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 1<br>0.075% self Speed (0.00075 * Speed)<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 ### Mui (c1044)
 
@@ -6286,11 +6083,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Punishment** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks all enemies by calling upon a trained monster, with a 50% chance each to inflict two --bleeding-- effects for 2 turns and a 80% chance to inflict --stun-- for 1 turn.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.8<br>!pow: 1<br>
-  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns.
+  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Punishment's effect chance by 10%.
 
 - [ ] **S3 — Grand Finale** — Base damage supported; secondary effects pending
@@ -6316,11 +6113,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Shoots an arrow infused with a sleep toxin, with a 100% chance to put them to --sleep-- for 1 turn.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Hopeful Hymn** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -6349,11 +6146,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Wind Cutter** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with a sword, with a 75% chance to --decrease Defense-- for 2 turns. Increases Attack of the caster for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1 (1.25 soulburn)<br>!pow: 1.1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Nahkwol (c1151)
 
@@ -6372,23 +6168,22 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Spiritual Devouring** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Attacks all enemies with a powerful spell, dispelling all buffs before inflicting --bind-- for 2 turns and increasing skill cooldowns by 1 turn. Grants an extra turn to the caster.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Navy Captain Landy (c2109)
 
 - [ ] **S1 — Precision Targeting** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with gunfire, and increases Combat Readiness of the caster by 25%. After attacking, has a 40% chance to activate Salvo Fire as an extra attack.<br>Salvo Fire: Attacks all enemies by firing off artillery, and recovers Health of the caster proportional to Attack.
   - Resource: fightingSpirit; base gain 25; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1.1<br>!pow: 1<br><br><br>Skill1 (Proc)<br>att_rate: 0.8<br>!pow: 1.3<br>Heal Strength: 80% Caster's Max Attack (0.8 * Max Attack)<br>
   - Unparsed formula lines: Skill1 (Proc); att_rate: 0.8; !pow: 1.3; Heal Strength: 80% Caster's Max Attack (0.8 * Max Attack)
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Ruler of the Sea** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6413,11 +6208,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Powerfully shoots an arrow at the enemy, --decreasing Hit Chance-- for 2 turns and Combat Readiness by 30%. Damage dealt increases proportional to the enemy's max Health.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1(1.7 soulburn)<br>!pow: 0.8<br>5% target max Health, 8.5% soulburn<br>
   - Unparsed formula lines: 5% target max Health, 8.5% soulburn
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — A Girl's Determination** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -6431,11 +6226,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — An Opening!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a bamboo sword, inflicting injuries. The severity of injuries increases proportional to damage dealt. Injuries decrease max Health of the target by up to 10% every time this skill is used. When the caster is granted vigor, a successful attack will inflict additional damage equivalent to 50% of injuries inflicted on the target.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack.
+  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Absorbs some of the damage dealt as Health when using An Opening!.
 
 - [ ] **S2 — You Started This!** — Passive partially implemented or pending
@@ -6469,12 +6264,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Using mana, dispels all buffs from all enemies before --sealing-- and making them --unable to be buffed-- for 2 turns. At the start of the first battle, grants skill effect nullifier once to the caster.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Notos (c2181)
 
@@ -6489,11 +6284,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Blaze of Battle** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
   - Review/work: Passive: triggered effects are not automated
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: (Notos) Unaffected by Combat Readiness increase and decrease effects.<br>(God of Battle) Attacks the enemy with transcendent power. Penetrates the target’s Defense by 50%. Damage dealt increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill2 (God of Battle)<br>att_rate: 0.6 (0.9 soulburn)<br>!pow: 0.9<br>Health scaling: 20% caster's max Health (30% with soulburn)<br>Def pen: 50%
   - Unparsed formula lines: Skill2 (God of Battle); Def pen: 50%
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — God’s Might** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -6507,13 +6302,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Order's In, Just Wait!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with overflowing energy, and increases Combat Readiness of the ally with the highest Combat Readiness except the caster by 15%
   - Reviewed Earth effects: readiness.
   - Resource: focus; base gain 1; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies.
+  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Combat Readiness by an additional 5% when using Order's In, Just Wait!
 
 - [ ] **S2 — One Luluca's Special!** — Passive partially implemented or pending
@@ -6552,11 +6347,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Obliterate** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Calls in drones to attack all enemies, with a 100% chance each to decrease buff durations by 1 turn before decreasing Combat Readiness by 30%. Grants increased Attack to all allies for 2 turns. When the target is granted a barrier, ignores Effect Resistance.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.2 (1.45 soulburn)<br>!pow: 1.1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Orte (c3133)
 
@@ -6569,11 +6364,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — No Mercy for the Weak** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a swift swordstorm. Penetrates the target's Defense by 30%. When the Speed of the Caster is greater than the Speed of the target, penetration rate increases proportional to the difference, op to a maximum of 70%. Damage dealt increases proportional to the Speed of the caster.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.7<br>!pow: 0.95<br>0.075% self Speed (0.00075 * Speed)<br>30% + 0.3% def pen per speed over the target, caps at 70%<br><br>>=133.3 speed difference = 70% pen
   - Unparsed formula lines: 30% + 0.3% def pen per speed over the target, caps at 70%; >=133.3 speed difference = 70% pen
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Otillie (c3045)
 
@@ -6593,22 +6388,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Mana Release** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Exhales powerful darkness to attack the enemy, decreasing Combat Readiness by 40%, before --silencing-- and making them --unable to be buffed-- for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 ### Pavel (c1080)
 
 - [ ] **S2 — Storm Bullet** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Grants the caster increased Attack for 2 turns, before firing a strong blast of wind at all enemies. Damage dealt increases proportional to the caster's Speed. This skill cannot trigger a counterattack.
   - Reviewed Earth effects: buff.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.8<br>!pow: 1<br>0.1125% self Speed (0.001125 * Speed)<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 1: Dispels two debuffs from the caster before the skill effect when using Storm Bullet.
   - EE 2: Additionally grants increased Attack to the ally except for the caster with the highest Attack for 2 turns after using Storm Bullet.
 
@@ -6624,12 +6417,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Set in Motion** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Increases Speed and Defense of all allies for 2 turns, before granting an extra turn to the caster.
   - Resource: focus; base gain 3; required/spent 0.
   - Source multiplier text (requires review): Skill2<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Pearlhorizon (c3073)
 
@@ -6649,21 +6442,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy and --stuns-- them for 1 turn. When the enemy is --asleep--, deals additional damage equivalent to 20% of the target's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5<br>!pow: 0.9<br>20% target max Health as extra damage when they're asleep (30% as awakened pearlhorizon)<br>
   - Unparsed formula lines: 20% target max Health as extra damage when they're asleep (30% as awakened pearlhorizon)
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Peira (c1125)
 
 - [ ] **S1 — Wolven Claw** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Slashes the enemy with sharp claws, with a 40% chance to --stun-- for 1 turn. When the caster is granted a barrier, effect chance increases by 25%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increase effect chance to 100%.
+  - Soulburn (10 souls): Increase effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Punishing Blade** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -6680,13 +6473,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: Barrier Strength: Probably 180 shield per level. (10800 @ 60); CS_ADD_SHIELD_CASTER_LEVEL 180
 
 ### Penelope (c3125)
-
-- [ ] **S1 — Merciless Sword** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy before increasing Attack of the caster by 15%. When an enemy is defeated, increases Combat Readiness of the caster by 75%. Increased Attack effect can stack up to 3 times.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1 (1.6 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
 
 - [ ] **S2 — Preliminary Plans** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -6708,10 +6494,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Rose Breeze** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with scented paper, and has a 75% chance to inflicted --decreased Defense-- for 1 turn. 
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Triggers a Dual Attack from the ally with the highest Attack.
+  - Soulburn (10 souls): Triggers a Dual Attack from the ally with the highest Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Elixir de Belle Nuit** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6734,10 +6520,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Skyward Slash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword, with a 50% chance to --decrease Defense-- for 2 turns. When Ragnvald is on the ally team, triggers a Dual Attack from Ragnvald.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.65<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Coldhearted Judgment** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -6760,11 +6546,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Execution** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a gun, stealing one buff. At the end of the turn, detonates --bomb-- effects inflicted on the target.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 0.95<br>Detonation multi: 1.0<br>
   - Unparsed formula lines: Detonation multi: 1.0
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Scourge of the Sea** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6781,13 +6567,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: When using Full Burst, steals one additional buff from the target and randomly grants it to an ally.
 
 ### Politis (c1112)
-
-- [ ] **S1 — Call of the Stars** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Summons dolls to attack the enemy, with a 40% chance to --stun-- for 1 turn.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Astral Guide** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6821,10 +6600,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Final Blow** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with a powerful ground pound, and has a 50% chance to inflict --stun-- for 1 turn. When the target’s Health is 30% or less, increases effect chance by 50%. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.8(1.05 soulburn)<br>!pow: 1<br>10% self max Health (0.10 * Health)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Pyllis (c3005)
 
@@ -6845,12 +6623,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy before --provoking-- for 1 turn, and grants a barrier to all allies for 2 turns. Damage dealt and barrier strength increase proportional to the caster's Defense.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.3<br>!pow: 0.95<br>70% self Defense (0.7 * Defense)<br>Barrier strength: 80% self Defense
   - Unparsed formula lines: Barrier strength: 80% self Defense
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Ragnvald (c3164)
 
@@ -6871,20 +6649,19 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Desperate** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy with a sword, dispelling two buffs and --decreasing Defense-- for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 ### Ram (c1115)
 
 - [ ] **S1 — How Boring.** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with wind, with a 75% chance to --decrease Attack-- for 1 turn. When the caster is buffed, effect chance increases by 25%.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack.
+  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Ran (c1118)
 
@@ -6900,21 +6677,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with a sword, dispelling two buffs before a 100% chance to inflict --frostbite-- and --restrict-- for 2 turns, and a critical hit will have a 85% chance to inflict --decreased Defense-- for 2 turns. Damage dealt increases proportional to the caster and the target's Speed.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.8<br>!pow: 1<br>0.075% self Speed (0.00075 * Speed)<br>0.15% target Speed (0.0015 * Speed)
   - Unparsed formula lines: 0.15% target Speed (0.0015 * Speed)
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Ras (c1001)
-
-- [ ] **S2 — Command Strike** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy repeatedly, before triggering a Dual Attack from the ally with the highest Attack.
-  - Supported damage formula (reference only): Skill2<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
 
 - [ ] **S3 — Sword of the Heir** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -6927,12 +6697,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Slaughter** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a double-edged axe, and absorbs some of the damage dealt as Health. A successful attack always results in a critical hit.
   - Resource: fightingSpirit; base gain 30; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1 (2.5 soulburn)<br>!pow: 1<br>38% of damage as healing<br>
   - Unparsed formula lines: 38% of damage as healing
-  - Soulburn (20 souls): Greatly increases amount of damage dealt. Does not trigger a Dual Attack.
+  - Soulburn (20 souls): Greatly increases amount of damage dealt. Does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Demon's Blood** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -6973,12 +6743,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Invigorate** — Non-attack cast supported; remaining effects listed below
   - Current base support: nonAttack. Non-attack cast implemented
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: By infusing vitality, dispels all debuffs from all allies and grants immunity for 2 turns before recovering Health proportional to the target’s max Health.
   - Non-attack source note (no damage formula): Skill3<br>Heal strength: 15% Target Max Health, 25% soulburn<br>
   - Unparsed formula lines: Heal strength: 15% Target Max Health, 25% soulburn
-  - Soulburn (10 souls): Increases the amount recovered.
+  - Soulburn (10 souls): Increases the amount recovered. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Increases Defense of the caster for 2 turns when using Invigorate.
 
 ### Rem (c1114)
@@ -6986,10 +6756,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Leave it to Me.** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a morning star, with a 50% chance to --decrease Defense-- for 2 turns. When the caster is granted Demon Mode, grants the caster an extra attack with the same skill.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — A Maid's Pride** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7007,14 +6777,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
 
 ### Remnant Violet (c2074)
-
-- [ ] **S1 — Sword Flash** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Cuts the enemy, with a 75% chance to --decrease Hit Chance-- for 1 turn.
-  - Resource: focus; base gain 1; required/spent 0.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1.2<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Concentration** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7053,12 +6815,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Flower of Devoured Fate** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Increases Combat Readiness of all allies by 50%, and grants three Dirge Bullets to the caster.
   - Resource: focus; base gain 2; required/spent 0.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): The number of Dirge Bullets granted is doubled.
+  - Soulburn (10 souls): The number of Dirge Bullets granted is doubled. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Requiem Roana (c2102)
 
@@ -7066,11 +6828,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with magic, with a 75% chance to inflict --decreased Defense-- for 1 turn. Cannot trigger a critical hit or a heavy blow, and a successful attack will inflict additional damage proportional to the caster's Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Additional damage: 50% caster's Attack (0.5 * Attack)<br>
   - Unparsed formula lines: Additional damage: 50% caster's Attack (0.5 * Attack)
-  - Soulburn (10 souls): Increases effect chance to 100% and decreases Defense for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100% and decreases Defense for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Boundless Obsession** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7104,10 +6866,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Dirge** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks with magic, with a 100% chance to --decrease Defense-- for 2 turns, and increases Combat Readiness of all allies by 20%.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8(2.7 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Researcher Carrot (c4051)
 
@@ -7130,10 +6891,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Flame Spurt** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies with a powerful fire, dispelling two buffs before a 75% chance each to inflict two --burn-- effects for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 ### Revna (c3160)
 
@@ -7153,10 +6913,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Strike Target** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy relentlessly, with a 100% chance to inflict --target-- and --decreased Speed-- for 2 turns. When granted promotion, damage dealt increases proportional to the target's max Health.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5 (1.8 Soulburn)<br>!pow: 1<br>3% target max Health<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 ### Rhianna and Luciella (c2185)
 
@@ -7172,13 +6931,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: --(Rhianna)-- Attacks the enemy, dispelling two buffs before inflicting --bind-- and --decreased Defense-- for 2 turns. Swaps with Luciella and grants an extra turn. After attacking, when the target has a debuff, Luciella activates Waning Moon Slash as an extra attack.<br><br>(Luciella) After granting increased Attack to the caster for 3 turns, attacks the enemy. Swaps with Rhianna and grants an extra turn. After attacking, when the target's Health is 50% or less, Rhianna activates Half Moon Slash as an extra attack.
   - Source multiplier text (requires review): Skill2 (Rihanna)<br>att_rate: 1<br>!pow: 1<br><br><br>Skill2 (Luciella)<br>att_rate: 1.5 (3 with soulburn)<br>!pow: 1<br>
   - Unparsed formula lines: Skill2 (Rihanna); Skill2 (Luciella); att_rate: 1.5 (3 with soulburn); !pow: 1
-  - Soulburn (20 souls): --(Rhianna)-- Ignores Effect Resistance.<br>(Luciella) Increases damage dealt.
+  - Soulburn (20 souls): --(Rhianna)-- Ignores Effect Resistance.<br>(Luciella) Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Pursuit of Death** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -7203,11 +6962,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks with a swordstorm, with a 70% chance to --decrease Attack-- for 2 turns. Damage dealt increases proportional to the caster's Speed.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Moonlight Roar** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -7229,12 +6988,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Cheer** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Encourages all allies, decreasing skill cooldown by 1 turn and increasing Speed for 2 turns.
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Flash Cut** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -7247,10 +7006,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Lullaby Arrow** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Shoots an arrow infused with a sleep toxin, with a 100% chance to put them to --sleep-- for 1 turn.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.3<br>!pow: 0.95<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S3 — War Hymn** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -7278,11 +7036,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with black flame, and a successful attack will inflict 5,000 additional damage. Additional damage increases proportional to the number of buffs granted to all allies, up to 10,000. When the target has a buff, inflicts --decreased Defense-- on all enemies for 2 turns. Unaffected by elemental disadvantage.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.8<br>!pow: 1<br>Flat damage = 5000 + 625 per ally buff, max 10000<br>if you are bad at math, that means 8 buffs for 10k
   - Unparsed formula lines: Flat damage = 5000 + 625 per ally buff, max 10000; if you are bad at math, that means 8 buffs for 10k
-  - Soulburn (10 souls): Cooldown of this skill is decreased by 2 turns.
+  - Soulburn (10 souls): Cooldown of this skill is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Rin (c1054)
 
@@ -7306,14 +7064,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Showtime** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: With an elegant dance, recovers Health of all allies proportional to the target’s max Health before granting two random buffs for 3 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>Heal strength: 20% target max Health<br>Barrier strength: 15% target max Health
   - Unparsed formula lines: att_rate: n/a; !pow: n/a; Heal strength: 20% target max Health; Barrier strength: 15% target max Health
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Increases Showtime's amount recovered by 15%.
   - EE 3: Dispels one debuff from all allies before the skill effect when using Showtime.
 
@@ -7328,11 +7086,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Pickpocketing** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Swiftly attacks the enemy, dispelling all buffs before decreasing Combat Readiness by 40% and inflicting --pilfer--. Grants increased Attack to the caster for 2 turns and an extra turn.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.7<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 - [ ] **S3 — Clumsy Finish** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
@@ -7357,11 +7114,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — All Out!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with focused fire, dispelling all buffs and decreasing Combat Readiness by 50%, before granting immunity for 2 turns and exploiting weak points once to the caster and the foremost ally.
   - Supported damage formula (reference only): Skill3<br>att_rate: 2<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Roaming Warrior Leo (c2029)
 
@@ -7385,24 +7141,23 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Go, Racoo!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks all enemies with Racoo’s help, decreasing buff durations by 1 turn before a 100% chance each to inflict --decreased Speed-- and a --bomb-- for 2 turns. Grants skill nullifier once to the caster.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.8<br>!pow: 1.1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 2: Has a 30% chance to activate Fire Shockbomb as an extra attack against a random enemy when using Go, Racoo!.
 
 ### Roana (c1102)
 
 - [ ] **S1 — Soul Purification** — Base damage supported; secondary effects pending
   - Current base support: supported. Reviewed e7calc damage formula
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a noble power, and grants a barrier (proportional to the caster’s max Health) to the ally with the lowest Health for 2 turns.
   - Reviewed Earth effects: barrier.
   - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>Barrier strength: 10-12.5% self Max Health<br>
-  - Soulburn (20 souls): Grants a barrier to all allies for 2 turns after attacking.
+  - Soulburn (20 souls): Grants a barrier to all allies for 2 turns after attacking. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Robin (c1169)
 
@@ -7416,12 +7171,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with her secret weapon and extends durations of debuffs except for those which prevent movement by 1 turn before a 100% chance to inflict --decreased Defense-- for 2 turns. When this skill is not on cooldown, at the start of an ally’s extra turn, grants swift attack to the caster and increases Combat Readiness by 25%.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.05<br>!pow: 1<br>Detonation multi: 1.0<br>
   - Unparsed formula lines: Detonation multi: 1.0
-  - Soulburn (10 souls): At the end of the turn, detonates bleed and burn effects inflicted on the target.
+  - Soulburn (10 souls): At the end of the turn, detonates bleed and burn effects inflicted on the target. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Romann (c1043)
 
@@ -7434,12 +7189,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Gravitation** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a magic circle, with a 50% chance each to decrease Combat Readiness by 20% four times.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.7<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
   - EE 2: Grants a barrier to the caster for 2 turns when using Gravitation. Barrier strength Increases<br>proportional to the caster's max Health.
   - EE 3: Has a 50% chance to dispel one buff each from all enemies when using Gravitation.
 
@@ -7463,11 +7217,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks with a swordstorm, with a 70% chance to --decrease Attack-- for 2 turns. Damage dealt increases proportional to the caster's Speed.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Divine Response** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -7503,13 +7257,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Goddess of Victory** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Gives blessing to all allies, increasing Attack for 2 turns, and Combat Readiness by 25%. Grants increased Defense to the caster for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: Decreases skill cooldown of Goddess of Victory by 1 turn.
 
 ### Roy Mustang (c1135)
@@ -7517,12 +7271,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Ignite** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with flames, and increases Combat Readiness of the caster by 15%. When used on the caster's turn, if the caster is granted Flame Alchemist, activates Heat Wave instead of Ignite.<br>Heat Wave: Attacks the enemy with a huge flame, and increases Combat Readiness of the caster by 30%. Penetrates the target's Defense by 50%. This skill does not trigger a Dual Attack.
   - Resource: fightingSpirit; base gain 30; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.8<br>!pow: 1<br><br><br>Skill1Alt<br>att_rate: 0.8<br>!pow: 1<br>
   - Unparsed formula lines: Skill1Alt; att_rate: 0.8; !pow: 1
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Hero of Ishval** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7545,11 +7299,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Key to an Oath** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a staff, before recovering Health of all allies. Damage dealt and amount recovered increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.81<br>!pow: 0.95<br>5% self max Health (0.05 * Health)  -> 35% with soulburn<br>
   - Unparsed formula lines: 5% self max Health (0.05 * Health)  -> 35% with soulburn
-  - Soulburn (20 souls): Attacks the enemy before greatly healing all allies. Does not trigger a Dual Attack.
+  - Soulburn (20 souls): Attacks the enemy before greatly healing all allies. Does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Light Pillar** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -7588,11 +7342,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Demolition** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy by destroying the surroundings, dispelling all buffs from the target and decreasing Combat Readiness by 50% before a 100% chance each to inflict --laceration-- and --silence-- for 2 turns. Increases Combat Readiness of the caster by 50%. At the start of the first battle, grants stealth for 2 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Sage Baal & Sezan (c2015)
 
@@ -7605,10 +7358,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Cloud of Ruin** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks all enemies by summoning storm clouds and has a 100% chance to dispel two buffs before inflicting --sleep-- for 1 turn. When this skill is not on cooldown, at the end of an enemy’s turn, increases Combat Readiness of the caster by 20%.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.85<br>!pow: 1.3<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S3 — Eye of Death** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
@@ -7632,21 +7384,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Nggdrasil's Judgment** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: After inflicting --collapse-- on the enemy for 2 turns, attacks with the power of Nggdrasil, with a 100% chance to inflict --decreased Defense-- for 2 turns, and deals additional damage to the target. Damage dealt and additional damage increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.7<br>!pow: 1<br>Health scaling: 15% caster's max Health<br>Additional damage: 17% caster's max Health (70% def pen)
   - Unparsed formula lines: Additional damage: 17% caster's max Health (70% def pen)
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Saria (c1177)
 
 - [ ] **S1 — Spirit Burst** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks two enemies with a burst and has a 75% chance to dispel one buff.
   - Resource: focus; base gain 1; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and ignores Effect Resistance.
+  - Soulburn (10 souls): Increases effect chance to 100% and ignores Effect Resistance. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Guidance of Nature** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7684,12 +7436,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Smite of Salvation** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a powerful blow and grants invincibility to all allies except for the caster for 1 turn. When the enemy is defeated, inflicts extinction. Penetrates the target's Defense by 50%.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.2 (1.65 soulburn)<br>!pow: 1<br>Penetration: 50%<br>Increased 20% dmg on dark elemental targets
   - Unparsed formula lines: Penetration: 50%; Increased 20% dmg on dark elemental targets
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Schniel (c1060)
 
@@ -7703,12 +7455,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — You May Walk Yourself Out** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies, before granting increased Defense and a barrier (proportional to the caster's max Health) to all allies for 2 turns. Deals 5,000 additional damage regardless of whether the attack hits. When the caster is granted indomitable, greatly increases additional damage.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1<br>!pow: 1.1<br>Barrier strength: 15% (19% soulburn) caster's max Health<br>Fixed Damage: 5000 or 15000 with Indomitable
   - Unparsed formula lines: Barrier strength: 15% (19% soulburn) caster's max Health; Fixed Damage: 5000 or 15000 with Indomitable
-  - Soulburn (10 souls): Increase barrier strength.
+  - Soulburn (10 souls): Increase barrier strength. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### School Nurse Yulha (c2131)
 
@@ -7716,11 +7468,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a scalpel, with a 80% chance to inflict two --bleeding-- effects for 2 turns. At the end of the turn, detonates bleeding effects inflicted on the target,
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.9<br>!pow: 1<br>Detonation multiplier: 1.3<br>
   - Unparsed formula lines: Detonation multiplier: 1.3
-  - Soulburn (10 souls): Grants an extra attack with the same skill.
+  - Soulburn (10 souls): Grants an extra attack with the same skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — There, It'll Feel Better** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7758,12 +7510,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Rifle Shot** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks all enemies with a rifle and decreases Combat Readiness by 30%. . When Focus is full, consumes it all, increasing damage dealt and ignoring Effect Resistance.
   - Resource: focus; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1 (1.25 full Focus)<br>!pow: 1<br>
   - Unparsed formula lines: att_rate: 1 (1.25 full Focus)
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Sea Phantom Politis (c2112)
 
@@ -7778,12 +7530,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Hosts a ball, making all allies enraged for 2 turns. Dispels two buffs from all enemies and --decreases Speed-- for 2 turns before decreasing Combat Readiness by 20%.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Sealed Eye Surin (c6065)
 
@@ -7805,11 +7557,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Unexpected Accident** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After granting increased Attack to the caster for 2 turns, attacks all enemies by staging an accident, inflicting three --bleeding-- effects for 1 turn. When the target is inflicted with --provoke-- or --redirected provoke--, extends duration of --bleed-- inflicted on the target by 1 turn. When the caster is granted rage, ignores Effect Resistance.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 ### Seaside Bellona (c5071)
 
@@ -7826,12 +7577,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Haven't I Warned You?** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a spray of water, dispelling all buffs before a 100% chance each to inflict --cannot buff-- and --unhealable-- for 2 turns.
   - Resource: focus; base gain 3; required/spent 0.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.2<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
   - EE 3: Decreases skill cooldown of Haven't I Warned You? by 1 turn.
 
 ### Senya (c1106)
@@ -7858,12 +7608,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Dragon Slayer's Strike** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies by striking downwards with a spear and has a 100% chance to --decrease Hit Chance-- for 2 turns and a 85% chance to --provoke-- for 1 turn. Adopts a counterattacking stance for 3 turns.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 1.1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
   - EE 3: Grants increased Attack (Greater) to the caster for 3 turns after using Dragon Slayer's Strike. (This effect is applied before adopting a counterattack stance)
 
 ### Serene Purity Adin (c4142)
@@ -7871,11 +7620,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Ankle Cut** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword, with a 50% chance to --decrease Defense-- for 2 turns.
   - Resource: focus; base gain 1; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.85<br>!pow: 1.05<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Crystal Clear Soul** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7905,13 +7654,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy, with a 75% chance to --decrease Attack-- for 2 turns, and when the enemy is defeated, resets skill cooldowns. Grants increased Attack to the caster for 2 turns and absorbs some of the damage dealt as Health.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.7 (2.2 soulburn)<br>!pow: 1.05<br>30% of damage as healing<br>
   - Unparsed formula lines: 30% of damage as healing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: Has a 30% chance of granting the caster an extra turn when using Spirit Absorb.
 
 - [ ] **S3 — Flame Kiss** — Base damage supported; secondary effects pending
@@ -7929,12 +7678,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Horizontal Slash** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a sword, and absorbs some of the damage dealt as Health. Damage dealt increases proportional to the caster's max Health.
   - Resource: fightingSpirit; base gain 10; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.6 (1.3 soulburn)<br>!pow: 1<br>Health scaling: 12% caster's max Health, Lifesteal: 30% of the damage dealt<br>
   - Unparsed formula lines: Health scaling: 12% caster's max Health, Lifesteal: 30% of the damage dealt
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Surpressed Desire** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -7975,11 +7724,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Conviction** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Inflicts lethal damage on the enemy. When the enemy is defeated, inflicts extinction, and inflicts additional damage proportional to the caster's Attack on all enemies except for the target. Damage dealt increases proportional to the target's lost Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 2(3.2 soulburn)<br>!pow: 0.95<br>0.3% (0.7% soulburn) increased damage per 1% target missing Health<br><br><br>explosion on kill does 150% of self Attack<br>
   - Unparsed formula lines: 0.3% (0.7% soulburn) increased damage per 1% target missing Health; explosion on kill does 150% of self Attack
-  - Soulburn (20 souls): Increases damage dealt.
+  - Soulburn (20 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Shadow Knight Pyllis (c4005)
 
@@ -7998,11 +7747,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Perceptive Slash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Concentrates in order to dispel one debuff from all allies before attacking the enemy, --provoking-- for 1 turn and granting all allies a barrier for 2 turns. Damage dealt and barrier strength increase proportional to the caster's Defense.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.3<br>!pow: 0.95<br>70% self Defense (0.7 * Defense) <br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — enhanced cast implemented.
 
 ### Shadow Rose (c2003)
 
@@ -8015,12 +7763,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Spear of Darkness** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Leaps into the air and strikes at the enemy with a swordstorm, dispelling one buff and inflciting --decreased Defense-- for 2 turns. Grants an extra turn.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.5<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — enhanced cast implemented.
   - EE 1: Dispels one additional buff when using Spear of Darkness.
 
 - [ ] **S3 — Goddess of Ruin** — Base damage supported; secondary effects pending
@@ -8037,10 +7784,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Summon Household** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Summons different familiars to attack the enemy, inflicting injuries. The severity of injuries increases proportional to the damage dealt. Injuries decrease max Health of the target by up to 10% every time this skill is used. 
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.1 (1.5 Soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt and injuries decrease max Health of the target by up to 20%.
+  - Soulburn (10 souls): Increases damage dealt and injuries decrease max Health of the target by up to 20%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — True Vampire** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8050,13 +7797,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: No info
 
 ### Sharun (c1132)
-
-- [ ] **S1 — How Fragile** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy, with a 100% chance to inflict --venom-- for 1 turn. After attacking, when the target is inflicted with venom, increases skill cooldowns by 1 turn.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Ignores Effect Resistance.
 
 - [ ] **S2 — Just Trust Me** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8089,12 +7829,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Casts weakening magic, with a 100% chance each to decrease buff durations of all enemies by 1 turn and inflict --frostbite-- for 2 turns. Grants immunity to all allies for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Punishing Light** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -8109,10 +7849,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Crimson Claws** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: After inflicting --rupture-- on the enemy for 1 turn, attacks the enemy. A successful attack always results in a critical hit. Damage dealt increases proportional to the caster's max Health. When the caster is granted immortality, triggers a Dual Attack from the ally with the highest Attack.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5 (1 soulburn)<br>!pow: 1<br>Health scaling: 12% caster's max Health (24% with soulburn)<br>
-  - Soulburn (20 souls): Increases damage dealt.
+  - Soulburn (20 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Noias's Guidance** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8138,12 +7878,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Resurrection Magic** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Revives a dead ally with magic and grants increased Attack and immortality for 1 turn. When the target is not dead, grants increased Attack and immortality for 3 turns.
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Sparkling Star** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -8157,11 +7897,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Magicule Explosion** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by manipulating magicules and recovers Health of all allies. Damage dealt and amount recovered increase proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.75<br>!pow: 1<br>9% self max Health (0.09 * Health)<br>Heal strength: 8% self max hp
   - Unparsed formula lines: Heal strength: 8% self max hp
-  - Soulburn (10 souls): Grants an extra attack with the same skill.
+  - Soulburn (10 souls): Grants an extra attack with the same skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Blooming Lotus** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -8198,11 +7938,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Smash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by swiping consecutively with a scythe, with a 100% chance each to inflict --unhealable-- and --bleeding-- for 2 turns. After attacking, when the target's Health is 50% or less, activates Sever as an extra attack. When attacking with an extra attack, Sever has a 100% chance to inflict --bleeding--.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.25<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 3: After using Smash, the Health condition to activate Sever's extra attack changes to 75%.
 
 ### Silk (c1004)
@@ -8210,12 +7949,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Single Shot** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Shoots arrows at the enemy, decreasing their Combat Readiness by 10%. Damage dealt increases proportional to the caster's Speed.
   - Resource: focus; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.9 (1.2 automatic shot)<br>!pow: 0.9<br>0.075% self Speed (0.00075 * Speed)<br>
   - Unparsed formula lines: att_rate: 0.9 (1.2 automatic shot)
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Concentration** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8239,11 +7978,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks an enemy with an explosion of flames, with a 75% chance to --burn-- for 1 turn. After attacking, when an enemy is burned, activates Flame Release as an extra attack.<br>Flame Release: Attacks all enemies with fire energy, with a 60% chance to --burn-- for 1 turn, before detonating --burn-- effects inflicted on the target at the end of the turn.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Detonation multi: 1.0<br><br><br>Skill1 Proc<br>att_rate: 0.5<br>!pow: 1.3<br>
   - Unparsed formula lines: Detonation multi: 1.0; Skill1 Proc; att_rate: 0.5; !pow: 1.3
-  - Soulburn (10 souls): Effect Chance of Flame Friction increases to 100%, and ignores Effect Resistance.
+  - Soulburn (10 souls): Effect Chance of Flame Friction increases to 100%, and ignores Effect Resistance. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Flame of Savara** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8278,22 +8017,22 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Dragon Knight's Cheer** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Increases Attack of all allies for 2 turns. Increases Defense and Effectiveness of the caster for 2 turns and recovers Health. Amount recovered increases proportional to the caster's Max Health.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Sinful Angelica (c2062)
 
 - [ ] **S1 — Debilitating Strike** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the target with a staff, with a 75% chance to --decrease Defense-- for 1 turn. When the caster is immortal, triggers a Dual Attack from the ally with the highest Attack.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Increases effect chance to 100%, and decreases Defense of the target for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100%, and decreases Defense of the target for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Soul Harvest** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8339,12 +8078,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the target with a strong punch, dispelling all buffs and inflicts --cannot buff-- for 2 turns. Damage dealt increases proportional to the target's max Health. After attacking, deals additional damage proportional to the caster's Attack regardless of whether the attack hits.
   - Resource: fightingSpirit; base gain 60; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.6<br>!pow: 1<br>5% target max Health<br>Additional damage: 40% of Self Attack (0.4 * Attack)
   - Unparsed formula lines: Additional damage: 40% of Self Attack (0.4 * Attack)
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Solitaria of the Snow (c2111)
 
@@ -8368,12 +8107,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Decreases buff durations of the enemy by 1 turn and attacks with starlight, inflicting --stun-- for 1 turn before decreasing Combat Readiness by 30%. Grants a barrier (proportional to the caster’s max Health) to the caster for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.8<br>!pow: 1<br>Barrier Strength: 25% of Self Max HP<br>
   - Unparsed formula lines: Barrier Strength: 25% of Self Max HP
-  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 1 turn and grants an extra turn.
+  - Soulburn (20 souls): Extends duration of buffs granted by this skill by 1 turn and grants an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Sonia (c3104)
 
@@ -8388,11 +8127,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Recovery** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Recovers the target's Health using a recovery cube and dispels two debuffs. Amount recovered increases proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill2<br>Heal Strength: 7% Self Max Health<br>
   - Unparsed formula lines: Heal Strength: 7% Self Max Health
-  - Soulburn (20 souls): Effect is granted to all allies.
+  - Soulburn (20 souls): Effect is granted to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Cube Aura** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -8413,11 +8152,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Evil Claws** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies with evil claws, with a 80% chance to --stun-- for 1 turn, before granting increased Attack to the caster for 2 turns and increasing the caster's Combat Readiness by 50%. Increases Effectiveness of this attack by 50%.,
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.8(1.05 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Light Storm** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
@@ -8433,10 +8172,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Poison Blast** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy with an explosion of poison energy and has a 70% chance to inflict --poison-- for 2 turns. This skill cannot trigger a counterattack. When Endless Nightmare is on cooldown, attacks two enemies including the target.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1.2<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S2 — Nightmare Illusion** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8455,26 +8193,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.8<br>!pow: 0.95<br>20% increased damage per target debuff<br>
   - Unparsed formula lines: 20% increased damage per target debuff
 
-### Spirit Eye Celine (c2103)
-
-- [ ] **S1 — Mighty Strike** — Base damage supported; secondary effects pending
-  - Current base support: supported. Reviewed e7calc Mighty Strike / Nimble Sword
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a sheath. When this skill is used, if it was not triggered by a Dual Attack and the caster has a buff, uses Nimble Sword instead.<br>Nimble Sword: After granting increased Attack to the caster for 1 turn, swiftly attacks the enemy, and absorbs some of the damage dealt as Health. Penetrates the target's Defense by 50%. This skill does not trigger a Dual Attack.
-  - Implemented: buff-dependent Nimble Sword (except Dual Attacks), pre-hit Attack Up, 50% penetration, 25% lifesteal, and no outgoing Dual Attack in Nimble Sword form.
-  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br><br><br>Skill1 Extra (Nimble Sword)<br>att_rate: 1<br>!pow: 0.9<br>25% Lifesteal<br>Penetration 50%
-  - Soulburn (20 souls): Grants an extra turn.
-
-- [ ] **S2 — Sixth Sense** — Passive partially implemented or pending
-  - Current base support: passive. Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented
-  - Review/work: Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented
-  - Review/work: EE option 1: EE mechanic not implemented
-  - Description: When attacked, damage suffered in one attack does not exceed 50% of max Health. When someone dies, decreases skill cooldowns by 1 turn and gains 5 Soul. Effects upon death are only activated upon a Hero's death.
-  - Source multiplier text (requires review): No info
-  - Unparsed formula lines: No info
-  - EE 1: When the casters uses Soulburn for the first time, increases damage dealt by 50% and does not cost any Soul.
-
 ### Stark (c1174)
 
 - [ ] **S2 — Master's Lessons** — Passive partially implemented or pending
@@ -8487,23 +8205,23 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Lightning Strike** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy by slamming down with an axe. Penetrates the target's Defense by 50%. Damage dealt increases proportional to the caster's max Health. Damage dealt increases every time this skill is used, stacking up to 3 times.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.7 (0.9 soulburn)<br>!pow: 1<br>Health scaling: 12% (16% Soulburn) caster's max Health<br>50% Penetration<br>Damage increase 30% per stack
   - Unparsed formula lines: 50% Penetration; Damage increase 30% per stack
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Straze (c1034)
 
 - [ ] **S2 — Destructive Gaze** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks all enemies with a wave of force and dispels all buffs. Ignores Effect Resistance of any targets with Attack lower than the caster's Attack. When there are three or fewer enemies, damage dealt increases with fewer enemies.
   - Source multiplier text (requires review): Skill2<br>att_rate: 0.9<br>!pow: 1<br>20% increased damage per enemy less than 4 (20% 3 enemies, 40% 2, 60% 1)<br>
   - Unparsed formula lines: 20% increased damage per enemy less than 4 (20% 3 enemies, 40% 2, 60% 1)
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Star Extinction** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
@@ -8538,7 +8256,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 1: EE mechanic not implemented
@@ -8546,7 +8264,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
   - EE 1: Increases Azure Phantom's chance to --decrease Defense-- by 15%.
 
 ### Summer Break Charlotte (c5009)
@@ -8554,13 +8272,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Caught A Big One** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with two meaty fish and has a 75% chance to --decrease Defense-- for 1 turn. When activated as a Dual Attack, this attack changes into an attack that targets all enemies. The changed attack does not trigger a counterattack, and increases Combat Readiness of all allies by 20%.
   - Resource: fightingSpirit; base gain 20; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack or counterattack.
+  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack or counterattack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Caught a Big One's chance to --decrease Defense-- by 5%.
   - EE 2: Increases Combat Readiness by an additional 5% when Caught a Big One is activated as a Dual Attack
 
@@ -8597,11 +8315,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Unverified target count
   - Review/work: Unverified target count
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy with a cold blade, with a 100% chance to inflict two --poison-- effects for 2 turns, and increases the caster's Combat Readiness by 30%.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Glistening Summer Strike** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -8614,12 +8332,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Are you the Culprit?** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with swords, with a 75% chance each to dispel one buff twice.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
   - EE 1: Increases buff dispel chance of Are you the Culprit? by 5%.
   - EE 2: After using Are you the Culprit?, detonates bombs inflicted on the target at the end of the turn.
 
@@ -8653,10 +8370,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Edge Smash** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy consecutively with a chain axe, inflicting two to four --bleeding-- effects for 2 turns and--decreased Attack-- for 1 turn.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.4<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
+  - Soulburn (20 souls): Grants an extra turn. — enhanced cast implemented.
 
 - [ ] **S3 — Implosion** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
@@ -8670,10 +8386,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Shadow Tracking** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy and has a 50% chance to --burn-- for 2 turns.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Belated Bloom** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8699,11 +8415,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — S3** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks all enemies and inflicts huge damage. Damage dealt increases proportional to the caster's lost Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.8<br>!pow: 0.8<br>0.5% increased damage per 1% self Health missing<br>0.15% increased damage per 1% target health missing
   - Unparsed formula lines: 0.5% increased damage per 1% self Health missing; 0.15% increased damage per 1% target health missing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Swift Flagbearer Sigret (c5072)
 
@@ -8717,11 +8433,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: After dispelling all buffs from the enemy, has a 100% chance to inflict --target-- for 2 turns, and makes all allies except for the caster attack with a basic skill. Increases Combat Readiness of the caster by 30%.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Ignores Effect Resistance.
+  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Flag of Victory** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -8737,12 +8453,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Mana Attunment** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with mana, before increasing Combat Readiness of the caster by 15% and increasing Attack by 20%. Increased Attack effect can stack up to 3 times. On the caster's turn, when Focus is full, activates the same skill as an extra attack.
   - Resource: focus; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>same att_rate and pow for the soulburn (but its aoe)<br>20% attack increase per buff stack (up to 3 times)
   - Unparsed formula lines: same att_rate and pow for the soulburn (but its aoe); 20% attack increase per buff stack (up to 3 times)
-  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack.
+  - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Insight** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -8766,11 +8482,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a blade, with a 80% chance each to inflict two --bleeding-- effects for 2 turns, and when the caster is granted overload, increases effect chance by 20%. At the end of the turn, detonates --bleeding-- effects inflicted on the target.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Bleed Detonation multiplier: 1.3<br>
   - Unparsed formula lines: Bleed Detonation multiplier: 1.3
-  - Soulburn (10 souls): Inflicts one additional --bleeding--.
+  - Soulburn (10 souls): Inflicts one additional --bleeding--. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Guard** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -8793,12 +8509,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Full Moon Slash** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a spear and increases Combat Readiness of the caster by 15%. Damage dealt increases proportional to the caster's Speed. When the caster is enraged, activates Tidal Crash as an extra attack. Tidal Crash can only be activated once per turn, during the caster's turn.<br>Tidal Crash: Attacks the enemy by slashing downwards with a spear. Damage dealt increases proportional to the caster's Speed.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.98 (1.65 soulburn)<br>!pow: 0.9<br>0.075% self Speed (0.00075 * Speed)<br>yes, 0.98, weird value<br><br>Skill1Proc<br>att_rate: 1.2<br>!pow: 1.3<br>0.075% self Speed (0.00075 * Speed)<br>does not benefit from s1 mola
   - Unparsed formula lines: yes, 0.98, weird value; Skill1Proc; att_rate: 1.2; !pow: 1.3; 0.075% self Speed (0.00075 * Speed); does not benefit from s1 mola
-  - Soulburn (10 souls): Increase damage dealt by Full Moon Slash.
+  - Soulburn (10 souls): Increase damage dealt by Full Moon Slash. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Full Moon Slash's Combat Readiness increase effect by 5%.
 
 - [ ] **S2 — Azure Waves Of The Ocean** — Passive partially implemented or pending
@@ -8836,13 +8552,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Soulful Strike** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with full power, and increases Defense of the caster for 2 turns. When the target is inflicted with --provoke-- or --redirected provoke--, increases damage dealt.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.5 (1.8 Soulburn)<br>!pow: 0.9<br>50% increased damage if target provoked<br>
   - Unparsed formula lines: 50% increased damage if target provoked
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Talia (c3154)
 
@@ -8863,21 +8579,20 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Break Apart** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy's vital point, with a 100% chance to dispel two buffs and make them --unable to be buffed-- for 2 turns. This skill cannot trigger a counterattack.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.5<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Tamarinne (c1067)
 
 - [ ] **S1 — Serene Tune** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: (Tamarinne) Attacks an enemy with a serene melody before recovering Health of the ally with the lowest Health proportional to the target’s max Health. Decreases cooldown of Shining Star☆ by 1 turn.<br>(Idol) Attacks all enemies with a beautiful voice and dispels all buffs. Triggers a Dual Attack from the ally with the highest Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 0.75<br>Heal strength: 7% target max Health. <br>Heal strength: 35% self max Health (Soulburn)<br><br>Skill1(Idol)<br>att_rate: 1<br>!pow: 0.75<br>Heal strength: 35% self max Health (Soulburn)<br>
   - Unparsed formula lines: Heal strength: 7% target max Health. ; Heal strength: 35% self max Health (Soulburn); Skill1(Idol); att_rate: 1; !pow: 0.75; Heal strength: 35% self max Health (Soulburn)
-  - Soulburn (20 souls): Greatly recovers Health of all allies after attacking.
+  - Soulburn (20 souls): Greatly recovers Health of all allies after attacking. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Song of the Forest** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -8910,13 +8625,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
 
-- [ ] **S3 — Pierce** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Pierces the enemy's weak point with a spear, decreasing Combat Readiness by 50%.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 1<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
-
 ### Taranor Royal Guard (c3002)
 
 - [ ] **S1 — Sword of the Kingdom** — Skill execution unsupported
@@ -8932,13 +8640,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Description: The caster reflects 50% of the damage suffered from a critical hit to the attacker. Reflected damage can't be higher than caster's max Health.
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
-
-- [ ] **S3 — Strike** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Jumps towards the enemy and attacks them, dispelling all buffs and absorbing all damage as Health. Damage dealt increases proportional to the caster's max Health.<br>
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1.5(2.3 soulburn)<br>!pow: 0.95<br>5% self max Health (0.05 * Health)<br>
-  - Soulburn (10 souls): Increases damage dealt.<br>
 
 ### Tempest Surin (c2065)
 
@@ -8962,12 +8663,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies, with a 100% chance each to make them --unable to be buffed-- for 2 turns and inflict --silence-- for 1 turn. Damage dealt increases proportional to the amount of the caster's lost Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1 (1.25 Soulburn)<br>!pow: 1.05<br>0.50% increased damage per 1% self Health missing<br>
   - Unparsed formula lines: 0.50% increased damage per 1% self Health missing
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
   - EE 3: When using Moonlight Shadow, dispels one buff from the terget (This effect is applied before inflicting --unable to be buffed--).<br>
 
 ### Tenebria (c1050)
@@ -8983,10 +8684,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Ominous Thunder** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Summons ominous thunder to attack all enemies, dispelling one buff before decreasing Combat Readiness by 30% and before --decreasing Speed-- and making them --unable to be buffed-- for 2 turns.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1 (1.25 soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Nightmare** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -9004,11 +8705,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Has a 85% chance to inflict --seal-- on the enemy for 2 turns before attacking. When used on the caster's turn, has a 40% chance to activate Twisted Strike as an extra attack.<br>Twisted Strike: Attacks all enemies, absorbing some of the damage dealt as Health, and has a 35% chance to inflict --fear-- for 1 turn. When the caster is granted engulf, effect chance is doubled.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.75<br>!pow: .95<br><br><br>Skill1 (Proc)<br>att_rate: .3<br>!pow: 1<br>Heal strength: 50% of the damage dealt<br>
   - Unparsed formula lines: Skill1 (Proc); att_rate: .3; !pow: 1; Heal strength: 50% of the damage dealt
-  - Soulburn (10 souls): Increases chance of activating Twisted Strike to 100%.
+  - Soulburn (10 souls): Increases chance of activating Twisted Strike to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Craving Affection** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9038,13 +8739,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill2<br>att_rate: n/a<br>!pow: n/a<br>
   - Unparsed formula lines: att_rate: n/a; !pow: n/a
 
-- [ ] **S3 — Soul Break** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Strikes the enemy strongly, dealing damage proportional to the target's max Health.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 0.9<br>6% target max Health<br>
-  - Soulburn (20 souls): Grants an extra turn.
-
 ### Top Model Luluca (c2082)
 
 - [ ] **S2 — Victory Pose** — Skill execution unsupported
@@ -9060,24 +8754,24 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Demolish** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: After granting increased Attack to the caster for 3 turns, attacks the enemy, and when the enemy is defeated, inflicts extinction. Grants stealth and a barrier (proportional to Attack) to the caster for 2 turns. Penetrates the target’s Defense by 50%. When the Speed of the caster is greater than the Speed of the target, penetration rate increases proportional to the difference, up to a maximum of 100%.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.7<br>!pow: 1<br>0.25% defense penetration per speed over the target (MAX 100% Def Penetration)<br>(200 Speed difference for max def penetration)<br>Barrier strength: 100% caster's Attack
   - Unparsed formula lines: 0.25% defense penetration per speed over the target (MAX 100% Def Penetration); (200 Speed difference for max def penetration); Barrier strength: 100% caster's Attack
-  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns.
+  - Soulburn (20 souls): All skill cooldowns decreased by 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Tori (c1171)
 
 - [ ] **S1 — Overreaction** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy by whipping a ribbon, and grants a barrier to the caster for 1 turn. Barrier strength increases proportional to the caster's Attack.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1.2 (2.3 Soulburn)<br>!pow: 0.9<br>Barrier strength: 50% caster's Attack<br>
   - Unparsed formula lines: Barrier strength: 50% caster's Attack
-  - Soulburn (20 souls): Greatly increases damage dealt and does not trigger a Dual Attack. When the caster is granted cascade, does not cost any Soul to activate Soulburn.
+  - Soulburn (20 souls): Greatly increases damage dealt and does not trigger a Dual Attack. When the caster is granted cascade, does not cost any Soul to activate Soulburn. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Delusional Runway** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9100,10 +8794,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Lunge** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy in an act of faith, with a 40% chance to --stun-- for 1 turn. When it is not the caster's turn, effect chance increases by 20%. Damage dealt increases proportional to the caster's max Health.<br>
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.95<br>4% self max Health (0.04 * Health)<br>
-  - Soulburn (10 souls): Increases effect chance by 60%.<br>
+  - Soulburn (10 souls): Increases effect chance by 60%.<br> — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Chivalry** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9130,13 +8824,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Sundering Slash** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
   - Review/work: Missing numeric scaling coefficient
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy with a sword, inflicting up to 10% injuries, before granting a barrier (proportional to the caster’s max Health) to the caster for 1 turn. When triggered as a counterattack, changes into an attack that targets all enemies.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1 (1.7 Soulburn)<br>!pow: 1<br>Barrier Strength: 12% of self Max Health<br><br><br>Skill1(AoE Proc)<br>att_rate: 1<br>!pow: 1<br>Barrier Strength: 12% of self Max Health<br>
   - Unparsed formula lines: Barrier Strength: 12% of self Max Health; Skill1(AoE Proc); att_rate: 1; !pow: 1; Barrier Strength: 12% of self Max Health
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Wandering Eidolon** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9158,12 +8852,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Sword Storm** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with a sword blast, with a 75% chance to inflict --decreased Defense-- for 2 turns. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.8<br>!pow: 0.95<br>4% self max Health (0.04 * Health)<br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Sword Storm's --decrease Defense-- effect chance by 15%.
   - EE 2: Increases combat Readiness of the ally in the back row by 10% when using Sword Storm.
 
@@ -9187,10 +8881,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S1 — Shield Thrust** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a sword and shield, with a 75% chance each to dispel one buff twice. Damage dealt increases proportional to the caster's max Health.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 0.95<br>5% self max Health (0.05 * Health)  <br>
-  - Soulburn (10 souls): Increases effect chance to 100%.
+  - Soulburn (10 souls): Increases effect chance to 100%. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Escort** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9224,22 +8918,15 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
 
-- [ ] **S3 — Light Piercing the End** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks all enemies with a drone, dispelling all buffs before increasing skill cooldowns by 1 turn. Deals 3000 additional damage regardless of whether the attack hits.
-  - Supported damage formula (reference only): Skill3<br>att_rate: 0.7<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
-
 ### Urban Shadow Choux (c2101)
 
 - [ ] **S1 — Zippity Zap!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a spear, and increases Combat Readiness of the caster by 15%. When it is the caster's turn, gains 1 Focus. Damage dealt increases proportional to the caster's max Health.
   - Resource: focus; base gain 0; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 0.5 (0.8 Soulburn)<br>!pow: 1<br>Max Health scaling 10% (0.10 * self Max Health) (16% with Soulburn)<br>
-  - Soulburn (10 souls): Increases damage dealt and deals additional damage equivalent to 40% of injuries inflicted on the target. 
+  - Soulburn (10 souls): Increases damage dealt and deals additional damage equivalent to 40% of injuries inflicted on the target.  — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Wild Charge** — Passive partially implemented or pending
   - Current base support: passive. Passive: reviewed resource grants/gain blocking implemented; other effects pending
@@ -9279,12 +8966,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy repeatedly, granting increased Attack and Weakness Shared to the caster for 2 turns, before absorbing some of the damage dealt as Health. A critical hit has a 100% chance to --decrease Defense-- for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Veronica (c1150)
 
@@ -9308,12 +8995,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Chain Explosion** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy, dispelling two buffs before inflicting --decreased Defense-- and --bomb-- for 2 turns. A critical hit will grant an extra turn.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.8<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
   - EE 3: Decreases Combat Readiness of the target by 50% when using Chain Explosion.
 
 ### Victorika (c1166)
@@ -9326,11 +9012,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S2 — Maelstrom Waltz** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks all enemies by infiltrating deep into enemy lines, and grants counterattack to the caster for 3 turns.
   - Supported damage formula (reference only): Skill2<br>att_rate: 1.2 (1.45 Soulburn)<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
 
 - [ ] **S3 — Promised Glory** — Skill execution unsupported
   - Current base support: unsupported. Missing numeric scaling coefficient
@@ -9353,12 +9038,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Precise Attack** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Fires a missile at the enemy, and when the enemy is defeated, inflicts extinction and grants torrent to the caster. Increases Hit Chance of this skill by 50%.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S3 — Limiter Release** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -9381,12 +9066,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Blade Ascent** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a swordstorm, dealing damage proportional to the caster's Speed.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.85 (1.1 soulburn)<br>!pow: 1<br>0.1125% self Speed  (0.001125 * Speed)<br>
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — enhanced cast implemented.
   - EE 2: Resets skill cooldown when defeating an enemy with Blade Ascent.
   - EE 3: Grants increased Critical Hit Damage to the caster for 2 turns before the skill effect when using Blade Ascent.
 
@@ -9395,11 +9079,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Graceful Cut** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks with a sword, with a 75% chance to --decrease Attack-- for 1 turn. When it is not the caster's turn, increases Combat Readiness by 15% and gains double the amount of Focus.
   - Resource: focus; base gain 1; required/spent 0; out-of-turn gain ×2.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 0.9<br>
-  - Soulburn (10 souls): Increases effect chance to 100% and --decreases Attack-- of the target for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100% and --decreases Attack-- of the target for 2 turns. — enhanced cast implemented.
 
 ### Vivian (c1088)
 
@@ -9414,11 +9097,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Thunder God's Cry** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks all enemies with a thunderstorm. When an enemy is defeated, activates Thunder God's Cry once more. Each subsequent Thunder God's Cry activated this way deals decreased damage, and can be activated up to 3 times.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.05(1.3 soulburn)<br>!pow: 0.9<br>first trigger on kill is 0.55 att_rate, second trigger is 0.3 att_rate<br>these get mola bonus too, but NOT soulburn
   - Unparsed formula lines: first trigger on kill is 0.55 att_rate, second trigger is 0.3 att_rate; these get mola bonus too, but NOT soulburn
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Mana Amplification** — Non-attack cast supported; remaining effects listed below
   - Current base support: nonAttack. Non-attack cast implemented
@@ -9449,10 +9132,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Fatal Shot** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Description: Attacks the enemy's vital points, with a 100% chance to --stun-- for 2 turn.
   - Supported damage formula (reference only): Skill3<br>att_rate: 1.8<br>!pow: 0.9<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Wanderer Silk (c2004)
 
@@ -9469,14 +9151,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by shooting lightning arrows, inflicting --silence-- and --decreased Attack-- for 2 turns and decreasing Combat Readiness by 100%. Grants a barrier (proportional to the caster's level) to the caster for 2 turns.
   - Source multiplier text (requires review): Skill3<br>att_rate: 2<br>!pow: 0.8<br>Shield Strength: 75 per character level<br>
   - Unparsed formula lines: Shield Strength: 75 per character level
-  - Soulburn (20 souls): Ignores Effect Resistance.<br>
+  - Soulburn (20 souls): Ignores Effect Resistance.<br> — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Dispels one buff from the enemy when using Shock Arrow. (This effect is applied before inflicting --silence--.)
   - EE 3: Increases Speed of all allies for 2 turns when using Shock Arrow.
 
@@ -9485,10 +9167,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Spiral Cut** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with a machete, with a 75% chance to --decrease Defense-- for 1 turn.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Increases effect chance to 100%, and decreases Defense of the target for 2 turns.
+  - Soulburn (10 souls): Increases effect chance to 100%, and decreases Defense of the target for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Natural Storyteller** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9530,12 +9212,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Finishing Shot** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unverified defense penetration
   - Review/work: Conditional or unverified defense penetration
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: EE option 2: EE mechanic not implemented
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy with a mana bullet. Penetrates the target’s Defense. Increases Hit Chance by 50% when using this skill.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.8<br>!pow: 0.95<br>
-  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns.
+  - Soulburn (10 souls): Skill cooldown is decreased by 2 turns. — Soulburn effect mapped; base skill is not executable yet.
   - EE 2: Grants skill nullifier once to the caster when using Finishing Shot.
   - EE 3: Increases Hit Chance of Finishing Shot by 50%.
 
@@ -9545,11 +9227,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy, with a 100% chance to inflict --burn-- for 1 turn. When Merciless Execution is on cooldown, activates Annihilate instead of Overpower.<br>Annihilate: Attacks the enemy, inflicting --burn-- for 1 turn, and at the end of the turn, detonates --burn-- effects inflicted on the target.
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br><br><br>Skill1<br>att_rate: 1<br>!pow: 1<br>Detonation (burn only) multi: 1.0<br>
   - Unparsed formula lines: att_rate: 1; !pow: 1; Detonation (burn only) multi: 1.0
-  - Soulburn (10 souls): Inflicts an additional --burn-- effect for 1 turn.
+  - Soulburn (10 souls): Inflicts an additional --burn-- effect for 1 turn. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Operational Readiness** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9585,13 +9267,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Witch of the Mere Tenebria (c6050)
 
-- [ ] **S1 — Mirror Fragment** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a mirror, with a 100% chance to inflict a --random debuff-- for 1 turn. When Mirror of the Abyss is on cooldown, triggers a Dual Attack from the ally with the highest Attack.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (20 souls): Grants an extra turn.
-
 - [ ] **S2 — Consuming Grasp** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
@@ -9614,12 +9289,12 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Hide in the Shadows** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy by swinging a sword, and has a 100% chance to grant stealth to the caster for 1 turn. 
   - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Barrier strength: 20% caster's max Health<br>Heal strength: 15% caster's max Health
   - Unparsed formula lines: Barrier strength: 20% caster's max Health; Heal strength: 15% caster's max Health
-  - Soulburn (20 souls): Grant an extra turn.
+  - Soulburn (20 souls): Grant an extra turn. — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S2 — Aegis of Time** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9655,21 +9330,21 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S3 — Battle Cry** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
   - Review/work: Non-damaging skill: effect support pending
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Raises the morale of all allies, granting increased Attack and immunity for 2 turns and decreasing debuff durations by 1 turn.
   - Source multiplier text (requires review): Skill3<br>
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Young Senya (c1162)
 
 - [ ] **S1 — Oopsie!** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Accidentally spills bread to attack the enemy, and triggers a Dual Attack from a random ally, and increases Combat Readiness of the caster by 15%.
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>
-  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies.
+  - Soulburn (10 souls): Combat Readiness increase effect will be applied to all allies. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — No Bullying!** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9704,11 +9379,10 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Dragon's Roar** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks all enemies with a dragon howl, dispelling one buff, before a 70% chance to --decrease Defense-- for 2 turns and a 85% chance to --silence-- for 1 turn.
   - Supported damage formula (reference only): Skill2<br>att_rate: 0.9<br>!pow: 1<br>
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — enhanced cast implemented.
   - EE 3: Increases Dragon's Roar's chance to --silence-- by 15%.
 
 ### Yulha (c1131)
@@ -9726,13 +9400,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 - [ ] **S3 — Symphony of Agony** — Base damage supported; secondary effects pending
   - Current base support: supported. Reviewed e7calc damage formula
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 3: EE mechanic not implemented
   - Description: Attacks the enemy by unraveling Sphere of Sadism, and when the enemy is defeated, recovers Health of the caster proportional to max Health. When the target is not an Elite or Boss monster, ignores damage share. Penetrates the target's Defense, but cannot trigger a critical hit or a heavy blow. Damage dealt increases proportional to the caster's lost Health.
   - Reviewed Earth effects: heal.
   - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
   - Supported damage formula (reference only): Skill3<br>att_rate: 0.5<br>!pow: 1<br>0.31 (0.41 with soulburn) flat per 1 hp missing<br>Heal strength: 40% Self Max HP
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 3: Resets skill cooldown when defeating an enemy with Symphony of Agony.
 
 ### Yuna (c1030)
@@ -9740,13 +9414,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S1 — Homing Laser** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks all enemies with a drone, before increasing Combat Readiness of the caster by 15%, and increasing Combat Readiness of all allies except for the caster by 5%. 
   - Resource: focus; base gain 1; required/spent 0.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.6 (0.85 soulburn)<br>!pow: 0.8<br>0.075% self Speed (0.00075 * Speed)<br>140% dmg vs 2 targets, 160% vs 1 target
   - Unparsed formula lines: 140% dmg vs 2 targets, 160% vs 1 target
-  - Soulburn (10 souls): Increases damage dealt.
+  - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 1: Increases Combat Readiness of the caster by an additional 5% when using Homing Laser.
 
 - [ ] **S2 — Upgrade** — Non-attack cast supported; remaining effects listed below
@@ -9767,14 +9441,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Unparsed formula lines: 20% damage increase for each enemy less than 4
 
 ### Zahhak (c1119)
-
-- [ ] **S1 — Vulnerability Exposed** — Base damage supported; secondary effects pending
-  - Current base support: supported. Reviewed e7calc damage formula
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with a longsword. Increases Hit Chance and Critical Hit Chance of this skill by 50%. When the target has a buff, increases damage dealt.
-  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1.1(1.8 soulburn)<br>!pow: 1<br>30% increased damage if target is buffed<br>
-  - Soulburn (10 souls): Increases damage dealt.
 
 - [ ] **S3 — Execute** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -9806,21 +9472,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Unverified target count
   - Review/work: Unverified target count
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy, dispelling all buffs and making them --unable to be buffed-- for 2 turns, before increasing Attack and Defense of the caster for 2 turns.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn.
+  - Soulburn (10 souls): Extends duration of buffs granted by this skill by 1 turn. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Zeno (c1083)
-
-- [ ] **S1 — Black Thorn** — Base damage supported; secondary effects pending
-  - Current base support: supported. Damage coefficients parsed
-  - Review/work: Soulburn enhanced execution (currently preview only)
-  - Description: Attacks the enemy with thorns, inflicting --frostbite-- for 1 turn. Damage dealt increases proportional to the caster's Defense.
-  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>100% self Defense (1.0 * Defense)<br>
-  - Soulburn (20 souls): Grants an extra turn.
 
 - [ ] **S2 — Star's Armor** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -9845,11 +9504,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 - [ ] **S2 — Ice Pick** — Skill execution unsupported
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the enemy repeatedly, before increasing Combat Readiness of the caster by 50%. When the target has a debuff, increases damage dealt.
   - Source multiplier text (requires review): Skill2<br>att_rate: 1.5 (2 soulburn)<br>!pow: 0.95<br>30% increased damage if target is debuffed<br>
   - Unparsed formula lines: 30% increased damage if target is debuffed
-  - Soulburn (10 souls): Increases damage dealt.<br>
+  - Soulburn (10 souls): Increases damage dealt.<br> — Soulburn effect mapped; base skill is not executable yet.
 
 - [ ] **S3 — Iceberg** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -9877,9 +9536,9 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Current base support: unsupported. Conditional or unrecognized multiplier text
   - Review/work: Conditional or unrecognized multiplier text
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn enhanced execution (currently preview only)
+  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy, dispelling two buffs before --silencing-- for 1 turn and decreasing Combat Readiness by 40%. Grants deify to the caster for 3 turns. Penetrates the target's Defense by 100% and cannot trigger a critical hit. When the target is a Hero, damage dealt increases proportional to the target's current Health.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.2<br>!pow: 1<br>Proportional damage based on target current hp: 18.75% (0.1875 * Target Current Health)<br>Penetration: 100%
   - Unparsed formula lines: Proportional damage based on target current hp: 18.75% (0.1875 * Target Current Health); Penetration: 100%
-  - Soulburn (20 souls): Ignores Effect Resistance.
+  - Soulburn (20 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.

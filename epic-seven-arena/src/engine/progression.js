@@ -33,6 +33,7 @@ export function normalizeEquipment(hero) {
           cooldown = description.match(
             /^Decreases cooldown of .+ by (\d+) turns?\.?$/i,
           );
+        const soulburnFirstFree=hero.id==="c2103" && description === "When the casters uses Soulburn for the first time, increases damage dealt by 50% and does not cost any Soul.";
         const opening =
           hero.id === "c2007" &&
           /start of battle/i.test(description) &&
@@ -51,7 +52,8 @@ export function normalizeEquipment(hero) {
             "When using Thorn, triggers a Dual Attack from a random ally.";
         let support = "unsupported",
           reason = "EE mechanic not implemented";
-        if (randomDual) {
+        if(soulburnFirstFree){support="supported";reason="First Soulburn is free and deals 50% more damage";}
+        else if (randomDual) {
           support = "supported";
           reason = "Dual Attack from a random eligible ally implemented";
         } else if (highestAttackDual) {
@@ -79,6 +81,7 @@ export function normalizeEquipment(hero) {
           damageBonus: damage ? Number(damage[1]) / 100 : 0,
           cooldownReduction: cooldown ? Number(cooldown[1]) : 0,
           opening,
+          soulburnFirstFree,
           highestAttackDual,
           randomDual,
           support,

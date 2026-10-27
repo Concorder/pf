@@ -1,3 +1,4 @@
+import {soulburnMetadata} from "./soulburn.js";
 import {EARTH_SKILL_RULES} from "./earthSkillRules.js";
 import {resolvePassiveWatchers} from "./passiveWatchers.js";
 import {reviewedDamage} from "./reviewedDamage.js";
@@ -289,7 +290,7 @@ export function normalizeSkill(hero, raw, index) {
     overrides: result.passiveDamageLimit ? {0: `${result.passiveDamageLimit}%`} : {},
   });
   if (passive) {
-    result.passiveComplete ||= !!earthReview?.complete;
+    result.passiveComplete ||= !!earthReview?.complete || (!!result.passiveDamageLimit && !!result.deathCooldownSouls);
     result.damageSupport = "passive";
     result.supportReason = earthReview?.staticPassive ? `Passive: reviewed stats${earthReview.complete ? " implemented" : "; pending: " + earthReview.pending.join(", ")}` : result.passiveDamageLimit
       ? "Passive: 50% effective-max-HP attack limit before sharing; hero-death cooldown reduction and souls implemented"
@@ -360,6 +361,7 @@ export function normalizeSkill(hero, raw, index) {
     result.damageSupport = "supported";
     result.supportReason = "Reviewed Sigret debuff-count penetration";
   }
+  result.soulburn=soulburnMetadata(hero,result,index);
   return result;
 }
 export function createCatalog(baseline, records) {

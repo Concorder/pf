@@ -1,3 +1,4 @@
+import {applySoulburn} from "../data/soulburn.js";
 import {applySkillEffects} from "./skillEffects.js";
 import {dispatchWatchers,tickWatcherCooldowns} from "./watchers.js";
 import {WATCHER_HANDLERS} from "./watcherHandlers.js";
@@ -50,7 +51,7 @@ function flushSkillWatchers(battle,budget) {
 }
 export const activeUnit = (battle) =>
   battle?.units.find((u) => u.id === battle.active);
-export const skillData = (heroes, u, s, kind = "active") => {
+const normalSkillData = (heroes, u, s, kind = "active") => {
   let data=equippedSkill(heroes[u.name],u,s);
   if(data?.additionalRate && kind==="additional")data={...data,rate:data.additionalRate};
   if(data?.consumesAllFocus) data={...data,focusAtCast:resourceValue(u),damageMultiplier:1+resourceValue(u)*data.focusMultiplier};
@@ -61,6 +62,14 @@ export const skillData = (heroes, u, s, kind = "active") => {
   return {...data,name:nimble?"Nimble Sword":data.name,celineNimble:nimble,
     penetration:nimble?0.5:0,canTriggerDualAttack:!nimble};
 };
+export const skillData=(heroes,u,s,kind="active",options={})=>{
+  let data=normalSkillData(heroes,u,s,kind);
+  if(data?.soulburn && equippedEE(heroes[u.name],u)?.option.soulburnFirstFree && !(u.soulburnUses>0))
+    data={...data,soulburn:{...data.soulburn,baseCost:data.soulburn.cost,cost:0,firstFree:true}};
+  const resolved=applySoulburn(data,!!options.soulburn&&kind==="active");
+  return resolved?.soulburnActive && resolved.soulburn.firstFree ? {...resolved,damageMultiplier:(resolved.damageMultiplier||1)*1.5} : resolved;
+};
+const castCooldown=(u,skill,data)=>Math.max(0,u.skills[skill].cd+1-(data?.soulburnEffects?.cooldownReduction||0));
 function eligibleDualAllies(heroes, battle, caller) {
   if (!caller || caller.currentHp <= 0) return [];
   // A Dual Attack partner is a separate unit; this is an action rule, not the definition of “ally”.
@@ -137,11 +146,13 @@ export function isValidSkillTarget(heroes,battle,caster,skill,target) {
   const forced = forcedTarget(battle,caster);
   return target.side !== caster.side && (!forced || target.id === forced.id);
 }
-export function canUse(heroes, battle, u, s) {
+export function canUse(heroes, battle, u, s, options={}) {
   if (!u || !battle || battle.winner) return false;
+  if (s === "wait" && options.soulburn)return false;
   if (s === "wait")
     return !forcedTarget(battle, u) || !canUse(heroes, battle, u, "S1");
-  const d = skillData(heroes, u, s);
+  const d = skillData(heroes, u, s,"active",options);
+  if(options.soulburn && (s==="wait" || !d?.soulburn?.supported))return false;
   if (["stic_stun", "stic_sleep", "stic_fear"].some((id) => hasBuff(u, id)))
     return false;
   if (forcedTarget(battle, u) && s !== "S1") return false;
@@ -162,7 +173,7 @@ export function canUse(heroes, battle, u, s) {
         d.pow > 0)) &&
     canPaySkillResource(u, d) &&
     !u.cooldowns[s] &&
-    battle.souls[u.side] >= u.skills[s].cost
+    battle.souls[u.side] >= u.skills[s].cost+(options.soulburn ? d.soulburn.cost : 0)
   );
 }
 export function readiness(unit, battle, units) {
@@ -246,6 +257,7 @@ export const clampSouls = (value) =>
 export function createBattle(teams, souls, heroes = {}) {
   const units = clone(roster(teams));
   for (const u of units) {
+    u.soulburnUses=0;
     u.reviewedPassives=clone(Object.values(heroes[u.name]?.skills||{}).filter(s=>s.passive&&s.earthReview).map(s=>s.earthReview));
     u.watchers = clone(Object.values(heroes[u.name]?.skills || {}).flatMap(s => s.watchers || []));
     u.watcherCooldowns = {};
@@ -415,6 +427,7 @@ function applySkillDispel(battle, actor, target, data, hit, random, stage) {
       allowMiss: stage === "beforeAttack",
       effectiveness: effectiveStats(actor).eff || 0,
       resistance: effectiveStats(target).efr || 0,
+      ignoreResistance:!!data.ignoreEffectResistance,
     },
     random,
   );
@@ -434,7 +447,7 @@ function performSkillAttack(
   random,
   options = {},
 ) {
-  const d = skillData(heroes, u, skill, options.actionKind || "active"),
+  const d = options.actionKind==="active" && options.castData ? options.castData : skillData(heroes, u, skill, options.actionKind || "active", options),
     target = battle.units.find((t) => t.id === targetId),
     targets = affectedTargets(battle, u, target, d),
     results = [],
@@ -530,6 +543,7 @@ function performSkillAttack(
               hit: hitResult.outcome,
               effectiveness: effectiveStats(u).eff || 0,
               resistance: effectiveStats(recipient).efr || 0,
+              ignoreResistance:!!d.ignoreEffectResistance,
               immunity: hasBuff(recipient, "stic_debuf_impossible"),
             },
             random,
@@ -555,7 +569,8 @@ function performSkillAttack(
   applySkillResourceGain(battle, u, d, hits);
   const resolvedExtra=(d.earthReview?.extraTurnOnKill&&hits.some(h=>h.defeated)) || (d.earthReview?.extraTurnOnCritical&&hits.some(h=>h.outcome==="crit"));
   const eventData=d.earthReview?.extraTurnOnKill||d.earthReview?.extraTurnOnCritical ? {...d,tags:[...d.tags.filter(t=>t!=="extraTurn"),...(resolvedExtra?["extraTurn"]:[])]} : d;
-  const skillUse = recordSkillUse(battle, u, skill, eventData, {kind: options.actionKind || "active", targetId,hits});
+  if(eventData!==d)eventData.soulburnTags=[...new Set([...eventData.tags,...(d.soulburnEffects?.extraTurn?["extraTurn"]:[])])];
+  const skillUse = recordSkillUse(battle, u, skill, eventData, {kind: options.actionKind || "active", targetId,hits,soulburn:!!d.soulburnActive});
   const followUps=d.earthReview?.focusFollowUp&&resourceValue(u)>=5 ? [{kind:"additional",actorId:u.id,targetId,skill:d.earthReview.focusFollowUp,consumeFocus:true,source:"skill",label:"Bellona · full Focus"}] : [];
   return { data: d, hits, results, skillUse, followUps };
 }
@@ -570,9 +585,10 @@ export function executeAttack(
   options = {},
 ) {
   const actor = activeUnit(previous);
-  if (!canUse(heroes, previous, actor, skill)) return previous;
+  if (options.soulburn && skill==="wait")return previous;
+  if (!canUse(heroes, previous, actor, skill,options)) return previous;
   const selfSkill = isCermiaSelfSkill(heroes, actor, skill);
-  const supportAction = skill !== "wait" ? skillData(heroes,actor,skill)?.nonAttack : null;
+  const supportAction = skill !== "wait" ? skillData(heroes,actor,skill,"active",options)?.nonAttack : null;
   if (supportAction && !validNonAttackTarget(previous,actor,supportAction,targetId)) return previous;
   const forced = forcedTarget(previous, actor);
   if (forced && skill !== "wait" && targetId !== forced.id) return previous;
@@ -595,7 +611,9 @@ export function executeAttack(
     u = activeUnit(battle),
     actorDeathSerial = u.deaths || 0,
     tickableBuffs = new Set((u.buffs || []).map(buffTickKey));
-  let attackExtraTurn=false;
+  const castData=skill!=="wait"?skillData(heroes,u,skill,"active",options):null;
+  if(options.soulburn){battle.souls[u.side]-=castData.soulburn.cost;u.soulburnUses=(u.soulburnUses||0)+1;}
+  let attackExtraTurn=!!castData?.soulburnEffects?.extraTurn;
   const watcherBudget={remaining:32};
   battle.lastWatchedSkillUseSerial ??= previous.skillUseSerial || 0;
   setCR(battle, u, 0, effectiveStats(u).spd);
@@ -606,23 +624,23 @@ export function executeAttack(
       `${teamName(u.side)} · no souls gained`,
     );
   else if (supportAction) {
-    const data = skillData(heroes,u,skill);
+    const data = castData;
     spendSkillResource(u,data);
     battle.souls[u.side] = clampSouls(battle.souls[u.side]-u.skills[skill].cost+u.skills[skill].gain);
-    u.cooldowns[skill] = u.skills[skill].cd+1;
+    u.cooldowns[skill] = castCooldown(u,skill,data);
     applyNonAttackSkill(heroes,battle,u,data,targetId);
     applySkillResourceGain(battle,u,data);
-    recordSkillUse(battle,u,skill,data,{kind:"active",targetId:targetId || u.id});
+    recordSkillUse(battle,u,skill,data,{kind:"active",targetId:targetId || u.id,soulburn:!!data.soulburnActive});
     log(battle,`${u.name} uses ${data.name}.`,"Non-attack skill · no hit or resistance roll");
   }
   else if (selfSkill) {
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
     );
-    u.cooldowns[skill] = u.skills[skill].cd + 1;
+    u.cooldowns[skill] = castCooldown(u,skill,castData);
     grantBuff(battle,u,"stic_att_up2",2,"Hot Streak!",{casterId:u.id});
     u.cooldowns.S3=0;
-    recordSkillUse(battle,u,skill,skillData(heroes,u,skill),{kind:"active",targetId:u.id});
+    recordSkillUse(battle,u,skill,castData,{kind:"active",targetId:u.id,soulburn:!!castData.soulburnActive});
     log(
       battle,
       `${u.name} uses Hot Streak!: Greater Attack, S3 cooldown reset and extra turn.`,
@@ -630,7 +648,7 @@ export function executeAttack(
     );
   } else {
     const naturalDual = naturalDualRequest(heroes, battle, u, skill,
-      skillData(heroes, u, skill), targetId, random, options);
+      castData, targetId, random, options);
     const {
       data: d,
       hits,
@@ -644,13 +662,13 @@ export function executeAttack(
       targetId,
       hit,
       random,
-      {...options, actionKind: "active"},
+      {...options, castData, actionKind: "active"},
     );
     battle.souls[u.side] = clampSouls(
       battle.souls[u.side] - u.skills[skill].cost + u.skills[skill].gain,
     );
-    u.cooldowns[skill] = (d.consumesAllFocus && d.focusAtCast>=5) || (d.earthReview?.cooldownResetOnKill && hits.some(h=>h.defeated)) ? 0 : u.skills[skill].cd + 1;
-    attackExtraTurn=(d.earthReview?.extraTurnOnKill&&hits.some(h=>h.defeated)) || (d.earthReview?.extraTurnOnCritical&&hits.some(h=>h.outcome==="crit"));
+    u.cooldowns[skill] = (d.consumesAllFocus && d.focusAtCast>=5) || (d.earthReview?.cooldownResetOnKill && hits.some(h=>h.defeated)) ? 0 : castCooldown(u,skill,d);
+    attackExtraTurn ||= (d.earthReview?.extraTurnOnKill&&hits.some(h=>h.defeated)) || (d.earthReview?.extraTurnOnCritical&&hits.some(h=>h.outcome==="crit"));
     log(
       battle,
       `${u.name} uses ${d.celineNimble ? "Nimble Sword" : skill}. ${results.join(" / ")}`,
@@ -691,6 +709,7 @@ export function executeAttack(
     }
   }
   flushSkillWatchers(battle,watcherBudget);
+  if(options.soulburn)log(battle,`${u.name} Soulburn: ${castData.soulburn.description}`,`${castData.soulburn.cost} souls consumed`);
   if ((u.deaths || 0) === actorDeathSerial) {
     endTurnEffects(battle, u);
     for (const name of expireBuffs(battle, u, tickableBuffs))
@@ -847,7 +866,7 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
       target.id,
       request.hit || "auto",
       random,
-      {...options, actionKind: request.kind},
+      {...options, soulburn:false, actionKind: request.kind},
     );
     log(
       battle,

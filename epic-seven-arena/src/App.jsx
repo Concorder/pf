@@ -141,10 +141,12 @@ export default function App() {
     if (soulburnChoice && !soulburnSelection) setSoulburnChoice(null);
   }, [soulburnChoice, soulburnSelection]);
   function toggleSoulburn(skill) {
-    if (soulburnSelection) { setSoulburnChoice(null); return; }
+    if (soulburnSelection) { setSoulburnChoice(null); setPending(null); return; }
     if (!active || !battle || battle.winner) return;
     const effect = skillData(heroes, active, skill)?.soulburn;
     if (!effect || battle.souls[active.side] < effect.cost) return;
+    if(!effect.supported)return toast(effect.reason);
+    if(!canUse(heroes,battle,active,skill,{soulburn:true}))return toast("This skill is not available to Soulburn.");
     setSoulburnChoice({actorId: active.id, turn: battle.turn, skill, cost: effect.cost});
     setSelectedSkill(skill);
     setPending(null);
@@ -241,7 +243,6 @@ export default function App() {
       });
   }
   function chooseTarget(targetId) {
-    if (soulburnSelection) return toast("Soulburn preview: enhanced skill execution is not enabled yet. Cancel Burn to use the normal skill.");
     if (active && isCermiaSelfSkill(heroes, active, selectedSkill))
       return chooseSkill(selectedSkill);
     if (!active) return;
@@ -265,9 +266,10 @@ export default function App() {
       toast("Choose a living ally highlighted in the arena.");
   }
   function attack(skill, targetId, hit, options) {
-    if (soulburnSelection && skill !== "wait") return toast("Soulburn execution is pending. Cancel Burn to use the normal skill.");
+    const burning=!!soulburnSelection && soulburnSelection.skill===skill;
+    if(soulburnSelection && !burning && skill!=="wait")return toast("Cancel Soulburn to use another skill.");
     setSoulburnChoice(null);
-    session.attack(skill, targetId, hit, options);
+    session.attack(skill, targetId, hit, {...options,soulburn:burning});
     setPending(null);
     setSelectedSkill(null);
   }

@@ -32,13 +32,13 @@ export default function SoulMeter({ side }) {
       role="group" aria-label={`${teamName(side)} soul meter`}>
       <div className="soulburn-slot">
         {available && <button type="button" className={`soulburn-button ${armed ? "is-armed" : "is-ready"}`}
-          aria-label={armed ? "Cancel Soulburn preview" : "Preview Soulburn"} aria-pressed={armed}
-          title={`${burnSkill.key} · ${burnSkill.data.soulburn.cost} souls · ${burnSkill.data.soulburn.description} · UI preview only; enhanced skill effect is not enabled yet.`}
+          aria-label={armed ? "Cancel Soulburn" : "Activate Soulburn"} aria-pressed={armed}
+          title={`${burnSkill.key} · ${burnSkill.data.soulburn.cost} souls · ${burnSkill.data.soulburn.description} · ${burnSkill.data.soulburn.reason}`}
           onClick={() => l.toggleSoulburn(burnSkill.key)}>
           <span className="soulburn-word">{armed ? "Cancel" : "Burn!"}</span>
           {armed ? <span className="soulburn-arrow">›</span> : <small>Tap to burn</small>}
         </button>}
-        {available && armed && <span className="soulburn-preview-note">UI preview · {burnSkill.key} · {burnSkill.data.soulburn.cost} souls</span>}
+        {available && armed && <span className="soulburn-preview-note">Ready · {burnSkill.key} · {burnSkill.data.soulburn.cost} souls</span>}
       </div>
       <div className="soul-meter-heading">
         <label htmlFor={`souls-${side}`}>{side === "left" ? "YOUR SOULS" : "ENEMY SOULS"}</label>

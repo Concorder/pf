@@ -690,7 +690,7 @@ export function applySkillDebuffs(
     const procChance = Math.min(100, effect.chance + (battle.active !== actor.id ? effect.chanceBonusOutsideTurn || 0 : 0));
     for (let stack = 0; stack < (effect.count || 1); stack++) {
       const unique = !!BUFFS[effect.id]?.unique;
-      const ignoreResistance = unique || !!effect.ignoreResistance ||
+      const ignoreResistance = unique || !!data.ignoreEffectResistance || !!effect.ignoreResistance ||
         (!!effect.ignoreResistanceAgainst &&
           target.attribute === effect.ignoreResistanceAgainst) ||
         (effect.ignoreResistanceIfLowerHP && maxHp(target) < maxHp(actor));
@@ -748,7 +748,7 @@ export function applySkillBuffs(battle, actor, code, skill, data) {
           battle,
           unit,
           effect.id,
-          effect.turns,
+          effect.turns+(data.soulburnEffects?.buffDurationBonus||0),
           `${actor.name} ${skill}`,
           { casterId: actor.id },
         )

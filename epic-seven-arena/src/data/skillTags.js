@@ -8,6 +8,7 @@ export const SKILL_TAG_LABELS = {
   nonAttack: "Non-attack",
   passive: "Passive",
   extraTurn: "Extra turn",
+  soulburn: "Soulburn",
   "dual-attack": "Dual attack",
   unclassified: "Unclassified",
 };
@@ -46,7 +47,9 @@ export function classifySkill(raw) {
 // Resolve the chosen cast variant for UI and future skill-use reaction contexts.
 // Return a copy so resolving Soulburn cannot mutate subsequent normal casts.
 export const skillTags = (skill, {soulburn = false, kind = "active"} = {}) => {
-  const tags = [...((soulburn ? skill?.soulburnTags : null) ?? skill?.tags ?? ["unclassified"])];
+  const burning=soulburn && kind==="active";
+  const tags = [...((burning ? skill?.soulburnTags : null) ?? skill?.tags ?? ["unclassified"])];
+  if(burning && !tags.includes("soulburn"))tags.push("soulburn");
   // Dual Attack is an execution context, not a permanent property of an S1
   // or of the skill which called the assisting hero.
   if (kind === "dual" && !tags.includes("dual-attack")) tags.push("dual-attack");

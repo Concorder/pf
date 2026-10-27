@@ -375,7 +375,7 @@ function Skills() {
       </div>
       <div id="skills" className="skills">
         {SKILLS.map((s) => {
-          const data = skillData(l.heroes, u, s),
+          const data = skillData(l.heroes,u,s,"active",{soulburn:l.soulburnSelection?.skill===s}),
             cd = l.active?.cooldowns[s] || 0;
           return (
             <button
@@ -412,7 +412,7 @@ function Skills() {
       <details className="skill-source-details">
         <summary>Skill data & support</summary>
         {SKILLS.map((s) => {
-          const data = skillData(l.heroes, u, s);
+          const data = skillData(l.heroes,u,s,"active",{soulburn:l.soulburnSelection?.skill===s});
           return (
             <div key={s}>
               <b>
@@ -438,7 +438,7 @@ function Skills() {
                   ? ` · EE damage +${Math.round(data.eeDamage * 100)}%`
                   : ""}
               </p>
-              {data?.soulburn && <p>Soulburn · {data.soulburn.cost} souls · {data.soulburnTags?.map(tag => SKILL_TAG_LABELS[tag]).join(" · ")} · {data.soulburn.description} Enhanced effect not automated; button preview only.</p>}
+              {data?.soulburn && <p>Soulburn · {data.soulburn.cost} souls · {data.soulburnTags?.map(tag => SKILL_TAG_LABELS[tag]).join(" · ")} · {data.soulburn.description} {data.soulburn.supported ? "Enhanced cast implemented." : data.soulburn.reason}</p>}
               {data?.automaticDebuffs?.length > 0 && (
                 <p>
                   Automatic debuffs:{" "}
@@ -485,7 +485,7 @@ function Skills() {
       </details>
       <div id="skillSummary" className="skill-summary">
         {l.soulburnSelection
-          ? `Soulburn · ${l.soulburnSelection.skill} · ${l.soulburnSelection.cost} souls · preview only`
+          ? `Soulburn · ${l.soulburnSelection.skill} · ${l.soulburnSelection.cost} souls · ready to cast`
           : !l.active
           ? l.battle?.winner
             ? "Reset to try another matchup"
