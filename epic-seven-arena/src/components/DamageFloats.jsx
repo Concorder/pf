@@ -10,7 +10,7 @@ export default function DamageFloats({ unitId }) {
     const events = damageEvents.filter(event => event.unitId === unitId);
     setVisible(events);
     if (!events.length) return;
-    const timer = setTimeout(() => setVisible(EMPTY), 1700 + events.length * 100);
+    const timer = setTimeout(() => setVisible(EMPTY), 1700 + Math.max(...events.map((event,index)=>event.delayMs ?? index*100)));
     return () => clearTimeout(timer);
   }, [damageEvents, unitId]);
   useLayoutEffect(() => {
@@ -42,7 +42,7 @@ export default function DamageFloats({ unitId }) {
     <span ref={root} className="damage-floats" data-unit-id={unitId} aria-hidden="true">
       {visible.map((event, index) => (
         <span className="damage-float-group" key={event.id}
-          style={{"--damage-delay": `${index * 100}ms`, "--damage-shift": `${[0,-12,12][index % 3]}px`}}>
+          style={{"--damage-delay": `${event.delayMs ?? index * 100}ms`, "--damage-shift": `${[0,-12,12][index % 3]}px`}}>
           {event.hit === "miss" && <span className="damage-miss-label">MISS</span>}
           <span className={`damage-float damage-${event.hit}`} data-hit={event.hit} data-damage={event.amount}>
             <span className="damage-number-outline">{event.amount.toLocaleString()}</span>

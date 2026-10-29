@@ -71,6 +71,7 @@ for (const {name, hero, key, s, gaps, ee, special} of entries) {
     `  - Current base support: ${s.damageSupport || "unknown"}. ${escape(s.supportReason)}`,
     ...gaps.map(g => `  - Review/work: ${escape(g)}`),
     `  - Description: ${escape(s.displayDescription || s.description || "No source description available.")}`);
+  if(s.additionalDamage?.length) out.push(`  - Implemented additional damage: ${s.additionalDamage.map(e=>`${e.ratio*100}% caster ${e.basis}, ${(e.penetration??.7)*100}% Defense penetration${e.allowMiss?", also on miss":""}${e.scope==="allEnemies"?", all enemies":""}`).join("; ")}; separate non-critical component.`);
   if (s.earthReview) out.push(`  - Reviewed Earth effects: ${[...(s.earthReview.beforeEffects || []),...(s.earthReview.combatEffects || []),...(s.earthReview.openingEffects || []),...(s.earthReview.turnStartEffects || [])].map(e=>e.kind).filter((v,i,a)=>a.indexOf(v)===i).join(", ") || "conditional/passive execution"}.`);
   if (s.celineS1) out.push("  - Implemented: buff-dependent Nimble Sword (except Dual Attacks), pre-hit Attack Up, 50% penetration, 25% lifesteal, and no outgoing Dual Attack in Nimble Sword form.");
   if (s.watchers?.length) out.push(`  - Implemented watchers: ${s.watchers.map(w => w.id).join(", ")}.`);

@@ -311,7 +311,7 @@ export const SKILL_DEBUFF_RULES = {
   },
   "c2007": {
     "S3": {
-      "description": "After increasing Attack of the caster for 2 turns, attacks all enemies before inflicting --decreased Hit Chance-- for 2 turns, and when an enemy is defeated, resets cooldown. When Focus is full, consumes it all, increasing damage dealt.",
+      "description": "After increasing Attack of the caster for 2 turns,\u00a0attacks all enemies before inflicting --decreased Hit Chance-- for 2 turns, and when an enemy is defeated, resets cooldown. When Focus is full, consumes it all, increasing damage dealt.",
       "effects": [
         {
           "id": "stic_blind",
@@ -348,7 +348,7 @@ export const SKILL_DEBUFF_RULES = {
       ]
     },
     "S3": {
-      "description": "Attacks all enemies with a massive fire pillar, with a {{variable}} chance each to inflict two --burn-- effects for 2 turns and a {{variable}} chance to inflict --stun-- for 1 turn. Grants a barrier (proportional to the caster’s Attack) to the caster for 2 turns.",
+      "description": "Attacks all enemies with a massive fire pillar, with a {{variable}} chance each to inflict two --burn-- effects for 2 turns and a {{variable}} chance to inflict --stun-- for 1 turn. Grants a barrier (proportional to the caster\u2019s Attack) to the caster for 2 turns.",
       "effects": [
         {
           "id": "stic_blaze",
@@ -599,7 +599,7 @@ export const SKILL_DEBUFF_RULES = {
   },
   "c2111": {
     "S3": {
-      "description": "Decreases buff durations of the enemy by 1 turn and attacks with starlight, inflicting --stun-- for 1 turn before decreasing Combat Readiness by 30%. Grants a barrier (proportional to the caster’s max Health) to the caster for 2 turns.",
+      "description": "Decreases buff durations of the enemy by 1 turn and attacks with starlight, inflicting --stun-- for 1 turn before decreasing Combat Readiness by 30%. Grants a barrier (proportional to the caster\u2019s max Health) to the caster for 2 turns.",
       "effects": [
         {
           "id": "stic_stun",
@@ -612,7 +612,7 @@ export const SKILL_DEBUFF_RULES = {
   },
   "c2029": {
     "S3": {
-      "description": "Attacks all enemies with Racoo’s help, decreasing buff durations by 1 turn before a {{variable}} chance each to inflict --decreased Speed-- and a --bomb-- for 2 turns. Grants skill nullifier once to the caster.",
+      "description": "Attacks all enemies with Racoo\u2019s help, decreasing buff durations by 1 turn before a {{variable}} chance each to inflict --decreased Speed-- and a --bomb-- for 2 turns. Grants skill nullifier once to the caster.",
       "effects": [
         {
           "id": "stic_dodge_dn",
@@ -654,7 +654,7 @@ export const SKILL_DEBUFF_RULES = {
   },
   "c2110": {
     "S3": {
-      "description": "Attacks all enemies with a barrage of cannon fire, stealing one buff before a 85% chance to --decrease Defense-- for 2 turns, and a 100% chance to plant a --bomb-- for 2 turns, and decreases Combat Readiness by 20%.",
+      "description": "Attacks all enemies with a barrage of cannon fire, stealing one buff\u00a0before a 85% chance to --decrease Defense-- for 2 turns, and a 100% chance to plant a --bomb-- for 2 turns, and decreases Combat Readiness by 20%.",
       "effects": [
         {
           "id": "stic_bomb",
@@ -778,7 +778,7 @@ export const SKILL_DEBUFF_RULES = {
   },
   "c1104": {
     "S3": {
-      "description": "Descends and attacks all enemies, inflicting --fear-- for 2 turns, before recovering Health of the caster. Penetrates Defense of the enemy with the highest Max Health by 70%, and ignores Effect Resistance of any targets with Max Health lower than the caster’s Max Health. Damage dealt and amount recovered increase proportional to the caster's max Health.",
+      "description": "Descends and attacks all enemies, inflicting --fear-- for 2 turns, before recovering Health of the caster. Penetrates Defense of the enemy with the highest Max Health by 70%, and ignores Effect Resistance of any targets with Max Health lower than the caster\u2019s Max Health. Damage dealt and amount recovered increase proportional to the caster's max Health.",
       "effects": [
         {
           "id": "stic_fear",
@@ -1285,6 +1285,75 @@ export const SKILL_DEBUFF_RULES = {
           "turns": 1,
           "chance": 100,
           "count": 1
+        }
+      ]
+    }
+  },
+  "c1092": {
+    "S3": {
+      "description": "Attacks the target with a strong punch, dispelling all buffs and inflicts --cannot buff-- for 2 turns. Damage dealt increases proportional to the target's max Health. After attacking, deals additional damage proportional to the caster's Attack regardless of whether the attack hits.",
+      "effects": [
+        {
+          "id": "stic_buf_impossible",
+          "turns": 2,
+          "chance": 100,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c2102": {
+    "S1": {
+      "description": "Attacks the enemy with magic, with a {{variable}} chance to inflict --decreased Defense-- for 1 turn. Cannot trigger a critical hit or a heavy blow, and a successful attack will inflict additional damage proportional to the caster's Attack.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "turns": 1,
+          "chance": {
+            "variable": 0
+          },
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c2125": {
+    "S1": {
+      "description": "Attack the enemy, with a {{variable}} chance to --decrease Defense-- for 1 turn. A successful attack deals additional damage proportional to the caster's Attack.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "turns": 1,
+          "chance": {
+            "variable": 0
+          },
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c2066": {
+    "S2": {
+      "description": "Attacks the enemy by thrusting down a spear, inflicting --decreased Defense-- for 1 turn, and increases Combat Readiness of the caster by 50%. A successful attack will inflict additional damage on all enemies. Damage dealt and additional damage increase proportional to the caster's max Health.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "turns": 1,
+          "chance": 100,
+          "count": 1
+        }
+      ]
+    }
+  },
+  "c1137": {
+    "S3": {
+      "description": "Attacks the enemy by slamming them with a fist, --decreasing Defense-- for 2 turns, before increasing Speed of the caster for 2turns. A successful attack will deal additional damage proportional to the caster's Defense to all enemies. Damage dealt increases proportional to the caster's Defense.",
+      "effects": [
+        {
+          "id": "stic_def_dn",
+          "chance": 100,
+          "count": 1,
+          "turns": 2
         }
       ]
     }

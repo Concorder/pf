@@ -143,7 +143,7 @@ export const SKILL_UTILITY_RULES = {
   },
   "c2082": {
     "S3": {
-      "description": "After granting increased Attack to the caster for 3 turns, attacks the enemy, and when the enemy is defeated, inflicts extinction. Grants stealth and a barrier (proportional to Attack) to the caster for 2 turns. Penetrates the target’s Defense by 50%. When the Speed of the caster is greater than the Speed of the target, penetration rate increases proportional to the difference, up to a maximum of 100%.",
+      "description": "After granting increased Attack to the caster for 3 turns, attacks the enemy, and when the enemy is defeated, inflicts extinction. Grants stealth and a barrier (proportional to Attack) to the caster for 2 turns. Penetrates the target\u2019s Defense by 50%. When the Speed of the caster is greater than the Speed of the target, penetration rate increases proportional to the difference, up to a maximum of 100%.",
       "extinction": true
     }
   },
@@ -189,6 +189,14 @@ export const SKILL_UTILITY_RULES = {
       "dispel": {
         "timing": "afterAttack",
         "count": 2
+      }
+    }
+  },
+  "c1092": {
+    "S3": {
+      "description": "Attacks the target with a strong punch, dispelling all buffs and inflicts --cannot buff-- for 2 turns. Damage dealt increases proportional to the target's max Health. After attacking, deals additional damage proportional to the caster's Attack regardless of whether the attack hits.",
+      "dispel": {
+        "timing": "afterAttack"
       }
     }
   }

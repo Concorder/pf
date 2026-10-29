@@ -472,6 +472,7 @@ function Skills() {
                   {data.equipmentEffect.reason}
                 </p>
               )}
+              {!!data?.additionalDamage?.length && <p>Additional damage: {data.additionalDamage.map(e=>`${Math.round(e.ratio*100)}% caster ${e.basis.toUpperCase()} · ${Math.round((e.penetration??.7)*100)}% DEF penetration${e.allowMiss ? " · also on miss" : " · successful hit required"}${e.scope==="allEnemies" ? " · all enemies" : ""}`).join("; ")}. Separate non-critical component.</p>}
               {data?.earthReview && <p>Reviewed Earth mechanics: {[...(data.earthReview.beforeEffects || []),...(data.earthReview.combatEffects || [])].map(e=>e.kind).filter((v,i,a)=>a.indexOf(v)===i).join(", ") || (data.earthReview.staticPassive ? "passive stats" : "conditional execution")}{data.earthReview.pending?.length ? `; pending: ${data.earthReview.pending.join(", ")}` : ""}.</p>}
               {data?.celineS1 && <p>{data.celineNimble ? "Nimble Sword: Attack Up before damage, 50% Defense penetration, 25% lifesteal; cannot trigger a Dual Attack." : "Mighty Strike: a buff enables Nimble Sword; assisting Dual Attacks always use Mighty Strike."}</p>}
               {data?.damageSource && <p>Damage formula: <a href={data.damageSource.url} target="_blank" rel="noreferrer">e7calc</a> · reviewed formula</p>}

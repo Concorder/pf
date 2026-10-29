@@ -1,3 +1,4 @@
+import {ARTIFACT_DAMAGE_RULES} from "../data/artifactDamageRules.js";
 import { UNIT_RESOURCES } from "./resources.js";
 import { defaultSkillSettings } from "./progression.js";
 export { POSITIONS } from "./formation.js";
@@ -93,6 +94,8 @@ export function makeHero(heroes, name, preset = "damage") {
     teamDamageReduction: 0,
     ignoreDamageSharing: false,
     ignoreDamageReduction: false,
+    additionalDamageArtifact: "",
+    artifactProcChance: 100,
     artifact: "",
     artifactSouls: 0,
     skills: clone(settings),
@@ -148,6 +151,8 @@ export function validTeams(teams, heroes) {
               Number.isFinite(h.counterChance ?? 0) &&
               (h.counterChance ?? 0) >= 0 &&
               (h.counterChance ?? 0) <= 100 &&
+              (!(h.additionalDamageArtifact)||!!ARTIFACT_DAMAGE_RULES[h.additionalDamageArtifact]) &&
+              Number.isFinite(h.artifactProcChance??100) && (h.artifactProcChance??100)>=0 && (h.artifactProcChance??100)<=100 &&
               Number.isFinite(h.artifactSouls) &&
               h.artifactSouls >= 0 &&
               h.artifactSouls <= 99 &&

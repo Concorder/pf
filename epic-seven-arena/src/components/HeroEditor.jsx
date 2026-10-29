@@ -1,3 +1,4 @@
+import {ARTIFACT_DAMAGE_RULES} from "../data/artifactDamageRules.js";
 import {UNIT_RESOURCES} from "../engine/resources.js";
 import { syncTeamDefaults } from "../data/cecilia.js";
 import { equippedEE } from "../engine/progression.js";
@@ -328,6 +329,16 @@ export default function HeroEditor() {
           counter chance. Passive-specific counter rules require their own
           implementation; Seal does not suppress this configured chance.
         </p>
+        <label>Additional damage artifact
+          <select id="additionalDamageArtifact" value={draft.additionalDamageArtifact||""} onChange={e=>setDraft(d=>({...d,additionalDamageArtifact:e.target.value}))}>
+            <option value="">None</option>
+            {Object.entries(ARTIFACT_DAMAGE_RULES).filter(([,r])=>r.role===l.heroes[draft.name].role).map(([id,r])=><option key={id} value={id}>{r.name}</option>)}
+          </select>
+        </label>
+        {!!draft.additionalDamageArtifact && <label>Artifact proc chance %
+          <input id="artifactProcChance" type="number" min="0" max="100" step="any" value={draft.artifactProcChance??100} onChange={e=>setDraft(d=>({...d,artifactProcChance:Number(e.target.value)}))}/>
+        </label>}
+        <p className="fine">This selector automates the additional damage component, including on misses. Other artifact effects and cooldowns remain manual; disable the proc in attack confirmation when it is not ready.</p>
         <label>
           Artifact / notes
           <input

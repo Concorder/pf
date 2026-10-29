@@ -3,7 +3,7 @@
 Generated from the bundled CeciliaBot snapshot (2026-10-22T22:41:17.340Z) and current normalization rules.
 Scope: **45 heroes**, **135 skills** (rarity 5 only; includes Moonlight and limited units).
 Earth only; all remaining entries are work/research, not questions for the user.
-Contains **102 skill entries** across **44 heroes**.
+Contains **101 skill entries** across **44 heroes**.
 
 Regenerate with `npm run report:skills:earth`. This is an implementation/review queue, not a list of questions you must answer. Checked-off notes should be recorded in the relevant mechanics document or rules before regeneration, which replaces this file.
 
@@ -30,13 +30,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 ## Skills
 
 ### Albedo (c1156)
-
-- [ ] **S1 — No Need for Words** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Description: Attacks the enemy with a bardiche, before increasing Combat Readiness of the caster by 20%. A successful attack deals additional damage proportional to the caster's max Health. Damage dealt increases proportional to the caster's max Health.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 0.75<br>!pow: 1<br>Max Health scaling 9% (0.09 * self Max Health)<br>Additional damage: 7% caster's max Health (0.07 * Health)
-  - Unparsed formula lines: Additional damage: 7% caster's max Health (0.07 * Health)
 
 - [ ] **S2 — Aegis Unfold** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated

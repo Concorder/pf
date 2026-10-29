@@ -808,7 +808,7 @@ export function sufferDamage(battle, unit, amount, options = {}) {
   // Distinct injury sources add, each based on actual HP lost, with a shared 50% cap.
   const sources =
     (options.venom ? 1 : 0) +
-    (unit.isHero !== false && hasBuff(unit, "stic_laceration") ? 1 : 0);
+    (options.laceration!==false && unit.isHero !== false && hasBuff(unit, "stic_laceration") ? 1 : 0);
   if (sources && lost > 0) {
     const injury = inflictInjury(unit, lost * sources);
     if (injury > 0)

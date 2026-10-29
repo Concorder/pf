@@ -1,3 +1,4 @@
+import {selectedArtifactDamage} from "../engine/additionalDamage.js";
 import { planProtectedDamage } from "../engine/damageProtection.js";
 import {debuffGroupName} from "../engine/debuffContainers.js";
 import { activationBlockReason } from "../engine/triggers.js";
@@ -17,9 +18,11 @@ export default function HitDialog() {
     target = l.units.find((t) => t.id === p.targetId),
     d = skillData(l.heroes, u, p.skill,"active",{soulburn:l.soulburnSelection?.skill===p.skill}),
     targets = affectedTargets(l.battle, u, target, d),
+    artifactProc=selectedArtifactDamage(u,d,p.skill),
     [automaticDebuffs, setAutomaticDebuffs] = useState(true),
     [automaticReadiness, setAutomaticReadiness] = useState(true),
-    [automaticDispels, setAutomaticDispels] = useState(true);
+    [automaticDispels, setAutomaticDispels] = useState(true),
+    [automaticArtifactDamage,setAutomaticArtifactDamage]=useState(true);
   return (
     <Modal
       id="hitDialog"
@@ -89,6 +92,7 @@ export default function HitDialog() {
             automaticDebuffs,
             automaticReadiness,
             automaticDispels,
+            automaticArtifactDamage,
           })
         }
       >
@@ -196,6 +200,8 @@ export default function HitDialog() {
           A target defeated by this skill receives Extinction and cannot revive.
         </p>
       )}
+      {!!d.additionalDamage?.length && <p className="fine">Skill additional damage resolves separately after the primary effects, never crits, and appears one second later.</p>}
+      {!!artifactProc && <label className="fine"><input type="checkbox" checked={automaticArtifactDamage} onChange={e=>setAutomaticArtifactDamage(e.target.checked)}/> Apply artifact additional damage (also on a miss)</label>}
       <details>
         <summary>Manual hit override</summary>
         <div id="hitOptions" className="hit-options">
@@ -219,6 +225,7 @@ export default function HitDialog() {
                     automaticDebuffs,
                     automaticReadiness,
                     automaticDispels,
+                    automaticArtifactDamage,
                   })
                 }
               >
@@ -226,7 +233,7 @@ export default function HitDialog() {
                 <b>{label}</b>
                 <span>
                   {allowed
-                    ? total.toLocaleString() + " damage"
+                    ? total.toLocaleString() + " primary damage"
                     : "Not available"}
                 </span>
                 <small>

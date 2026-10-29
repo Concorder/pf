@@ -26,11 +26,13 @@ const NUMBER = "(?:\\d+(?:\\.\\d+)?|\\.\\d+)";
 /** Deliberately not an expression evaluator. Unknown lines block calculation. */
 export function parseMultipliers(text) {
   const values = {},
-    unknown = [];
+    unknown = [], additionalDamageCandidates=[];
   for (const original of String(text || "").split(/\r?\n/)) {
     let line = original.trim();
     if (!line) continue;
     if (/^Skill\s*[123]$/i.test(line)) continue;
+    const extra=line.match(/^Additional damage:\s*(\d+(?:\.\d+)?)%\s+(?:of\s+)?(?:caster['’]s|self)\s+(max Health|Health|Attack|Defense)\b/i);
+    if(extra){additionalDamageCandidates.push({ratio:Number(extra[1])/100,basis:/health/i.test(extra[2])?"hp":/defense/i.test(extra[2])?"def":"atk"});continue;}
     // A clearly labelled soulburn alternative is excluded from the normal cast.
     line = line.replace(/\(\s*[\d.]+%?\s+(?:with\s+)?soulburn\s*\)/gi, "").trim();
     // Normalize only explicit equivalent stat-coefficient spellings. Keep all
@@ -82,7 +84,7 @@ export function parseMultipliers(text) {
     (values.rate > 0 || ["selfHpScaling", "selfDefScaling", "targetHpScaling"].some(key => values[key] > 0)) &&
     Number.isFinite(values.pow) &&
     values.pow > 0 &&
-    !unknown.length;
+    !unknown.length && !additionalDamageCandidates.length;
   return {
     ...values,
     damageSupport: supported ? "supported" : "unsupported",
@@ -90,10 +92,11 @@ export function parseMultipliers(text) {
       ? "Damage coefficients parsed"
       : unknown.length
         ? "Conditional or unrecognized multiplier text"
-        : !text
+        : additionalDamageCandidates.length ? "Additional damage activation/variant needs review" : !text
           ? "No multiplier data"
           : "No verified attack coefficients",
     unparsed: unknown,
+    additionalDamageCandidates,
   };
 }
 export function compactHero(h) {
@@ -315,7 +318,7 @@ export function normalizeSkill(hero, raw, index) {
     result.supportReason = "Unverified target count";
   }
   if (
-    /cannot (?:trigger|deal|land).*critical|cannot critically hit/i.test(
+    result.cannotCrit || /cannot (?:trigger|deal|land).*critical|cannot critically hit/i.test(
       description,
     )
   )

@@ -13,7 +13,7 @@ The normal manual per-skill soul cost remains separate from the API Soulburn cos
 - Fully mapped direct debuff chances increased to 100%, including the combined 100%/ignore-ER clause and direct mapped Attack/Defense Down duration changes.
 - One-/two-turn extensions of buffs actually granted by the skill, and the reviewed generic duration/extra-turn combination. Existing unrelated buffs are not extended.
 
-Currently **124 executable base skills** have a mapped Soulburn variant; this does not certify all secondary effects in their base kits. Fifty-five damage alternatives are recorded in the source table, of which 27 currently have executable base skills. Other specialized variants—changed targeting, new secondary effects, custom healing/barrier coefficients, special resource rules, repeats and transformations—stay explicitly blocked until reviewed. A mapped damage alternative does not bypass an unsupported base skill.
+Currently **126 executable base skills** have a mapped Soulburn variant; this does not certify all secondary effects in their base kits. Fifty-five damage alternatives are recorded in the source table, of which 27 currently have executable base skills. Other specialized variants—changed targeting, new secondary effects, custom healing/barrier coefficients, special resource rules, repeats and transformations—stay explicitly blocked until reviewed. A mapped damage alternative does not bypass an unsupported base skill.
 
 ## Events and reactions
 

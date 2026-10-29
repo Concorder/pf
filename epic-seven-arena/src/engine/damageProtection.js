@@ -4,7 +4,7 @@ import { maxHp } from "./health.js";
 const percent = (value) => Math.max(0, Math.min(100, Number(value) || 0));
 
 // Direct attack protection only. Transferred damage never re-enters this pipeline.
-export function planProtectedDamage(battle, target, incoming, { attacker, skill } = {}) {
+export function planProtectedDamage(battle, target, incoming, { attacker, skill, additional=false } = {}) {
   // Check the damage recipient, not the tank/artifact owner: all applicable
   // incoming protection is suppressed for this bearer, regardless of its source.
   const frostbite = target.isHero !== false && hasBuff(target, "stic_freezing");
@@ -15,12 +15,12 @@ export function planProtectedDamage(battle, target, incoming, { attacker, skill 
   const ignoreSharing = frostbite || attacker?.ignoreDamageSharing || (applicable && bypass.ignoreDamageSharing);
   const ignoreReduction = frostbite || attacker?.ignoreDamageReduction || (applicable && bypass.ignoreDamageReduction);
   const allies = battle.units.filter(u => u.side === target.side && u.currentHp > 0);
-  const reduction = ignoreReduction ? 0 : Math.max(percent(target.damageReduction),
+  const reduction = additional || ignoreReduction ? 0 : Math.max(percent(target.damageReduction),
     ...allies.map(u => percent(u.teamDamageReduction)));
   const reduced = Math.floor(Math.max(0, incoming) * (1 - reduction / 100));
-  const nativeLimit = target.isHero !== false && !hasBuff(target, "stic_dizzy")
+  const nativeLimit = !additional && target.isHero !== false && !hasBuff(target, "stic_dizzy")
     ? percent(target.passiveDamageLimit) : 0;
-  const limits = [percent(target.damageLimit), nativeLimit].filter(value => value > 0);
+  const limits = [additional ? 0 : percent(target.damageLimit), nativeLimit].filter(value => value > 0);
   const limit = limits.length ? Math.min(...limits) : 0;
   const limited = limit > 0
     ? Math.min(reduced, Math.floor(maxHp(target) * limit / 100))

@@ -1,6 +1,6 @@
 # Additional and fixed damage — e7calc research
 
-Checked the maintained [tyopoyt/epic7-damage-calc repository](https://github.com/tyopoyt/epic7-damage-calc/tree/39070976ce3cd0435cbcf5d430f2711cf0ef0005), revision `39070976ce3cd0435cbcf5d430f2711cf0ef0005` (2026-10-22). Its `docs/CNAME` specifies `e7calc.xyz`. This supersedes the previously inspected 2024 `tyopoyt/e7calc-beta` snapshot. The live domain is blocked by this environment's HTTP policy; repository source was fetched directly from GitHub. These are source findings, not a claim to have tested the live calculator or enabled the mechanics in our engine.
+Checked the maintained [tyopoyt/epic7-damage-calc repository](https://github.com/tyopoyt/epic7-damage-calc/tree/39070976ce3cd0435cbcf5d430f2711cf0ef0005), revision `39070976ce3cd0435cbcf5d430f2711cf0ef0005` (2026-10-22). Its `docs/CNAME` specifies `e7calc.xyz`. This supersedes the previously inspected 2024 `tyopoyt/e7calc-beta` snapshot. The live domain is blocked by this environment's HTTP policy; repository source was fetched directly from GitHub. The source findings below informed the reviewed implementation added on 2026-10-29. The live calculator itself remains inaccessible from this environment.
 
 ## Ordinary stat-scaled additional damage
 
@@ -77,3 +77,32 @@ Reference: [damage.service.ts, fixed contribution outside hit multipliers](https
 - Use the existing user-confirmed protection rules where applicable; research source-specific coverage rather than inheriting every ordinary-attack modifier.
 - Preserve the deferred Laceration/additional-damage injury question. This research does not settle event eligibility or simultaneous passive ordering.
 - Recheck existing formulas imported from the old beta against this maintained source. For example, its current DoT code has 40% ATK Bleed and 70% ATK Burn; our earlier 30%/60% implementation needs a separate update. No DoT behavior was changed in this research pass.
+
+
+## Implemented shared pipeline (2026-10-29)
+
+The live site returned HTTP 403 here. The maintained repository HEAD was checked again and still matches the revision above. The implementation uses `floor(stat × ratio × 1.871 / (1 + effective DEF × (1 − penetration) / 300))`, with 70% default penetration. Albedo at 10,000 effective max HP against 1,000 DEF therefore deals **654** additional damage, not the 350 that ordinary no-penetration mitigation would produce without the engine constant.
+
+Additional damage is a separate component after the primary skill's strips/debuffs/buffs, not another attack/skill use. It does not crit, inherit main-hit enhancement/crit/miss/element modifiers, start a turn, trigger another skill-use event or recursively counter/Dual Attack. The skill's stated hit requirement still applies. Sol S3 explicitly procs even on a miss; ordinary successful-hit skill components do not. Artifact damage ignores the primary hit/miss outcome but still checks its configured proc chance and applicable role/attack scope.
+
+Damage is resolved atomically inside the same turn/Undo snapshot. A separate white damage number has an explicit 1,000 ms presentation delay and remains visible for its normal lifetime. No asynchronous timer mutates battle HP or advances the combat engine.
+
+Reviewed skill mappings:
+
+| Skill | Component | Trigger/scope |
+| --- | --- | --- |
+| ae-KARINA S3 | 140% caster Defense | Successful primary hit, then all enemies; Defense Down and self Speed precede it. |
+| Albedo S1 | 7% caster max HP | Successful hit, primary target; primary damage also has 9% HP scaling. |
+| Sol S3 | 40% caster Attack | Primary target, including misses. |
+| Requiem Roana S1 | 50% caster Attack | Successful hit; resolves after the skill's Defense Down. |
+| Lone Wolf Peira S1 | 25% caster Attack | Successful hit; normal single-target form. |
+| New Moon Luna S2 | 16% caster max HP | Successful primary hit, then splash to all living enemies using each enemy's Defense. |
+| Guard Captain Krau S1 | 60% caster Defense | Successful hit; the primary 85% Defense scaling is also imported from e7calc. |
+| Salome S3 | 17% caster max HP | Successful hit; Collapse before the primary attack and Defense Down before the component. |
+| Hwayoung S1 | 35% caster Attack | Successful hit, normal form. Soulburn repeat/variant still requires its own review. |
+
+Reviewed artifact **damage profiles** are selectable in Hero Workshop: 3F (9% HP), M.O.A.S and Rocket Punch Gauntlet (100% DEF), Reingar's Special Drink (45% ATK/AoE), Spear of a New Dawn (50% ATK/basic skill), and Uberius's Tooth (45% ATK). All use their explicit 70% penetration. These are e7calc component profiles, not complete artifact automation: proc chance is a manual build setting, other bonuses are not imported, and activation/cooldown restrictions not encoded by the calculator remain manual. The attack dialog can disable the artifact component for an individual cast. Legacy free-text artifact notes do not silently enable a profile.
+
+The component bypasses ordinary attack damage reduction/caps; strongest eligible damage sharing is resolved once, with existing Frostbite/share-bypass rules. Barriers, Invincibility, Immortality, death and revival use the shared damage pipeline. Dedicated additional-damage reduction/Pursuit modifiers remain separate pending integrations. Laceration-on-additional-damage remains deferred, so this new event does not enable it implicitly.
+
+Checked but still requiring their native execution/condition handlers: Archdemon's Shadow Burst, Festive Eda Expected Outcome, Inheritor Amiki's conditional penetration/Immortality form, Monarch of the Sword Iseria's Fracture/injury variants, and New Kid Adin's Vigor/injury component. Notos remains deferred as previously requested. Fixed-damage skills such as Rimuru/Schniel are a different category and are not converted into stat-scaled aftermath damage merely because their descriptions say “additional.”

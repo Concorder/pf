@@ -299,5 +299,237 @@ export const REVIEWED_DAMAGE_RULES = {
         "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
       }
     }
+  },
+  "c1156": {
+    "S1": {
+      "description": "Attacks the enemy with a bardiche, before increasing Combat Readiness of the caster by {{variable}}. A successful attack deals additional damage proportional to the caster's max Health. Damage dealt increases proportional to the caster's max Health.",
+      "sourceText": "Skill1\natt_rate: 0.75\n!pow: 1\nMax Health scaling 9% (0.09 * self Max Health)\nAdditional damage: 7% caster's max Health (0.07 * Health)",
+      "rate": 0.75,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "hp",
+          "ratio": 0.07,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "selfHpScaling": 0.09
+    }
+  },
+  "c1092": {
+    "S3": {
+      "description": "Attacks the target with a strong punch, dispelling all buffs and inflicts --cannot buff-- for 2 turns. Damage dealt increases proportional to the target's max Health. After attacking, deals additional damage proportional to the caster's Attack regardless of whether the attack hits.",
+      "sourceText": "Skill3\natt_rate: 1.6\n!pow: 1\n5% target max Health\nAdditional damage: 40% of Self Attack (0.4 * Attack)",
+      "rate": 1.6,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "atk",
+          "ratio": 0.4,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": true,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "targetHpScaling": 0.05
+    }
+  },
+  "c2102": {
+    "S1": {
+      "description": "Attacks the enemy with magic, with a {{variable}} chance to inflict --decreased Defense-- for 1 turn. Cannot trigger a critical hit or a heavy blow, and a successful attack will inflict additional damage proportional to the caster's Attack.",
+      "sourceText": "Skill1\natt_rate: 1\n!pow: 1\nAdditional damage: 50% caster's Attack (0.5 * Attack)\n",
+      "rate": 1,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "atk",
+          "ratio": 0.5,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "cannotCrit": true
+    }
+  },
+  "c2125": {
+    "S1": {
+      "description": "Attack the enemy, with a {{variable}} chance to --decrease Defense-- for 1 turn. A successful attack deals additional damage proportional to the caster's Attack.",
+      "sourceText": "Skill1\natt_rate: 1\n!pow: 1\nAdditional damage: 25% caster's Attack (0.25 * Attack)\n",
+      "rate": 1,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "atk",
+          "ratio": 0.25,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      }
+    }
+  },
+  "c2066": {
+    "S2": {
+      "description": "Attacks the enemy by thrusting down a spear, inflicting --decreased Defense-- for 1 turn, and increases Combat Readiness of the caster by 50%. A successful attack will inflict additional damage on all enemies. Damage dealt and additional damage increase proportional to the caster's max Health.",
+      "sourceText": "Skill2\natt_rate: 0.7\n!pow: 0.95\nMax Health scaling 20% (0.20 * self Max Health)\nAdditional damage: 16% caster's max Health (0.16 * Health)",
+      "rate": 0.7,
+      "pow": 0.95,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "hp",
+          "ratio": 0.16,
+          "penetration": 0.7,
+          "scope": "allEnemies",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "selfHpScaling": 0.2
+    }
+  },
+  "c5070": {
+    "S1": {
+      "description": "Attacks the enemy with a mystic blade, and increases Combat Readiness of the caster by {{variable}}. A successful attack deals additional damage proportional to the caster's Defense. Damage dealt increases proportional to the caster's Defense.",
+      "sourceText": "Skill1\natt_rate: 0.7\n!pow: 1\nAdditional damage: 60% caster's Defense (0.6 * Defense)\n",
+      "rate": 0.7,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "def",
+          "ratio": 0.6,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "selfDefScaling": 0.85
+    }
+  },
+  "c2184": {
+    "S3": {
+      "description": "After inflicting --collapse-- on the enemy for 2 turns, attacks with the power of Nggdrasil, with a {{variable}} chance to inflict --decreased Defense-- for 2 turns, and deals additional damage to the target. Damage dealt and additional damage increase proportional to the caster's max Health.",
+      "sourceText": "Skill3\natt_rate: 0.7\n!pow: 1\nHealth scaling: 15% caster's max Health\nAdditional damage: 17% caster's max Health (70% def pen)",
+      "rate": 0.7,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "hp",
+          "ratio": 0.17,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "selfHpScaling": 0.15
+    }
+  },
+  "c1128": {
+    "S1": {
+      "description": "Attacks the enemy with a kick and deals additional damage proportional to the caster's Attack.",
+      "sourceText": "Skill1\natt_rate: 0.8\n!pow: 1\nAdditional damage: 35% of caster's Attack as damage, assumed 70% def pen\n\n\nSkill1 (Soulburn)\natt_rate: 1.2\n!pow: 1\nAdditional damage: 70% of caster's Attack as damage, assumed 70% def pen\n",
+      "rate": 0.8,
+      "pow": 1,
+      "targets": 1,
+      "additionalDamage": [
+        {
+          "basis": "atk",
+          "ratio": 0.35,
+          "penetration": 0.7,
+          "scope": "targets",
+          "allowMiss": false,
+          "source": "skill"
+        }
+      ],
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "cannotCrit": true
+    }
+  },
+  "c1137": {
+    "S3": {
+      "description": "Attacks the enemy by slamming them with a fist, --decreasing Defense-- for 2 turns, before increasing Speed of the caster for 2turns. A successful attack will deal additional damage proportional to the caster's Defense to all enemies. Damage dealt increases proportional to the caster's Defense.",
+      "sourceText": "Skill3\natt_rate: 0.5\n!pow: 1\n50% self Defense (0.50 * Defense)\n\n\nSkill3 Explosion\n140% self Defense (1.40 * Defense)\n",
+      "rate": 0.5,
+      "pow": 1,
+      "targets": 1,
+      "selfDefScaling": 0.5,
+      "damageSource": {
+        "provider": "e7calc",
+        "revision": "39070976ce3cd0435cbcf5d430f2711cf0ef0005",
+        "url": "https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts"
+      },
+      "additionalDamage": [
+        {
+          "source": "skill",
+          "basis": "def",
+          "ratio": 1.4,
+          "penetration": 0.7,
+          "scope": "allEnemies",
+          "allowMiss": false
+        }
+      ],
+      "afterPrimaryEffects": [
+        {
+          "kind": "buff",
+          "target": "caster",
+          "id": "stic_speed_up",
+          "turns": 2
+        }
+      ]
+    }
   }
 };

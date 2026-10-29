@@ -240,3 +240,6 @@ The [Earth 5★ review](docs/earth-review.md) covers the first Earth implementat
 
 
 [Soulburn gameplay](docs/soulburn.md) now supports verified damage alternatives, extra turns, ER bypass, direct proc changes, cooldown reduction and buff-duration extensions. Completed casts emit `soulburn` alongside their ordinary tags so reviewed allied/enemy watchers can react. Specialized unmapped variants remain in the skill checklist.
+
+
+[Additional damage](docs/additional-and-fixed-damage.md#implemented-shared-pipeline-2026-10-29) now uses reviewed e7calc components (1.871 constant, 70% default Defense penetration), separate non-critical delayed numbers, skill hit requirements and artifact-on-miss rules. Nine skill casts and six selectable artifact component profiles use the pipeline. Artifact proc chance is configurable; other bonuses/cooldowns remain manual.

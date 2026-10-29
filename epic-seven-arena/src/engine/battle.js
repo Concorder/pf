@@ -1,3 +1,4 @@
+import {applyAdditionalDamage} from "./additionalDamage.js";
 import {applySoulburn} from "../data/soulburn.js";
 import {applySkillEffects} from "./skillEffects.js";
 import {dispatchWatchers,tickWatcherCooldowns} from "./watchers.js";
@@ -564,6 +565,8 @@ function performSkillAttack(
         }
     }
 
+  applySkillEffects(heroes,battle,u,d,d.afterPrimaryEffects,targetId,{random,hits});
+  applyAdditionalDamage(battle,u,d,skill,hits,random,{artifact:options.automaticArtifactDamage!==false});
   applySkillEffects(heroes,battle,u,d,d.earthReview?.combatEffects,targetId,{random,hits});
   if(d.earthReview?.cooldownResetOnKill&&hits.some(h=>h.defeated))u.cooldowns[skill]=0;
   applySkillResourceGain(battle, u, d, hits);
@@ -866,7 +869,7 @@ function resolveReactionQueue(heroes, battle, queue, random, options = {}) {
       target.id,
       request.hit || "auto",
       random,
-      {...options, soulburn:false, actionKind: request.kind},
+      {...options, soulburn:false, automaticArtifactDamage:actor.id===battle.active?options.automaticArtifactDamage:true, actionKind: request.kind},
     );
     log(
       battle,

@@ -2,7 +2,7 @@
 
 Generated from the bundled CeciliaBot snapshot (2026-10-22T22:41:17.340Z) and current normalization rules.
 Scope: **391 heroes**, **1173 skills**.
-Contains **1052 skill entries** across **389 heroes**.
+Contains **1050 skill entries** across **389 heroes**.
 
 Regenerate with `npm run report:skills`. This is an implementation/review queue, not a list of questions you must answer. Checked-off notes should be recorded in the relevant mechanics document or rules before regeneration, which replaces this file.
 
@@ -164,14 +164,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Source multiplier text (requires review): Skill2<br>Barrier strength: 70% self caster def<br>
   - Unparsed formula lines: Barrier strength: 70% self caster def
 
-- [ ] **S3 — I'll Blow You Away!** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
+- [ ] **S3 — I'll Blow You Away!** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Audit buff recipients, conditions and durations against implemented grants
   - Description: Attacks the enemy by slamming them with a fist, --decreasing Defense-- for 2 turns, before increasing Speed of the caster for 2turns. A successful attack will deal additional damage proportional to the caster's Defense to all enemies. Damage dealt increases proportional to the caster's Defense.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 0.5<br>!pow: 1<br>50% self Defense (0.50 * Defense)<br><br><br>Skill3 Explosion<br>140% self Defense (1.40 * Defense)<br>
-  - Unparsed formula lines: Skill3 Explosion; 140% self Defense (1.40 * Defense)
+  - Implemented additional damage: 140% caster def, 70% Defense penetration, all enemies; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill3<br>att_rate: 0.5<br>!pow: 1<br>50% self Defense (0.50 * Defense)<br><br><br>Skill3 Explosion<br>140% self Defense (1.40 * Defense)<br>
 
 ### ae-NINGNING (c1140)
 
@@ -389,13 +388,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Soulburn (20 souls): Ignore Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Albedo (c1156)
-
-- [ ] **S1 — No Need for Words** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Description: Attacks the enemy with a bardiche, before increasing Combat Readiness of the caster by 20%. A successful attack deals additional damage proportional to the caster's max Health. Damage dealt increases proportional to the caster's max Health.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 0.75<br>!pow: 1<br>Max Health scaling 9% (0.09 * self Max Health)<br>Additional damage: 7% caster's max Health (0.07 * Health)
-  - Unparsed formula lines: Additional damage: 7% caster's max Health (0.07 * Health)
 
 - [ ] **S2 — Aegis Unfold** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -764,7 +756,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Description: Damage suffered from a critical hit decreases by 30%. When more than one damage reduction effect is granted, only the strongest effect is applied. After using a basic skill, when the target is --sealed--, increases Attack of the caster for 1 turn before activating Burst.<br>Burst: Attacks all enemies, and increases Combat Readiness of the caster by 25% before gaining 1 Focus. A successful attack deals additional damage proportional to the caster's Attack.
   - Resource: focus; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill2Proc<br>att_rate: 0.45<br>!pow: 1.3<br>Additional damage: 40% of Self Attack (0.4 * Attack)<br>
-  - Unparsed formula lines: Skill2Proc; Additional damage: 40% of Self Attack (0.4 * Attack)
+  - Unparsed formula lines: Skill2Proc
 
 - [ ] **S3 — Dissolution** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -3429,7 +3421,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Unmapped/conditional debuff grants
   - Description: At the start of battle and at the end of the turn, grants stealth for 1 turn. At the start of the turn, when not stealthed, dispels all debuffs and grants Shyness for 1 turn. Effects at the start of the turn can only be activated once every 4 turns. After attacking, when granted Shyness activates Expected Outcome.<br>Expected Outcome: Attacks all enemies, decreasing Combat Readiness by 50% and inflicting additional damage proportional to the caster's max Health.
   - Source multiplier text (requires review): Skill2(Proc)<br>att_rate: 1<br>!pow: 1<br>Additional damage: 40% caster's max Health (70% def penetration)<br>
-  - Unparsed formula lines: Skill2(Proc); Additional damage: 40% caster's max Health (70% def penetration)
+  - Unparsed formula lines: Skill2(Proc)
 
 - [ ] **S3 — Let Me Give It a Try** — Base damage supported; secondary effects pending
   - Current base support: supported. Damage coefficients parsed
@@ -3762,13 +3754,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Guard Captain Krau (c5070)
 
-- [ ] **S1 — Crimson Flame** — Skill execution unsupported
-  - Current base support: unsupported. Missing numeric scaling coefficient
-  - Review/work: Missing numeric scaling coefficient
+- [ ] **S1 — Crimson Flame** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: EE option 1: EE mechanic not implemented
   - Description: Attacks the enemy with a mystic blade, and increases Combat Readiness of the caster by 20%. A successful attack deals additional damage proportional to the caster's Defense. Damage dealt increases proportional to the caster's Defense.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 0.7<br>!pow: 1<br>Additional damage: 60% caster's Defense (0.6 * Defense)<br>
-  - Unparsed formula lines: Additional damage: 60% caster's Defense (0.6 * Defense)
+  - Implemented additional damage: 60% caster def, 70% Defense penetration; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 0.7<br>!pow: 1<br>Additional damage: 60% caster's Defense (0.6 * Defense)<br>
   - EE 1: With Crimson Flame's effect, increases Combat Readiness by an additional 5%.
 
 - [ ] **S2 — Comet** — Base damage supported; secondary effects pending
@@ -4178,14 +4170,14 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Hwayoung (c1128)
 
-- [ ] **S1 — Supersonic Kick** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S1 — Supersonic Kick** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Review/work: EE option 2: EE mechanic not implemented
   - Description: Attacks the enemy with a kick and deals additional damage proportional to the caster's Attack.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 0.8<br>!pow: 1<br>Additional damage: 35% of caster's Attack as damage, assumed 70% def pen<br><br><br>Skill1 (Soulburn)<br>att_rate: 1.2<br>!pow: 1<br>Additional damage: 70% of caster's Attack as damage, assumed 70% def pen<br>
-  - Unparsed formula lines: Additional damage: 35% of caster's Attack as damage, assumed 70% def pen; Skill1 (Soulburn); att_rate: 1.2; !pow: 1; Additional damage: 70% of caster's Attack as damage, assumed 70% def pen
+  - Implemented additional damage: 35% caster atk, 70% Defense penetration; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 0.8<br>!pow: 1<br>Additional damage: 35% of caster's Attack as damage, assumed 70% def pen<br><br><br>Skill1 (Soulburn)<br>att_rate: 1.2<br>!pow: 1<br>Additional damage: 70% of caster's Attack as damage, assumed 70% def pen<br>
   - Soulburn (10 souls): Grants an extra attack with the same skill. — Soulburn effect needs a reviewed execution rule or verified coefficients.
   - EE 2: Increases Combat Readiness of the caster by 15% when using Supersonic Kick.
 
@@ -4370,7 +4362,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Review source-specific extra-turn execution/conditions (tag is capability metadata)
   - Description: Attacks the enemy with a sword. Cannot trigger a critical hit. A successful attack deals additional damage proportional to the caster's Attack to all enemies. Penetrates the target’s Defense by 30%, and when the caster’s Health is 30% or less, penetrates by 70%. When the caster is immortal, grants an extra turn.
   - Source multiplier text (requires review): Skill3<br>att_rate: 1.1<br>!pow: 0.95<br>Additional damage: 60% caster's Attack (0.6 * Attack)<br><br><br>Skill3(soulburn)<br>att_rate: 1.5<br>!pow: 0.95<br>Additional damage: 80% caster's Attack (0.8 * Attack)<br>
-  - Unparsed formula lines: Additional damage: 60% caster's Attack (0.6 * Attack); Skill3(soulburn); att_rate: 1.5; !pow: 0.95; Additional damage: 80% caster's Attack (0.8 * Attack)
+  - Unparsed formula lines: Skill3(soulburn); att_rate: 1.5; !pow: 0.95
   - Soulburn (10 souls): Increases damage dealt and additional damage. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 ### Iseria (c1024)
@@ -5411,14 +5403,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Lone Wolf Peira (c2125)
 
-- [ ] **S1 — Bash** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
+- [ ] **S1 — Bash** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attack the enemy, with a 75% chance to --decrease Defense-- for 1 turn. A successful attack deals additional damage proportional to the caster's Attack.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Additional damage: 25% caster's Attack (0.25 * Attack)<br>
-  - Unparsed formula lines: Additional damage: 25% caster's Attack (0.25 * Attack)
+  - Implemented additional damage: 25% caster atk, 70% Defense penetration; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>Additional damage: 25% caster's Attack (0.25 * Attack)<br>
   - Soulburn (10 souls): Attacks all enemies. This attack does not trigger a Dual Attack. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Time to Rampage** — Passive partially implemented or pending
@@ -5959,7 +5950,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with sword fragments. Penetrates the target's Defense. When triggered as a counterattack, activates Sword of Duty instead.<br>Sword of Duty: After inflicting --fracture-- on the caster, attacks the enemy with the ritual sword, and increases Combat Readiness of the caster and the foremost ally except for the caster by 25%. Inflicts additional damage proportional to the caster's Attack on the target and up to 25% injuries.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.3 (0.5 soulburn)<br>!pow: 1<br><br><br>Skill1 (Proc)<br>att_rate: 0.3<br>!pow: 1<br>Additional damage: 125% caster's Attack and 20% injury<br>
-  - Unparsed formula lines: Skill1 (Proc); att_rate: 0.3; !pow: 1; Additional damage: 125% caster's Attack and 20% injury
+  - Unparsed formula lines: Skill1 (Proc); att_rate: 0.3; !pow: 1
   - Soulburn (10 souls): Increases damage dealt. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Elbris's Successor** — Passive partially implemented or pending
@@ -5972,12 +5963,11 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - EE 1: Increases the amount of Hit Chance and Penetration Resistance increased by Elbris's Successor by 30%.
 
 - [ ] **S3 — Dawnbreaker** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+  - Current base support: unsupported. Additional damage activation/variant needs review
+  - Review/work: Additional damage activation/variant needs review
   - Review/work: Unmapped/conditional debuff grants
   - Description: After inflicting --fracture-- on the caster and dispelling all debuffs, attacks all enemies with the power of the ritual sword. Inflicts additional damage proportional to the caster's Attack on the target and up to 25% injuries.
   - Source multiplier text (requires review): Skill3<br>att_rate: 0.3<br>!pow: 1<br>Additional damage: 155% caster's Attack and 25% injury<br>
-  - Unparsed formula lines: Additional damage: 155% caster's Attack and 25% injury
 
 ### Montmorancy (c3042)
 
@@ -6252,13 +6242,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### New Moon Luna (c2066)
 
-- [ ] **S2 — Demon-Sealing Spear** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S2 — Demon-Sealing Spear** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Unmapped/conditional debuff grants
   - Description: Attacks the enemy by thrusting down a spear, inflicting --decreased Defense-- for 1 turn, and increases Combat Readiness of the caster by 50%. A successful attack will inflict additional damage on all enemies. Damage dealt and additional damage increase proportional to the caster's max Health.
-  - Source multiplier text (requires review): Skill2<br>att_rate: 0.7<br>!pow: 0.95<br>Max Health scaling 20% (0.20 * self Max Health)<br>Additional damage: 16% caster's max Health (0.16 * Health)
-  - Unparsed formula lines: Additional damage: 16% caster's max Health (0.16 * Health)
+  - Implemented additional damage: 16% caster hp, 70% Defense penetration, all enemies; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill2<br>att_rate: 0.7<br>!pow: 0.95<br>Max Health scaling 20% (0.20 * self Max Health)<br>Additional damage: 16% caster's max Health (0.16 * Health)
 
 - [ ] **S3 — Moon's Judgment** — Skill execution unsupported
   - Current base support: unsupported. Non-damaging skill: effect support pending
@@ -6279,7 +6269,7 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Review/work: Unmapped/conditional debuff grants
   - Description: (Notos) Attacks the enemy with divinity and has a 75% chance to inflict --decreased Defense-- for 1 turn. Damage dealt increases proportional to the caster’s max Health.<br>(God of Battle) Attacks the enemy and deals additional damage proportional to the caster’s max Health. Damage dealt increases proportional to the caster’s max Health.
   - Source multiplier text (requires review): Skill1<br>att_rate: 0.5<br>!pow: 0.9<br>Health scaling: 10% caster's max Health<br><br><br>Skill1 (God of Battle)<br>att_rate: 0.5<br>!pow: 0.9<br>Health scaling: 6% caster's max Health<br>Additional damage: 15% caster's max Health
-  - Unparsed formula lines: Skill1 (God of Battle); att_rate: 0.5; !pow: 0.9; Health scaling: 6% caster's max Health; Additional damage: 15% caster's max Health
+  - Unparsed formula lines: Skill1 (God of Battle); att_rate: 0.5; !pow: 0.9; Health scaling: 6% caster's max Health
 
 - [ ] **S2 — Blaze of Battle** — Passive partially implemented or pending
   - Current base support: passive. Passive: triggered effects are not automated
@@ -6824,14 +6814,13 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
 
 ### Requiem Roana (c2102)
 
-- [ ] **S1 — Touch of Darkness** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Unmapped/conditional debuff grants
+- [ ] **S1 — Touch of Darkness** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Soulburn pending: Soulburn effect needs a reviewed execution rule or verified coefficients
   - Description: Attacks the enemy with magic, with a 75% chance to inflict --decreased Defense-- for 1 turn. Cannot trigger a critical hit or a heavy blow, and a successful attack will inflict additional damage proportional to the caster's Attack.
-  - Source multiplier text (requires review): Skill1<br>att_rate: 1<br>!pow: 1<br>Additional damage: 50% caster's Attack (0.5 * Attack)<br>
-  - Unparsed formula lines: Additional damage: 50% caster's Attack (0.5 * Attack)
+  - Implemented additional damage: 50% caster atk, 70% Defense penetration; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
+  - Supported damage formula (reference only): Skill1<br>att_rate: 1<br>!pow: 1<br>Additional damage: 50% caster's Attack (0.5 * Attack)<br>
   - Soulburn (10 souls): Increases effect chance to 100% and decreases Defense for 2 turns. — Soulburn effect needs a reviewed execution rule or verified coefficients.
 
 - [ ] **S2 — Boundless Obsession** — Passive partially implemented or pending
@@ -7380,15 +7369,6 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Description: Releases divinity, granting skill nullifier once to the caster, and cloning a target Hero except for the caster for 1 turn. Grants an extra turn.<br>Clone: Clones the target's appearance and abilities. While in the Clone state, seperate skill cooldowns are applied. When dispelled, unique effects granted to the caster by the Clone skill are also dispelled.
   - Source multiplier text (requires review): No info
   - Unparsed formula lines: No info
-
-- [ ] **S3 — Nggdrasil's Judgment** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
-  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
-  - Description: After inflicting --collapse-- on the enemy for 2 turns, attacks with the power of Nggdrasil, with a 100% chance to inflict --decreased Defense-- for 2 turns, and deals additional damage to the target. Damage dealt and additional damage increase proportional to the caster's max Health.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 0.7<br>!pow: 1<br>Health scaling: 15% caster's max Health<br>Additional damage: 17% caster's max Health (70% def pen)
-  - Unparsed formula lines: Additional damage: 17% caster's max Health (70% def pen)
-  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
 
 ### Saria (c1177)
 
@@ -8074,16 +8054,15 @@ Ordinary target selection, caster exclusions, buff recipients, durations and exp
   - Resource: fightingSpirit; base gain 0; required/spent 0.
   - Source multiplier text (requires review): Skill2<br>att_rate: 0.7<br>!pow: 1<br>4% target max Health<br>
 
-- [ ] **S3 — Tyrant Rave ver. Beta** — Skill execution unsupported
-  - Current base support: unsupported. Conditional or unrecognized multiplier text
-  - Review/work: Conditional or unrecognized multiplier text
+- [ ] **S3 — Tyrant Rave ver. Beta** — Base damage supported; secondary effects pending
+  - Current base support: supported. Reviewed e7calc damage formula
   - Review/work: Unmapped/conditional debuff grants
-  - Review/work: Soulburn pending: Soulburn effect mapped; base skill is not executable yet
   - Description: Attacks the target with a strong punch, dispelling all buffs and inflicts --cannot buff-- for 2 turns. Damage dealt increases proportional to the target's max Health. After attacking, deals additional damage proportional to the caster's Attack regardless of whether the attack hits.
+  - Implemented additional damage: 40% caster atk, 70% Defense penetration, also on miss; separate non-critical component.
+  - Reviewed damage source: [e7calc](https://github.com/tyopoyt/epic7-damage-calc/blob/39070976ce3cd0435cbcf5d430f2711cf0ef0005/damage-calc/src/assets/data/heroes.ts), revision 39070976ce3cd0435cbcf5d430f2711cf0ef0005.
   - Resource: fightingSpirit; base gain 60; required/spent 0.
-  - Source multiplier text (requires review): Skill3<br>att_rate: 1.6<br>!pow: 1<br>5% target max Health<br>Additional damage: 40% of Self Attack (0.4 * Attack)
-  - Unparsed formula lines: Additional damage: 40% of Self Attack (0.4 * Attack)
-  - Soulburn (10 souls): Ignores Effect Resistance. — Soulburn effect mapped; base skill is not executable yet.
+  - Supported damage formula (reference only): Skill3<br>att_rate: 1.6<br>!pow: 1<br>5% target max Health<br>Additional damage: 40% of Self Attack (0.4 * Attack)
+  - Soulburn (10 souls): Ignores Effect Resistance. — enhanced cast implemented.
 
 ### Solitaria of the Snow (c2111)
 
